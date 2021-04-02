@@ -15,6 +15,21 @@ library(readxl)
 ```
 
 ```{r}
+library(tidyverse)
+library(car)
+library(lmtest)
+library(sandwich)
+library(stargazer)
+library(tidyverse)
+library(magrittr)
+library(ggplot2)
+library(dplyr)
+library(patchwork)
+```
+
+
+
+```{r}
 # Load data about mask-wearing polices from the W203 spreadsheet
 url_203data_masks <- 'https://docs.google.com/spreadsheets/d/1zu9qEWI8PsOI_i8nI_S29HDGHlIp2lfVMsGxpQ5tvAQ/edit#gid=1489353670'
 mask_policy <- read.csv(text=gsheet2text(url_203data_masks,format='csv'),
@@ -165,6 +180,44 @@ svi <-  read_csv('data/Yu-Social Vulnerability Index/SVI2018_US_COUNTY.csv')
 # Load data from Yu-Stroke and Heart Disease
 heart_disease <- read_csv('data/Yu-Stroke and Heart Disease/all_heart_disease_deathrateper100k_allages_2016-2018.csv')
 stroke <- read_csv('data/Yu-Stroke and Heart Disease/all_stroke_deathrateper100k_allages_2016-2018.csv')
+```
+
+
+```{r}
+clean_cases <- cases_usafacts %>%
+  select(countyFIPS, `2021-03-31`) %>%
+  rename(cases = `2021-03-31`)
+clean_deaths <- deaths_usafacts %>%
+  select(countyFIPS, `2021-03-31`) %>%
+  rename(deaths = `2021-03-31`)
+
+combined_cases_deaths_usafacts <- clean_cases %>%
+  merge(clean_deaths, by = "countyFIPS") 
+  
+combined_cases_deaths_usafacts %>%
+  ggplot() +
+  aes(x = cases, y = deaths) + 
+  geom_point()
+
+combined_cases_deaths_usafacts <- combined_cases_deaths_usafacts %>%
+  mutate(
+    death_per_covid = deaths / cases
+  ) 
+```
+
+```{r}
+summary(combined_cases_deaths_usafacts$death_per_covid)
+```
+
+
+```{r}
+combined_cases_deaths_usafacts %>%
+  filter(
+    death_per_covid <= 0.1
+  ) %>%
+  ggplot() +
+  aes(death_per_covid) +
+  geom_histogram(bins = 100)
 ```
 
 
