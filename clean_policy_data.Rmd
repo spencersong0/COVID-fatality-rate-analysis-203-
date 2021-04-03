@@ -1,0 +1,88 @@
+---
+title: "Clean Policy Data"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(tidyverse)
+```
+
+```{r, load data markdown}
+rmarkdown::render("load_data.Rmd")
+```
+
+## Prepare Mask Policy Data
+#Calculate the longest number of days that any state had a mask mandate policy, which would be whichever state implemented it first and then up to the most recent date a state ended their mask mandate
+-Column 'Public face mask mandate' = beginning date
+-Column 'End face mask mandate' = ending date
+```{r, Calculate mask mandate date range}
+mask_policy <- mask_policy[-52,]
+
+first_mask <- mask_policy %>% filter(mask_policy$Public.face.mask.mandate != 0)
+last_mask <- mask_policy %>% filter(mask_policy$End.face.mask.mandate != 0)
+
+first_mask$Public.face.mask.mandate <- as.Date(first_mask$Public.face.mask.mandate, format = "%m/%d/%Y")
+last_mask$End.face.mask.mandate <- as.Date(last_mask$End.face.mask.mandate, format = "%m/%d/%Y")
+
+mask_begin <- min(first_mask$Public.face.mask.mandate)
+mask_end <- max(last_mask$End.face.mask.mandate)
+
+mask_range <- mask_end - mask_begin
+
+mask_range <- as.numeric(mask_range, units = "days")
+```
+
+#Add a column for the number of days each state had/has a mask mandate policy
+```{r, Calculate number of days each state had a mask policy}
+mask_policy$Public.face.mask.mandate <- as.Date(mask_policy$Public.face.mask.mandate, format = "%m/%d/%Y")
+mask_policy$End.face.mask.mandate <- as.Date(mask_policy$End.face.mask.mandate, format = "%m/%d/%Y")
+
+mask_policy <- mask_policy %>% mutate(days_mask = case_when(
+  is.na(Public.face.mask.mandate) == TRUE ~ 0,
+  is.na(Public.face.mask.mandate) == FALSE & is.na(End.face.mask.mandate) == TRUE ~ as.numeric((mask_end - Public.face.mask.mandate), units = "days"),
+  TRUE ~ as.numeric((End.face.mask.mandate - Public.face.mask.mandate), units = "days")))
+```
+
+#Add a column to the mask_policy data frame to show the ratio of days each state mandate masks
+```{r, Calculate ratio of policy in place to the total number of days masks have been required}
+mask_policy$mask_ratio <- mask_policy$days_mask / mask_range
+```
+
+## Prepare Stay-at-Home Policy Data
+#Calculate the longest number of days that any state had a stay-at-home mandate policy, which would be whichever state implemented it first and then up to the most recent date a state ended their stay-at-home mandate
+-Column 'Stay at home/shelter in place' = beginning date
+-Column 'End stay at home/shelter in place ' = ending date
+```{r, Calculate stay-at-home mandate date range}
+stayathome_policy <- stayathome_policy[-52,]
+
+first_stay <- stayathome_policy %>% filter(stayathome_policy$Stay.at.home.shelter.in.place != 0)
+last_stay <- stayathome_policy %>% filter(stayathome_policy$End.stay.at.home.shelter.in.place != 0)
+
+first_stay$Stay.at.home.shelter.in.place <- as.Date(first_stay$Stay.at.home.shelter.in.place, format = "%m/%d/%Y")
+last_stay$End.stay.at.home.shelter.in.place <- as.Date(last_stay$End.stay.at.home.shelter.in.place, format = "%m/%d/%Y")
+
+home_begin <- min(first_stay$Stay.at.home.shelter.in.place)
+home_end <- max(last_stay$End.stay.at.home.shelter.in.place)
+
+home_range <- home_end - home_begin
+
+home_range <- as.numeric(home_range, units = "days")
+```
+
+#Add a column for the number of days each state had/has a stay-at-home policy
+```{r, Calculate number of days each state had a mask policy}
+stayathome_policy$Stay.at.home.shelter.in.place <- as.Date(stayathome_policy$Stay.at.home.shelter.in.place, format = "%m/%d/%Y")
+stayathome_policy$End.stay.at.home.shelter.in.place <- as.Date(stayathome_policy$End.stay.at.home.shelter.in.place, format = "%m/%d/%Y")
+
+stayathome_policy <- stayathome_policy %>% mutate(days_home = case_when(
+  is.na(Stay.at.home.shelter.in.place) == TRUE ~ 0,
+  is.na(Stay.at.home.shelter.in.place) == FALSE & is.na(End.stay.at.home.shelter.in.place) == TRUE ~ as.numeric((home_end - Stay.at.home.shelter.in.place), units = "days"),
+  TRUE ~ as.numeric((End.stay.at.home.shelter.in.place - Stay.at.home.shelter.in.place), units = "days")))
+```
+
+#Add a column to the stayathome_policy data frame to show the ratio of days each state mandate to stay at home 
+```{r, Calculate ratio of policy in place to the total number of days masks have been required}
+stayathome_policy$home_ratio <- stayathome_policy$days_home / home_range
+```
