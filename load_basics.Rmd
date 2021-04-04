@@ -29,7 +29,7 @@ icu_beds_ccm <- read_csv(url(url_covidcaremap))
 ```{r}
 cases_deaths_edit <-
   cases_deaths %>%
-    select(county, state, fips, cases, deaths, confirmed_cases, confirmed_deaths, probable_cases, probable_deaths) %>%
+    select(county, state, fips, cases, deaths) %>%
     transform(fips = as.numeric(fips)) %>%
     transform(fips = as.character(fips))
 ```
@@ -45,3 +45,10 @@ icu_beds_ccm_edit <-
 ```{r}
 final_f <- merge(x = cases_deaths_edit, y = icu_beds_ccm_edit, by.x = "fips", by.y = "fips_code")#, all.x = TRUE)
 ```
+
+```{r}
+summary(final_f)
+```
+
+
+
