@@ -205,7 +205,7 @@ heart_disease_clean <- heart_disease %>%
   ) %>%
   transform(
     FIPS = as.numeric(FIPS),
-    heart_disease_per100k = as.numeric(heart_disease_per100k)
+    heart_disease_per100k = ifelse(as.numeric(heart_disease_per100k) > -1, as.numeric(heart_disease_per100k), NA)
   )
 
 summary(heart_disease_clean)
@@ -229,7 +229,7 @@ stroke_clean <- stroke %>%
   ) %>%
   transform(
     FIPS = as.numeric(FIPS),
-    stroke_per100k = as.numeric(stroke_per100k)
+    stroke_per100k = ifelse(as.numeric(stroke_per100k) > -1, as.numeric(stroke_per100k), NA)
   )
 
 summary(stroke_clean)
