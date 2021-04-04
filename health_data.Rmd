@@ -72,28 +72,25 @@ heart_disease <- read_csv('data/Yu-Stroke and Heart Disease/all_heart_disease_de
 stroke <- read_csv('data/Yu-Stroke and Heart Disease/all_stroke_deathrateper100k_allages_2016-2018.csv')
 ```
 
-```{r}
-head(asthma_death)
-```
 
 ```{r astha handling}
 # Get asthma death data in usable format
+# deaths per 100k, already normalized
 
 # Select relevant columns: Location, FIPS, and 2014 mortality rate
 asthma_death_2014_clean <-  asthma_death %>%
-  select(Asthma, ...2, ...10)
+  select(...2, ...10)
 
 # Rename columns and convert FIPS to integer
 # take average mortality rate (delete confidence interval)
 asthma_death_2014_clean <- asthma_death_2014_clean %>% 
   rename(
-    Location = Asthma,
     FIPS = ...2,
-    Mortality_Rate_2014 = ...10
+    asthma_deaths_per100k = ...10
     ) %>%
   transform(
     FIPS = as.numeric(FIPS),
-    Mortality_Rate_2014 = as.numeric(substr(Mortality_Rate_2014, start = 1, stop = 4))
+    asthma_deaths_per100k = as.numeric(substr(asthma_deaths_per100k, start = 1, stop = 4))
   )
 
 # Remove top row
@@ -105,22 +102,22 @@ summary(asthma_death_2014_clean)
 
 ```{r chronic respiratory disease handling}
 # Get chronic respiratory disease death data in usable format
+# deaths per 100k, already normalized
 
 # Select relevant columns: Location, FIPS, and 2014 mortality rate
 chronic_respiratory_diesease_2014_clean <-  chronic_respiratory_diesease %>%
-  select("Chronic respiratory diseases", ...2, ...10)
+  select(...2, ...10)
 
 # Rename columns and convert FIPS to integer
 # take average mortality rate (delete confidence interval)
 chronic_respiratory_diesease_2014_clean <- chronic_respiratory_diesease_2014_clean %>%
   rename(
-    Location = "Chronic respiratory diseases",
     FIPS = ...2,
-    Mortality_Rate_2014 = ...10
+    chronic_respiratory_disease_deaths_per100k = ...10
     ) %>%
   transform(
     FIPS = as.numeric(FIPS),
-    Mortality_Rate_2014 = as.numeric(substr(Mortality_Rate_2014, start = 1, stop = 4))
+    chronic_respiratory_disease_deaths_per100k = as.numeric(substr(chronic_respiratory_disease_deaths_per100k, start = 1, stop = 4))
   )
 
 # Remove top row
@@ -130,17 +127,16 @@ chronic_respiratory_diesease_2014_clean <- chronic_respiratory_diesease_2014_cle
 summary(chronic_respiratory_diesease_2014_clean)
 ```
 
-```{r}
-county_health_rankings$`Release Year`
-```
-
-
 
 ```{r}
 # Variables:
 # 1. % of adults with obesity
 # 2. % of adults that smoke
 # 3. % of adults that are 65+
+# already normalized
+
+# select relevant variables
+# convert to numbers
 county_health_rankings_clean <- county_health_rankings %>%
   select(
     `5-digit FIPS Code`,
@@ -150,15 +146,106 @@ county_health_rankings_clean <- county_health_rankings %>%
   ) %>%
   rename(
     FIPS = `5-digit FIPS Code`,
-    obesity = `Adult obesity raw value`,
-    smoking = `Adult smoking raw value`,
-    over_65 = `% 65 and older raw value`
+    obesity_percent = `Adult obesity raw value`,
+    smoking_percent = `Adult smoking raw value`,
+    over_65_percent = `% 65 and older raw value`
     ) %>%
   transform(
     FIPS = as.numeric(FIPS),
-    obesity = as.numeric(obesity),
-    smoking = as.numeric(smoking),
-    over_65 = as.numeric(over_65)
+    obesity_percent = as.numeric(obesity_percent),
+    smoking_percent = as.numeric(smoking_percent),
+    over_65_percent = as.numeric(over_65_percent)
   )
+
+# Remove top row
+county_health_rankings_clean <- county_health_rankings_clean[-c(1), ]
+
+summary(county_health_rankings_clean)
 ```
+
+```{r diabetes cleaning}
+# people diagnosed with diabetes
+# needs to be normalized
+
+# select appropriate columns
+# convert to numbers
+diabetes_clean <- diabetes %>%
+  select(
+    CountyFIPS,
+    Number
+  ) %>%
+  rename(
+    FIPS = CountyFIPS,
+    num_diabetes_diagnosed = Number
+  ) %>%
+  transform(
+    FIPS = as.numeric(FIPS),
+    num_diabetes_diagnosed = as.numeric(num_diabetes_diagnosed)
+  )
+
+summary(diabetes_clean)
+```
+
+
+```{r heart disease}
+# heart disease per 100k
+# -1 values = NA
+# already normalized
+
+# select appropriate columns
+# convert to numbers
+heart_disease_clean <- heart_disease %>%
+  select(
+    cnty_fips,
+    Value
+  ) %>%
+  rename(
+    FIPS = cnty_fips,
+    heart_disease_per100k = Value
+  ) %>%
+  transform(
+    FIPS = as.numeric(FIPS),
+    heart_disease_per100k = as.numeric(heart_disease_per100k)
+  )
+
+summary(heart_disease_clean)
+```
+
+```{r stroke}
+# stroke per 100k
+# -1 values = NA
+# already normalized
+
+# select appropriate columns
+# convert to numbers
+stroke_clean <- stroke %>%
+  select(
+    cnty_fips,
+    Value
+  ) %>%
+  rename(
+    FIPS = cnty_fips,
+    stroke_per100k = Value
+  ) %>%
+  transform(
+    FIPS = as.numeric(FIPS),
+    stroke_per100k = as.numeric(stroke_per100k)
+  )
+
+summary(stroke_clean)
+```
+
+
+```{r}
+all_health_data_clean <- diabetes_clean %>% merge(asthma_death_2014_clean, by = "FIPS", all.x = TRUE) %>%
+  merge(chronic_respiratory_diesease_2014_clean, by = "FIPS", all.x = TRUE) %>%
+  merge(county_health_rankings_clean, by = "FIPS", all.x = TRUE) %>%
+  merge(heart_disease_clean, by = "FIPS", all.x = TRUE) %>%
+  merge(stroke_clean, by = "FIPS", all.x = TRUE)
+```
+
+```{r}
+
+```
+
 
