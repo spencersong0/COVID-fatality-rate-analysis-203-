@@ -236,16 +236,12 @@ summary(stroke_clean)
 ```
 
 
-```{r}
+```{r produce final df}
 all_health_data_clean <- diabetes_clean %>% merge(asthma_death_2014_clean, by = "FIPS", all.x = TRUE) %>%
   merge(chronic_respiratory_diesease_2014_clean, by = "FIPS", all.x = TRUE) %>%
   merge(county_health_rankings_clean, by = "FIPS", all.x = TRUE) %>%
   merge(heart_disease_clean, by = "FIPS", all.x = TRUE) %>%
   merge(stroke_clean, by = "FIPS", all.x = TRUE)
-```
-
-```{r}
-
 ```
 
 
