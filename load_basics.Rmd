@@ -43,7 +43,10 @@ icu_beds_ccm_edit <-
 ```
 
 ```{r}
-final_f <- merge(x = cases_deaths_edit, y = icu_beds_ccm_edit, by.x = "fips", by.y = "fips_code")#, all.x = TRUE)
+final_f <- merge(x = cases_deaths_edit, y = icu_beds_ccm_edit, by.x = "fips", by.y = "fips_code")
+final_f <- 
+  final_f %>%
+    mutate(perc_65 = Population / Population..65..)
 ```
 
 ```{r}
