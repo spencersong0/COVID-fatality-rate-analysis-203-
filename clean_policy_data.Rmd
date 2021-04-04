@@ -86,3 +86,14 @@ stayathome_policy <- stayathome_policy %>% mutate(days_home = case_when(
 ```{r, Calculate ratio of policy in place to the total number of days masks have been required}
 stayathome_policy$home_ratio <- stayathome_policy$days_home / home_range
 ```
+
+## Merge Data Frames
+#Merge mask and stay-at-home policy data sets
+``` {r, Merge data frames}
+policy_data <- merge(mask_policy, stayathome_policy, by.x="State.FIPS.Code", by.y="State.FIPS.Code")
+```
+
+#Remove columns
+``` {r, Remove columns from new data frame}
+policy_data <- policy_data[-c(4:13, 16:23)]
+```
