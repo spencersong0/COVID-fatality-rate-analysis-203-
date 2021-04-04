@@ -1,0 +1,47 @@
+---
+title: "load_data"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+install.packages("googlesheets")
+library(gsheet)
+library(readr)
+library(readxl)
+library(tidyverse)
+```
+
+```{r}
+# Load county-level COVID case and death data from NY times
+url_nytimes <- 'https://raw.githubusercontent.com/nytimes/covid-19-data/master/live/us-counties.csv'
+cases_deaths <- read_csv(url(url_nytimes))
+
+# Load county-level data about icu beds from CovidCareMap (CCM)
+url_covidcaremap <- 'https://raw.githubusercontent.com/covidcaremap/covid19-healthsystemcapacity/master/data/published/us_healthcare_capacity-county-CovidCareMap.csv'
+icu_beds_ccm <- read_csv(url(url_covidcaremap))
+```
+
+
+```{r}
+cases_deaths_edit <-
+  cases_deaths %>%
+    select(county, state, fips, cases, deaths, confirmed_cases, confirmed_deaths, probable_cases, probable_deaths) %>%
+    transform(fips = as.numeric(fips)) %>%
+    transform(fips = as.character(fips))
+```
+
+```{r}
+icu_beds_ccm_edit <-
+  icu_beds_ccm %>%
+    select(fips_code, `County Name`, `Staffed All Beds`, `Staffed ICU Beds`, `Staffed ICU Beds [Per 1000 Elderly (65+)]`, `Staffed ICU Beds [Per 1000 Adults (20+)]`, `Staffed ICU Beds [Per 1000 People]`, Population, `Population (65+)`, `Population (20+)`) %>%
+    transform(fips_code = as.numeric(fips_code)) %>%
+    transform(fips_code = as.character(fips_code))
+```
+
+```{r}
+final_f <- merge(x = cases_deaths_edit, y = icu_beds_ccm_edit, by.x = "fips", by.y = "fips_code")#, all.x = TRUE)
+```
