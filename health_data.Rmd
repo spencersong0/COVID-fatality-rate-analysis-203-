@@ -1,0 +1,164 @@
+---
+title: "health_data"
+output: html_document
+---
+
+```{r import load libraries}
+library(gsheet)
+library(readr)
+library(readxl)
+```
+
+```{r import other libraries, warning = FALSE, message = FALSE}
+library(tidyverse)
+library(car)
+library(lmtest)
+library(sandwich)
+library(stargazer)
+library(tidyverse)
+library(magrittr)
+library(ggplot2)
+library(dplyr)
+library(patchwork)
+```
+
+health conditions:
+8. chronic respiratory disease
+5. asthma
+1. % 65+
+2. % smokers
+3. % obesity
+4. diabetes
+6. heart disease mortality
+7. stroke mortality
+
+
+
+```{r}
+# Load data from Yu-Chronic Respiratory Disease Mortality
+# There are several sheets in this xlsx file. Relevant sheets/variables to pull:
+# 1. Chronic respiratory diseases
+
+chronic_respiratory_diesease <- read_excel('data/Yu-Chronic Respiratory Disease Mortality/IHME_USA_COUNTY_RESP_DISEASE_MORTALITY_1980_2014_NATIONAL_Y2017M09D26.XLSX',
+                                           sheet = 'Chronic respiratory diseases')
+
+asthma_death <- read_excel('data/Yu-Chronic Respiratory Disease Mortality/IHME_USA_COUNTY_RESP_DISEASE_MORTALITY_1980_2014_NATIONAL_Y2017M09D26.XLSX',
+                           sheet = 'Asthma')
+```
+
+
+```{r}
+# Load data from Yu-County Health Rankings
+# Variables in dataset (confirm in documentation):
+# Adult smoking (% smokers)
+# Adult obesity (% adults with obesity)
+# % 65 and older
+
+county_health_rankings <- read_csv('data/Yu-County Health Rankings/analytic_data2021.csv')
+```
+
+
+```{r}
+# Load diabetes data from Yu-Diabetes
+# Diagnosed Diabetes; Total (Total); Adults Aged 20+ Years; Crude Number; U.S. Counties; 2017
+
+# Edited the csv so that the column headers are in the top row
+diabetes <- read_csv('data/Yu-Diabetes/DiabetesAtlasCountyData-Edited.csv')
+```
+
+```{r}
+# Load data from Yu-Stroke and Heart Disease
+heart_disease <- read_csv('data/Yu-Stroke and Heart Disease/all_heart_disease_deathrateper100k_allages_2016-2018.csv')
+stroke <- read_csv('data/Yu-Stroke and Heart Disease/all_stroke_deathrateper100k_allages_2016-2018.csv')
+```
+
+```{r}
+head(asthma_death)
+```
+
+```{r astha handling}
+# Get asthma death data in usable format
+
+# Select relevant columns: Location, FIPS, and 2014 mortality rate
+asthma_death_2014_clean <-  asthma_death %>%
+  select(Asthma, ...2, ...10)
+
+# Rename columns and convert FIPS to integer
+# take average mortality rate (delete confidence interval)
+asthma_death_2014_clean <- asthma_death_2014_clean %>% 
+  rename(
+    Location = Asthma,
+    FIPS = ...2,
+    Mortality_Rate_2014 = ...10
+    ) %>%
+  transform(
+    FIPS = as.numeric(FIPS),
+    Mortality_Rate_2014 = as.numeric(substr(Mortality_Rate_2014, start = 1, stop = 4))
+  )
+
+# Remove top row
+asthma_death_2014_clean <- asthma_death_2014_clean[-c(1), ]
+
+
+summary(asthma_death_2014_clean)
+```
+
+```{r chronic respiratory disease handling}
+# Get chronic respiratory disease death data in usable format
+
+# Select relevant columns: Location, FIPS, and 2014 mortality rate
+chronic_respiratory_diesease_2014_clean <-  chronic_respiratory_diesease %>%
+  select("Chronic respiratory diseases", ...2, ...10)
+
+# Rename columns and convert FIPS to integer
+# take average mortality rate (delete confidence interval)
+chronic_respiratory_diesease_2014_clean <- chronic_respiratory_diesease_2014_clean %>%
+  rename(
+    Location = "Chronic respiratory diseases",
+    FIPS = ...2,
+    Mortality_Rate_2014 = ...10
+    ) %>%
+  transform(
+    FIPS = as.numeric(FIPS),
+    Mortality_Rate_2014 = as.numeric(substr(Mortality_Rate_2014, start = 1, stop = 4))
+  )
+
+# Remove top row
+chronic_respiratory_diesease_2014_clean <- chronic_respiratory_diesease_2014_clean[-c(1), ]
+
+
+summary(chronic_respiratory_diesease_2014_clean)
+```
+
+```{r}
+county_health_rankings$`Release Year`
+```
+
+
+
+```{r}
+# Variables:
+# 1. % of adults with obesity
+# 2. % of adults that smoke
+# 3. % of adults that are 65+
+county_health_rankings_clean <- county_health_rankings %>%
+  select(
+    `5-digit FIPS Code`,
+    `Adult obesity raw value`,
+    `Adult smoking raw value`, 
+    `% 65 and older raw value`,
+  ) %>%
+  rename(
+    FIPS = `5-digit FIPS Code`,
+    obesity = `Adult obesity raw value`,
+    smoking = `Adult smoking raw value`,
+    over_65 = `% 65 and older raw value`
+    ) %>%
+  transform(
+    FIPS = as.numeric(FIPS),
+    obesity = as.numeric(obesity),
+    smoking = as.numeric(smoking),
+    over_65 = as.numeric(over_65)
+  )
+```
+
