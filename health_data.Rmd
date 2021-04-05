@@ -244,4 +244,12 @@ all_health_data_clean <- diabetes_clean %>% merge(asthma_death_2014_clean, by = 
   merge(stroke_clean, by = "FIPS", all.x = TRUE)
 ```
 
+```{r}
+length(unique(all_health_data_clean$FIPS))
+```
+
+
+```{r}
+all_health_data_clean[duplicated(all_health_data_clean$FIPS),]
+```
 
