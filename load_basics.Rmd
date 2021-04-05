@@ -408,6 +408,26 @@ merge2 <- merge(x = merge1_clean, y = svi_clean, by.x = "fips", by.y = "fips_cod
 merge3 <- merge(x = merge2, y = policy_data, by.x = "state", by.y = "State.x", all.x = TRUE)
 #merge_dups <- merge1[duplicated(merge1$fips),]
 
+print(colnames(merge3))
+# "state"                                      "fips"*                                     
+#  [3] "county"                                    "cases"                                    
+#  [5] "deaths" *normalize death rate*                                   "County.Name"    *                          
+#  [7] "Staffed.All.Beds"                          "Staffed.ICU.Beds"                         
+#  [9] "Staffed.ICU.Beds..Per.1000.Elderly..65..." "Staffed.ICU.Beds..Per.1000.Adults..20..." 
+# [11] "Staffed.ICU.Beds..Per.1000.People."        "Population"                               
+# [13] "Population..65.."                          "Population..20.."                         
+# [15] "perc_65"                                   "num_diabetes_diagnosed" (normalized)                   
+# [17] "Location.x" *                              "Mortality_Rate_2014.x"                    
+# [19] "Location.y" *                              "Mortality_Rate_2014.y"                    
+# [21] "obesity"                                   "smoking"                                  
+# [23] "over_65"                                   "heart_disease_per100k"
+# [25] "stroke_per100k"                            "poverty_pct"
+# [27] "unemployment_pct"                          "income"                                   
+# [29] "age_65_pct"   *                             "minority_pct"                             
+# [31] "crowding_pct"                              "multi_unit_pct"                           
+# [33] "State.FIPS.Code"*                           "State.Abbreviation.x"*                     
+# [35] "mask_ratio"                                "home_ratio"      
+
 #merge2
 summary(merge2)
 

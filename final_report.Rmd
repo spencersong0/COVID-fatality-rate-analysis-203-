@@ -8,6 +8,8 @@ authors: Jenny Conde, Spencer Hong, Kevin Lu, Spencer Song
 
 Your introduction should present a research question and explain the concept that you're attempting to measure and how it will be operationalized. This section should pave the way for the body of the report, preparing the reader to understand why the models are constructed the way that they are. It is not enough to simply say "We are looking for policies that help against COVID."  Your introduction must do work for you, focusing the reader on a specific measurement goal, making them care about it, and propelling the narrative forward. This is also good time to put your work into context, discuss cross-cutting issues, and assess the overall appropriateness of the data.
 
+TODO: jenny conde
+
 ### 2. A Model Building Process
 
 You will next build a set of models to investigate your research question, documenting your decisions. Here are some things to keep in mind during your model building process:
@@ -25,6 +27,38 @@ At a minimum, you should include the following three specifications:
 1. **Limited Model**: A model that includes *only the key variable* you want to measure and nothing (or almost nothing) else. This variables might be transformed, as determined by your EDA, but the model should include the absolute minimum number of covariates (perhaps one, or at most two-three, covariates if they are so crucial that it would be unreasonable to omit them). 
 1. **Model Two**: A model that includes *key explanatory variables and covariates that you believe advance your modeling* goals without introducing too much multicollinearity or causing other issues. This model should strike a balance between accuracy and parsimony and reflect your best understanding of the relationships among key variables.
 1. **Model Three**: A model that includes the *previous covariates, and many other covariates*, erring on the side of inclusion. A key purpose of this model is to evaluate how parameters of interest change (if at all) when additional, potentially colinear variables are included in the model specification.
+TODO: data summary paragraph / report
+  TODO: anomaly report
+spencer TODO: clean up data loading code and documentation
+******TODO: consistency check on data  *******
+
+TODO: EDA for all 3 model types and reasoning for specific applied transformations
+  - remove NA and check for reasoning with why they existed (make sure not all from one state, etc.)
+  - scatter, hists, bar?, box 
+  - variable summary, outlier removal? / reasoning
+  - transformation logic (transformations to use,etc. include reasoning)
+TODO: causality concerns / collinearity
+  - check plots of var v. var
+  - correlation matrix
+  - draw causal theories?
+
+TODO: assess addition of each category of data from model 1 to model 2? (how does adding all ___ data to limited model impact the model?)
+  TODO: everyone can try this for their section. Take the limited model, and then add vars for model 2 from your section to the linear model. Analyze the difference and see how your variables impacted the model.
+
+TODO: Limited:
+  1. health, 1. policy, 1. socioeconomic
+  health var: chronic respitory disease / smoking
+  policy var: mask policy ratio
+  socioeconomic: poverty / minority
+  general: over 65%
+  
+TODO: Model 2: do NOT include these:
+  policy - include all
+  demographics - ICU data
+  socioeconomic - multi unit dwelling, income/unemployment/one or the other
+  health - asthma death, obesity
+TODO: Model 3:
+  everything we have
 
 Although the models have different emphases, each one must still be a reasonable choice given your modeling goals.  The idea is to choose models that encircle the space of reasonable modeling choices, and to give an overall understanding of how these choices impact results.
 
@@ -34,19 +68,34 @@ You should display all of your model specifications in a regression table, using
 
 In your text, comment on both *statistical significance and practical significance*. You may want to include statistical tests besides the standard t-tests for regression coefficients.
 
+TODO: run packages on data
+TODO: comment on statistical and practical significance
+
 ### 4. Limitations of your Model 
 
 As a team, evaluate all of the CLM assumptions that must hold for your model. However, do not report an exhaustive examination all 5 CLM assumption. Instead, bring forward only those assumptions that you think pose significant problems for your analysis. For each problem that you identify, describe the statistical consequences. If you are able to identify any strategies to mitigate the consequences, explain these strategies. 
 
 Note that you may need to change your model specifications in response to violations of the CLM. 
 
+TODO: CLM Assumptions and reasoning for violations
+  TODO: how those violations should change our model specifications
+TODO: strategies to mitigate violations
+
+
 ### 5. Discussion of Omitted Variables
 
 If the team has taken up an explanatory (i.e. causal) question to evaluate, then identify what you think are the 5 most important *omitted variables* that bias results you care about. For each variable, you should *reason about the direction of bias* caused by omitting this variable. If you can argue whether the bias is large or small, that is even better. State whether you have any variables available that may proxy (even imperfectly) for the omitted variable. Pay particular attention to whether each omitted variable bias is *towards zero or away from zero*. You will use this information to judge whether the effects you find are likely to be real, or whether they might be entirely an artifact of omitted variable bias.
+TODO: health
+TODO: policy
+TODO: socioeconomic
+TODO: other - weather, travel zones, travel patterns, political demographics, vaccine distribution, total cases, city density
+
 
 ### 6. Conclusion
 
 Make sure that you end your report with a discussion that distills key insights from your estimates and addresses your research question.
+
+TODO: all
 
 ## Rubric for Evaluation
 
