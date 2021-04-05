@@ -9,10 +9,16 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ```{r}
 install.packages("googlesheets")
-library(gsheet)
-library(readr)
-library(readxl)
 library(tidyverse)
+library(car)
+library(lmtest)
+library(sandwich)
+library(stargazer)
+library(tidyverse)
+library(magrittr)
+library(ggplot2)
+library(dplyr)
+library(patchwork)
 ```
 
 ```{r}
@@ -49,9 +55,329 @@ final_f <-
     mutate(perc_65 = Population / Population..65..)
 ```
 
+#spencer hong
 ```{r}
-summary(final_f)
+# Load data about mask-wearing polices from the W203 spreadsheet
+url_203data_masks <- 'https://docs.google.com/spreadsheets/d/1zu9qEWI8PsOI_i8nI_S29HDGHlIp2lfVMsGxpQ5tvAQ/edit#gid=1489353670'
+mask_policy <- read.csv(text=gsheet2text(url_203data_masks,format='csv'),
+                        stringsAsFactors=FALSE)
 ```
+
+```{r}
+# Load data about stay-at-home orders from the W203 spreadsheet
+url_203data_stayathome <- 'https://docs.google.com/spreadsheets/d/1zu9qEWI8PsOI_i8nI_S29HDGHlIp2lfVMsGxpQ5tvAQ/edit#gid=1894978869'
+stayathome_policy <- read.csv(text=gsheet2text(url_203data_stayathome,format='csv'),
+                        stringsAsFactors=FALSE)
+```
+
+## Prepare Mask Policy Data
+#Calculate the longest number of days that any state had a mask mandate policy, which would be whichever state implemented it first and then up to the most recent date a state ended their mask mandate
+-Column 'Public face mask mandate' = beginning date
+-Column 'End face mask mandate' = ending date
+```{r, Calculate mask mandate date range}
+mask_policy <- mask_policy[-52,]
+
+first_mask <- mask_policy %>% filter(mask_policy$Public.face.mask.mandate != 0)
+last_mask <- mask_policy %>% filter(mask_policy$End.face.mask.mandate != 0)
+
+first_mask$Public.face.mask.mandate <- as.Date(first_mask$Public.face.mask.mandate, format = "%m/%d/%Y")
+last_mask$End.face.mask.mandate <- as.Date(last_mask$End.face.mask.mandate, format = "%m/%d/%Y")
+
+mask_begin <- min(first_mask$Public.face.mask.mandate)
+mask_end <- max(last_mask$End.face.mask.mandate)
+
+mask_range <- mask_end - mask_begin
+
+mask_range <- as.numeric(mask_range, units = "days")
+```
+
+#Add a column for the number of days each state had/has a mask mandate policy
+```{r, Calculate number of days each state had a mask policy}
+mask_policy$Public.face.mask.mandate <- as.Date(mask_policy$Public.face.mask.mandate, format = "%m/%d/%Y")
+mask_policy$End.face.mask.mandate <- as.Date(mask_policy$End.face.mask.mandate, format = "%m/%d/%Y")
+
+mask_policy <- mask_policy %>% mutate(days_mask = case_when(
+  is.na(Public.face.mask.mandate) == TRUE ~ 0,
+  is.na(Public.face.mask.mandate) == FALSE & is.na(End.face.mask.mandate) == TRUE ~ as.numeric((mask_end - Public.face.mask.mandate), units = "days"),
+  TRUE ~ as.numeric((End.face.mask.mandate - Public.face.mask.mandate), units = "days")))
+```
+
+#Add a column to the mask_policy data frame to show the ratio of days each state mandate masks
+```{r, Calculate ratio of policy in place to the total number of days masks have been required}
+mask_policy$mask_ratio <- mask_policy$days_mask / mask_range
+```
+
+## Prepare Stay-at-Home Policy Data
+#Calculate the longest number of days that any state had a stay-at-home mandate policy, which would be whichever state implemented it first and then up to the most recent date a state ended their stay-at-home mandate
+-Column 'Stay at home/shelter in place' = beginning date
+-Column 'End stay at home/shelter in place ' = ending date
+```{r, Calculate stay-at-home mandate date range}
+stayathome_policy <- stayathome_policy[-52,]
+
+first_stay <- stayathome_policy %>% filter(stayathome_policy$Stay.at.home.shelter.in.place != 0)
+last_stay <- stayathome_policy %>% filter(stayathome_policy$End.stay.at.home.shelter.in.place != 0)
+
+first_stay$Stay.at.home.shelter.in.place <- as.Date(first_stay$Stay.at.home.shelter.in.place, format = "%m/%d/%Y")
+last_stay$End.stay.at.home.shelter.in.place <- as.Date(last_stay$End.stay.at.home.shelter.in.place, format = "%m/%d/%Y")
+
+home_begin <- min(first_stay$Stay.at.home.shelter.in.place)
+home_end <- max(last_stay$End.stay.at.home.shelter.in.place)
+
+home_range <- home_end - home_begin
+
+home_range <- as.numeric(home_range, units = "days")
+```
+
+#Add a column for the number of days each state had/has a stay-at-home policy
+```{r, Calculate number of days each state had a mask policy}
+stayathome_policy$Stay.at.home.shelter.in.place <- as.Date(stayathome_policy$Stay.at.home.shelter.in.place, format = "%m/%d/%Y")
+stayathome_policy$End.stay.at.home.shelter.in.place <- as.Date(stayathome_policy$End.stay.at.home.shelter.in.place, format = "%m/%d/%Y")
+
+stayathome_policy <- stayathome_policy %>% mutate(days_home = case_when(
+  is.na(Stay.at.home.shelter.in.place) == TRUE ~ 0,
+  is.na(Stay.at.home.shelter.in.place) == FALSE & is.na(End.stay.at.home.shelter.in.place) == TRUE ~ as.numeric((home_end - Stay.at.home.shelter.in.place), units = "days"),
+  TRUE ~ as.numeric((End.stay.at.home.shelter.in.place - Stay.at.home.shelter.in.place), units = "days")))
+```
+
+#Add a column to the stayathome_policy data frame to show the ratio of days each state mandate to stay at home 
+```{r, Calculate ratio of policy in place to the total number of days masks have been required}
+stayathome_policy$home_ratio <- stayathome_policy$days_home / home_range
+```
+
+
+```{r}
+# Load data from Yu-Chronic Respiratory Disease Mortality
+# There are several sheets in this xlsx file. Relevant sheets/variables to pull:
+# 1. Chronic respiratory diseases
+
+chronic_respiratory_diesease <- read_excel('data/Yu-Chronic Respiratory Disease Mortality/IHME_USA_COUNTY_RESP_DISEASE_MORTALITY_1980_2014_NATIONAL_Y2017M09D26.XLSX',
+                                           sheet = 'Chronic respiratory diseases')
+
+asthma_death <- read_excel('data/Yu-Chronic Respiratory Disease Mortality/IHME_USA_COUNTY_RESP_DISEASE_MORTALITY_1980_2014_NATIONAL_Y2017M09D26.XLSX',
+                           sheet = 'Asthma')
+```
+
+
+```{r}
+# Load data from Yu-County Health Rankings
+# Variables in dataset (confirm in documentation):
+# Adult smoking (% smokers)
+# Adult obesity (% adults with obesity)
+# % 65 and older
+
+county_health_rankings <- read_csv('data/Yu-County Health Rankings/analytic_data2021.csv')
+```
+
+
+```{r}
+# Load diabetes data from Yu-Diabetes
+# Diagnosed Diabetes; Total (Total); Adults Aged 20+ Years; Crude Number; U.S. Counties; 2017
+
+# Edited the csv so that the column headers are in the top row
+diabetes <- read_csv('data/Yu-Diabetes/DiabetesAtlasCountyData-Edited.csv')
+```
+
+```{r}
+# Load data from Yu-Stroke and Heart Disease
+heart_disease <- read_csv('data/Yu-Stroke and Heart Disease/all_heart_disease_deathrateper100k_allages_2016-2018.csv')
+stroke <- read_csv('data/Yu-Stroke and Heart Disease/all_stroke_deathrateper100k_allages_2016-2018.csv')
+```
+
+```{r astha handling}
+# Get asthma death data in usable format
+
+# Select relevant columns: Location, FIPS, and 2014 mortality rate
+asthma_death_2014_clean <-  asthma_death %>%
+  select(Asthma, ...2, ...10)
+
+# Rename columns and convert FIPS to integer
+# take average mortality rate (delete confidence interval)
+asthma_death_2014_clean <- asthma_death_2014_clean %>% 
+  rename(
+    Location = Asthma,
+    FIPS = ...2,
+    Mortality_Rate_2014 = ...10
+    ) %>%
+  transform(
+    FIPS = as.numeric(FIPS),
+    Mortality_Rate_2014 = as.numeric(substr(Mortality_Rate_2014, start = 1, stop = 4))
+  )
+
+# Remove top row
+asthma_death_2014_clean <- asthma_death_2014_clean[-c(1), ]
+
+
+summary(asthma_death_2014_clean)
+```
+
+```{r chronic respiratory disease handling}
+# Get chronic respiratory disease death data in usable format
+
+# Select relevant columns: Location, FIPS, and 2014 mortality rate
+chronic_respiratory_diesease_2014_clean <-  chronic_respiratory_diesease %>%
+  select("Chronic respiratory diseases", ...2, ...10)
+
+# Rename columns and convert FIPS to integer
+# take average mortality rate (delete confidence interval)
+chronic_respiratory_diesease_2014_clean <- chronic_respiratory_diesease_2014_clean %>%
+  rename(
+    Location = "Chronic respiratory diseases",
+    FIPS = ...2,
+    Mortality_Rate_2014 = ...10
+    ) %>%
+  transform(
+    FIPS = as.numeric(FIPS),
+    Mortality_Rate_2014 = as.numeric(substr(Mortality_Rate_2014, start = 1, stop = 4))
+  )
+
+# Remove top row
+chronic_respiratory_diesease_2014_clean <- chronic_respiratory_diesease_2014_clean[-c(1), ]
+
+
+summary(chronic_respiratory_diesease_2014_clean)
+```
+
+
+
+```{r}
+# Variables:
+# 1. % of adults with obesity
+# 2. % of adults that smoke
+# 3. % of adults that are 65+
+county_health_rankings_clean <- county_health_rankings %>%
+  select(
+    `5-digit FIPS Code`,
+    `Adult obesity raw value`,
+    `Adult smoking raw value`, 
+    `% 65 and older raw value`,
+  ) %>%
+  rename(
+    FIPS = `5-digit FIPS Code`,
+    obesity = `Adult obesity raw value`,
+    smoking = `Adult smoking raw value`,
+    over_65 = `% 65 and older raw value`
+    ) %>%
+  transform(
+    FIPS = as.numeric(FIPS),
+    obesity = as.numeric(obesity),
+    smoking = as.numeric(smoking),
+    over_65 = as.numeric(over_65)
+  )
+```
+
+```{r diabetes cleaning}
+# people diagnosed with diabetes
+# needs to be normalized
+
+# select appropriate columns
+# convert to numbers
+diabetes_clean <- diabetes %>%
+  select(
+    CountyFIPS,
+    Number
+  ) %>%
+  rename(
+    FIPS = CountyFIPS,
+    num_diabetes_diagnosed = Number
+  ) %>%
+  transform(
+    FIPS = as.numeric(FIPS),
+    num_diabetes_diagnosed = as.numeric(num_diabetes_diagnosed)
+  )
+
+summary(diabetes_clean)
+```
+
+
+```{r heart disease}
+# heart disease per 100k
+# -1 values = NA
+# already normalized
+
+# select appropriate columns
+# convert to numbers
+heart_disease_clean <- heart_disease %>%
+  select(
+    cnty_fips,
+    Value
+  ) %>%
+  rename(
+    FIPS = cnty_fips,
+    heart_disease_per100k = Value
+  ) %>%
+  transform(
+    FIPS = as.numeric(FIPS),
+    heart_disease_per100k = ifelse(as.numeric(heart_disease_per100k) > -1, as.numeric(heart_disease_per100k), NA)
+  )
+
+summary(heart_disease_clean)
+```
+
+```{r stroke}
+# stroke per 100k
+# -1 values = NA
+# already normalized
+
+# select appropriate columns
+# convert to numbers
+stroke_clean <- stroke %>%
+  select(
+    cnty_fips,
+    Value
+  ) %>%
+  rename(
+    FIPS = cnty_fips,
+    stroke_per100k = Value
+  ) %>%
+  transform(
+    FIPS = as.numeric(FIPS),
+    stroke_per100k = ifelse(as.numeric(stroke_per100k) > -1, as.numeric(stroke_per100k), NA)
+  )
+
+summary(stroke_clean)
+```
+
+
+```{r produce final df}
+all_health_data_clean <- diabetes_clean %>% merge(asthma_death_2014_clean, by = "FIPS", all.x = TRUE) %>%
+  merge(chronic_respiratory_diesease_2014_clean, by = "FIPS", all.x = TRUE) %>%
+  merge(county_health_rankings_clean, by = "FIPS", all.x = TRUE) %>%
+  merge(heart_disease_clean, by = "FIPS", all.x = TRUE) %>%
+  merge(stroke_clean, by = "FIPS", all.x = TRUE)
+```
+
+
+
+#kevin lu
+#Extract SVI Data Columns
+#Below Poverty
+#Unemployed
+#Income
+#Aged 65 or older
+#Minority
+#Multi-Unit Structures
+#Crowding
+```{r} 
+svi_clean <- data.frame(svi$FIPS, svi$EP_POV/100, svi$EP_UNEMP/100, svi$E_PCI, svi$EP_AGE65/100, svi$EP_MINRTY/100, svi$EP_CROWD/100, svi$EP_MUNIT/100)
+svi_clean <- svi_clean %>%
+  rename(
+    fips_code = svi.FIPS,
+    poverty_pct = svi.EP_POV.100,
+    unemployment_pct = svi.EP_UNEMP.100,
+    income = svi.E_PCI,
+    age_65_pct = svi.EP_AGE65.100,
+    minority_pct = svi.EP_MINRTY.100,
+    multi_unit_pct = svi.EP_MUNIT.100,
+    crowding_pct = svi.EP_CROWD.100
+    )
+svi_clean[, 'fips_code'] <- as.character(as.numeric(svi_clean[, 'fips_code']))
+svi_clean <- svi_clean[svi_clean$poverty_pct > 0,]
+#summary(svi_clean)
+```
+
+```{r}
+
+#merge(x = final_r, y = icu_beds_ccm_edit, by.x = "fips", by.y = "fips_code")
 
 
 
