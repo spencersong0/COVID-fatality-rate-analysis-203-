@@ -164,6 +164,7 @@ policy_data <- policy_data[-c(4,6)]
 ```
 
 
+
 ```{r}
 # Load data from Yu-Chronic Respiratory Disease Mortality
 # There are several sheets in this xlsx file. Relevant sheets/variables to pull:
@@ -202,24 +203,24 @@ heart_disease <- read_csv('data/Yu-Stroke and Heart Disease/all_heart_disease_de
 stroke <- read_csv('data/Yu-Stroke and Heart Disease/all_stroke_deathrateper100k_allages_2016-2018.csv')
 ```
 
+
 ```{r astha handling}
 # Get asthma death data in usable format
-
+# deaths per 100k, already normalized
 # Select relevant columns: Location, FIPS, and 2014 mortality rate
 asthma_death_2014_clean <-  asthma_death %>%
-  select(Asthma, ...2, ...10)
+  select(...2, ...10)
 
 # Rename columns and convert FIPS to integer
 # take average mortality rate (delete confidence interval)
 asthma_death_2014_clean <- asthma_death_2014_clean %>% 
   rename(
-    Location = Asthma,
     FIPS = ...2,
-    Mortality_Rate_2014 = ...10
+    asthma_deaths_per100k = ...10
     ) %>%
   transform(
     FIPS = as.numeric(FIPS),
-    Mortality_Rate_2014 = as.numeric(substr(Mortality_Rate_2014, start = 1, stop = 4))
+    asthma_deaths_per100k = as.numeric(substr(asthma_deaths_per100k, start = 1, stop = 4))
   )
 
 # Remove top row
@@ -231,22 +232,22 @@ summary(asthma_death_2014_clean)
 
 ```{r chronic respiratory disease handling}
 # Get chronic respiratory disease death data in usable format
+# deaths per 100k, already normalized
 
 # Select relevant columns: Location, FIPS, and 2014 mortality rate
 chronic_respiratory_diesease_2014_clean <-  chronic_respiratory_diesease %>%
-  select("Chronic respiratory diseases", ...2, ...10)
+  select(...2, ...10)
 
 # Rename columns and convert FIPS to integer
 # take average mortality rate (delete confidence interval)
 chronic_respiratory_diesease_2014_clean <- chronic_respiratory_diesease_2014_clean %>%
   rename(
-    Location = "Chronic respiratory diseases",
     FIPS = ...2,
-    Mortality_Rate_2014 = ...10
+    chronic_respiratory_disease_deaths_per100k = ...10
     ) %>%
   transform(
     FIPS = as.numeric(FIPS),
-    Mortality_Rate_2014 = as.numeric(substr(Mortality_Rate_2014, start = 1, stop = 4))
+    chronic_respiratory_disease_deaths_per100k = as.numeric(substr(chronic_respiratory_disease_deaths_per100k, start = 1, stop = 4))
   )
 
 # Remove top row
@@ -257,12 +258,15 @@ summary(chronic_respiratory_diesease_2014_clean)
 ```
 
 
-
 ```{r}
 # Variables:
 # 1. % of adults with obesity
 # 2. % of adults that smoke
 # 3. % of adults that are 65+
+# already normalized
+
+# select relevant variables
+# convert to numbers
 county_health_rankings_clean <- county_health_rankings %>%
   select(
     `5-digit FIPS Code`,
@@ -272,16 +276,21 @@ county_health_rankings_clean <- county_health_rankings %>%
   ) %>%
   rename(
     FIPS = `5-digit FIPS Code`,
-    obesity = `Adult obesity raw value`,
-    smoking = `Adult smoking raw value`,
-    over_65 = `% 65 and older raw value`
+    obesity_percent = `Adult obesity raw value`,
+    smoking_percent = `Adult smoking raw value`,
+    over_65_percent = `% 65 and older raw value`
     ) %>%
   transform(
     FIPS = as.numeric(FIPS),
-    obesity = as.numeric(obesity),
-    smoking = as.numeric(smoking),
-    over_65 = as.numeric(over_65)
+    obesity_percent = as.numeric(obesity_percent),
+    smoking_percent = as.numeric(smoking_percent),
+    over_65_percent = as.numeric(over_65_percent)
   )
+
+# Remove top row
+county_health_rankings_clean <- county_health_rankings_clean[-c(1), ]
+
+summary(county_health_rankings_clean)
 ```
 
 ```{r diabetes cleaning}
@@ -367,6 +376,8 @@ all_health_data_clean <- diabetes_clean %>% merge(asthma_death_2014_clean, by = 
 
 
 
+
+
 #kevin lu
 #Extract SVI Data Columns
 #Below Poverty
@@ -433,7 +444,59 @@ summary(merge2)
 
 #merge(x = final_r, y = icu_beds_ccm_edit, by.x = "fips", by.y = "fips_code")
 ```
+# [1] "state"                                      "fips"                                      
+#  [3] "county"                                     "cases"                                     
+#  [5] "deaths"                                     "County.Name"                               
+#  [7] "Staffed.All.Beds"                           "Staffed.ICU.Beds"                          
+#  [9] "Staffed.ICU.Beds..Per.1000.Elderly..65..."*  "Staffed.ICU.Beds..Per.1000.Adults..20..."  *pop20 / 1000
+# [11] "Staffed.ICU.Beds..Per.1000.People."*pop20 / 1000     "Population"                                
+# [13] "Population..65.."                           "Population..20.."                          
+# [15] "perc_65"   rm                                 "num_diabetes_diagnosed"                    
+# [17] "asthma_deaths_per100k" *pop / 100000                     "chronic_respiratory_disease_deaths_per100k" *pop / 100000
+# [19] "obesity_percent"   *pop                         "smoking_percent"*pop                           
+# [21] "over_65_percent"rm                          "heart_disease_per100k"*pop / 100000
+# [23] "stroke_per100k"  *pop / 100000                           "poverty_pct"*pop                               
+# [25] "unemployment_pct" * pop                           "income"                                    
+# [27] "age_65_pct"rm                                 "minority_pct" *pop                              
+# [29] "crowding_pct"                               "multi_unit_pct"  *pop                          
+# [31] "State.FIPS.Code" rm                            "State.Abbreviation.x" rm                      
+# [33] "mask_ratio"                                 "home_ratio" 
+```{r}
+merge4 <- merge3 %>%
+  mutate(
+    Staffed_ICU_Beds_Elderly = Staffed.ICU.Beds..Per.1000.Elderly..65... * Population..65.. / 1000,
+    Staffed_ICU_Beds_People = Staffed.ICU.Beds..Per.1000.People. * Population / 1000,
+    Staffed_ICU_Beds_Adults = Staffed.ICU.Beds..Per.1000.Adults..20... * Population..20.. / 1000,
+    Asthma_Deaths = asthma_deaths_per100k * Population / 100000,
+    Obesity = obesity_percent * Population,
+    Stroke_Deaths = stroke_per100k * Population / 100000,
+    Heart_Disease_Deaths = heart_disease_per100k * Population / 100000,
+    Smoking = smoking_percent * Population,
+    Chronic_Respiratory_Disease_Deaths = chronic_respiratory_disease_deaths_per100k * Population / 100000,
+    Unemployment = unemployment_pct * Population,
+    Minority = minority_pct * Population,
+    Crowding = crowding_pct * Population,
+    Multi_Unit = multi_unit_pct * Population,
+    Poverty = poverty_pct * Population,
+    Income = income * Population
+  ) %>%
+  subset(select = -c(over_65_percent, age_65_pct, State.Abbreviation.x, perc_65, Staffed.ICU.Beds..Per.1000.Elderly..65..., Staffed.ICU.Beds..Per.1000.People., Staffed.ICU.Beds..Per.1000.Adults..20..., asthma_deaths_per100k, obesity_percent, stroke_per100k, heart_disease_per100k, smoking_percent, chronic_respiratory_disease_deaths_per100k, unemployment_pct, minority_pct, crowding_pct, multi_unit_pct, poverty_pct, fips, county))
+
+merge5 <- merge4 %>%
+      subset(select = c(cases, state, deaths, Staffed.All.Beds, Staffed.ICU.Beds, Population, Population..20.., Population..65.., num_diabetes_diagnosed, Staffed_ICU_Beds_Elderly, Staffed_ICU_Beds_People, Staffed_ICU_Beds_Adults, Asthma_Deaths, Obesity, Stroke_Deaths, Heart_Disease_Deaths, Smoking, Chronic_Respiratory_Disease_Deaths, Unemployment, Minority, Crowding, Multi_Unit, Poverty))
+
+merge_sum <- aggregate(x = merge5, by = "state", FUN = sum)
+
+# c(cases, state, deaths, Staffed.All.Beds, Staffed.ICU.Beds, Population, Population..20.., Population..65.., num_diabetes_diagnosed, Staffed_ICU_Beds_Elderly, Staffed_ICU_Beds_People, Staffed_ICU_Beds_Adults, Asthma_Deaths, Obesity, Stroke_Deaths, Heart_Disease_Deaths, Smoking, Chronic_Respiratory_Disease_Deaths, Unemployment, Minority, Crowding, Multi_Unit, Poverty)~ state, sum
+#   v1 <- aggregate(  ~ state, data = df, sum)
+# v2 <- aggregate( v2 ~ c1 + c2, data = df, mean)
+# out <- merge(v1, v2, by=c("c1","c2"))
 
 
+
+```
+```{r}
+colnames(merge4)
+```
 
 
