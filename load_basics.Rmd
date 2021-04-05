@@ -9,6 +9,9 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ```{r}
 install.packages("googlesheets")
+library(gsheet)
+library(readr)
+library(readxl)
 library(tidyverse)
 library(car)
 library(lmtest)
@@ -49,7 +52,7 @@ icu_beds_ccm_edit <-
 ```
 
 ```{r}
-final_f <- merge(x = cases_deaths_edit, y = icu_beds_ccm_edit, by.x = "fips", by.y = "fips_code")
+final_f <- merge(x = cases_deaths_edit, y = icu_beds_ccm_edit, by.x = "fips", by.y = "fips_code", all.x = TRUE)
 final_f <- 
   final_f %>%
     mutate(perc_65 = Population / Population..65..)
@@ -142,6 +145,22 @@ stayathome_policy <- stayathome_policy %>% mutate(days_home = case_when(
 #Add a column to the stayathome_policy data frame to show the ratio of days each state mandate to stay at home 
 ```{r, Calculate ratio of policy in place to the total number of days masks have been required}
 stayathome_policy$home_ratio <- stayathome_policy$days_home / home_range
+```
+
+## Merge Data Frames
+#Merge mask and stay-at-home policy data sets
+``` {r, Merge data frames}
+policy_data <- merge(mask_policy, stayathome_policy, by.x="State.FIPS.Code", by.y="State.FIPS.Code")
+```
+
+#Remove columns
+``` {r, Remove columns from new data frame}
+policy_data <- policy_data[-c(4:13, 16:23)]
+```
+
+#Remove columns
+``` {r, Remove columns from new data frame}
+policy_data <- policy_data[-c(4,6)]
 ```
 
 
@@ -358,6 +377,9 @@ all_health_data_clean <- diabetes_clean %>% merge(asthma_death_2014_clean, by = 
 #Multi-Unit Structures
 #Crowding
 ```{r} 
+# Load data from Yu-Social Vulnerability Index
+# svi = social vulnerability index
+svi <-  read_csv('data/Yu-Social Vulnerability Index/SVI2018_US_COUNTY.csv')
 svi_clean <- data.frame(svi$FIPS, svi$EP_POV/100, svi$EP_UNEMP/100, svi$E_PCI, svi$EP_AGE65/100, svi$EP_MINRTY/100, svi$EP_CROWD/100, svi$EP_MUNIT/100)
 svi_clean <- svi_clean %>%
   rename(
@@ -376,8 +398,22 @@ svi_clean <- svi_clean[svi_clean$poverty_pct > 0,]
 ```
 
 ```{r}
+##**TODO filter out territories, check for more duplicates, check summary for excessive NAs and removing extra columns ***
+
+#final_f(3246), all_health_data_clean(3235), policy_data (51), svi_clean (3141)
+merge1 <- merge(x = final_f, y = all_health_data_clean, by.x = "fips", by.y = "FIPS")#, all.x = TRUE)
+merge1_clean <- merge1 %>%
+  filter(is.na(fips) == FALSE)
+merge2 <- merge(x = merge1_clean, y = svi_clean, by.x = "fips", by.y = "fips_code", all.x = TRUE)
+merge3 <- merge(x = merge2, y = policy_data, by.x = "state", by.y = "State.x", all.x = TRUE)
+#merge_dups <- merge1[duplicated(merge1$fips),]
+
+#merge2
+summary(merge2)
 
 #merge(x = final_r, y = icu_beds_ccm_edit, by.x = "fips", by.y = "fips_code")
+```
+
 
 
 
