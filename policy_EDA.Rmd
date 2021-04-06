@@ -1,0 +1,87 @@
+---
+title: "EDA of Policy Variables"
+output: html_document
+---
+
+```{r, echo = FALSE, message = FALSE, warning = FALSE}
+library(tidyverse)
+library(car)
+library(lmtest)
+library(sandwich)
+library(stargazer)
+library(tidyverse)
+library(magrittr)
+library(ggplot2)
+library(dplyr)
+library(patchwork)
+```
+
+```{r, echo = FALSE, message = FALSE, warning = FALSE}
+df <- read_csv('FinalDF.csv')
+```
+
+# Look at policy variables used in each model
+
+## Model 1
+mask_ratio
+
+## Model 2
+mask_ratio, home_ratio
+
+## Model 3 - Same as Model 2
+mask_ratio, home_ratio
+
+# Model 1 EDA
+## mask_ratio
+         
+```{r Model 1 EDA - Mask Mandate, echo = FALSE, message = FALSE, warning = FALSE, fig.height = 3}
+mask_hist <- df %>%
+  ggplot() +
+  aes(mask_ratio) +
+  geom_histogram()
+
+mask_box <- df %>%
+  ggplot() +
+  aes(mask_ratio) +
+  geom_boxplot()
+
+mask_scatter <- df %>%
+  ggplot() +
+  aes(mask_ratio, Fatality_Rate) +
+  geom_point() + geom_smooth()
+
+(mask_hist | mask_box) / mask_scatter
+
+summary(df$mask_ratio)
+```
+
+There are no outliers for the percentage duration that states enacted mask mandate policies. It appears that `Fatality_Rate` and percentage duration of mask policies of states has a positive correlation. No combination of log transformations makes a more linear relationship between the two variables. `mask_ratio` has a non-normal distribution with two modal groups of states. One is for states that implemented a mask mandate for 25% or less of the total duration time while the other group of states implemented mask-wearing for more than 60% of the duration. Given that 13 states did not implement a mask policy there is a left-tail skewness, which is confirmed by the larger median than mean.
+
+# Model 2 EDA
+## home_ratio
+
+```{r Model 2 EDA - Stay-at-Home Mandate, echo = FALSE, message = FALSE, warning = FALSE}
+home_hist <- df %>%
+  ggplot() +
+  aes(home_ratio) +
+  geom_histogram()
+
+home_box <- df %>%
+  ggplot() +
+  aes(home_ratio) +
+  geom_boxplot()
+
+home_scatter <- df %>%
+  ggplot() +
+  aes(home_ratio, Fatality_Rate) +
+  geom_point() + geom_smooth()
+
+(home_hist | home_box) / home_scatter
+
+summary(df$home_ratio)
+```
+
+New Mexico and California represent the two outliers for the percentage duration that states enacted stay-at-home policies. New Mexico never ended its policy while California had the longest tenured policy representing 100%. It appears that `Fatality_Rate` and percentage duration of stay-at-home policies of states has a positive correlation until 0.20. No combination of log transformations makes a more linear relationship between the two variables. Without the two outliers, `home_ratio` has a normal distribution with no significant skewness and ranging from 0.0% to 100.0%.
+
+
+
