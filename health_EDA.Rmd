@@ -1,0 +1,291 @@
+---
+title: "EDA of Health Variables"
+output: pdf_document
+---
+
+```{r, echo = FALSE, message = FALSE, warning = FALSE}
+library(tidyverse)
+library(car)
+library(lmtest)
+library(sandwich)
+library(stargazer)
+library(tidyverse)
+library(magrittr)
+library(ggplot2)
+library(dplyr)
+library(patchwork)
+```
+
+
+```{r, echo = FALSE, message = FALSE, warning = FALSE}
+df <- read_csv('FinalDF.csv')
+```
+
+# Fatality_Rate
+
+```{r, echo = FALSE, message = FALSE, warning = FALSE, fig.height = 3}
+fatality_hist <- df %>%
+  ggplot() +
+  aes(Fatality_Rate) +
+  geom_histogram()
+
+fatality_box <- df %>%
+  ggplot() +
+  aes(Fatality_Rate) +
+  geom_boxplot()
+
+fatality_hist | fatality_box
+
+summary(df$Fatality_Rate)
+```
+
+`Fatality_Rate` has a relatively normal distribution. There is no significant skew in the data. `Fatality_Rate` ranges from 0.47% to 2.85%. There are 3 outliers.
+
+\pagebreak{}
+
+# Look at health variables used in each model
+
+## Model 1
+Population..65..
+
+## Model 2
+Population..65.., Diabetes_Diagnosed_Perc, Stroke_Death_Perc, Heart_Disease_Death_Perc,
+Smoker_Perc, Chronic_Respiratory_Disease_Death_Perc
+
+## Model 3
+Population..65.., Diabetes_Diagnosed_Perc, Stroke_Death_Perc, Heart_Disease_Death_Perc,
+Smoker_Perc, Chronic_Respiratory_Disease_Death_Perc, Asthma_Deaths_Perc, Obesity_Perc
+
+# Model 1 EDA
+         
+```{r model 1 eda, echo = FALSE, message = FALSE, warning = FALSE}
+age_hist <- df %>% 
+  ggplot() +
+  aes(Population..65../Population) +
+  geom_histogram()
+
+age_box <- df %>% 
+  ggplot() +
+  aes(Population..65../Population) +
+  geom_boxplot()
+
+age_scatter <- df %>%
+  ggplot() +
+  aes(Population..65../Population, Fatality_Rate) +
+  geom_point() + geom_smooth()
+
+(age_hist | age_box) / age_scatter
+
+summary(df$Population..65../df$Population)
+```
+
+The percentage of the population > 65 has a few outliers on each end. It appears that `Fatality_Rate` and % of 65+ have a postiive correlation up to a certain point (~17.5% or so). No combination of log transformations makes a more linear relationship between the two variables. % of 65+ is relatively normally distributed. 
+
+# Model 2 EDA
+         
+## Diabetes_Diagnosed_Perc
+
+```{r model 2 eda - diabetes, echo = FALSE, message = FALSE, warning = FALSE}
+diabetes_hist <- df %>% 
+  ggplot() +
+  aes(Diabetes_Diagnosed_Perc) +
+  geom_histogram(bins = 20)
+
+diabetes_box <- df %>%
+  ggplot() +
+  aes(Diabetes_Diagnosed_Perc) +
+  geom_boxplot()
+
+diabetes_scatter <- df %>%
+  ggplot() +
+  aes(Diabetes_Diagnosed_Perc, Fatality_Rate) +
+  geom_point() + geom_smooth()
+
+diabetes_scatter_log <- df %>%
+  ggplot() +
+  aes(log(Diabetes_Diagnosed_Perc), Fatality_Rate) +
+  geom_point() + geom_smooth()
+
+(diabetes_hist | diabetes_box) / (diabetes_scatter | diabetes_scatter_log)
+
+summary(df$Diabetes_Diagnosed_Perc)
+```
+
+`Diabetes_Diagnosed_Perc` has a small right tail, though not highly significant, so there is no major deviation from normality. There is one outlier at 11.7%. `Diabetes_Diagnosed_Perc` and `Fatality_Rate` have a positive correlation. Log transformations do not significantly make the relationship between these two variables more linear.
+
+## Stroke_Death_Perc
+
+```{r model 2 eda - stroke, echo = FALSE, message = FALSE, warning = FALSE}
+stroke_hist <- df %>% 
+  ggplot() +
+  aes(Stroke_Death_Perc) +
+  geom_histogram(bins = 20)
+
+stroke_box <- df %>%
+  ggplot() +
+  aes(Stroke_Death_Perc) +
+  geom_boxplot()
+
+stroke_scatter <- df %>%
+  ggplot() +
+  aes(Stroke_Death_Perc, Fatality_Rate) +
+  geom_point() + geom_smooth()
+
+stroke_scatter_log <- df %>%
+  ggplot() +
+  aes(Stroke_Death_Perc, log(Fatality_Rate)) +
+  geom_point() + geom_smooth()
+
+(stroke_hist | stroke_box) / (stroke_scatter | stroke_scatter_log)
+
+summary(df$Stroke_Death_Perc)
+```
+
+`Stroke_Death_Perc` has a relatively normal distribution. There are no outliers. The `Fatality_Rate` vs `Stroke_Death_Perc` scatterplot has a parabolic shape, but this shape cannot be made more linear using log transformations.
+
+## Heart_Disease_Death_Perc
+
+```{r model 2 eda - heart disease, echo = FALSE, message = FALSE, warning = FALSE}
+heart_disease_hist <- df %>% 
+  ggplot() +
+  aes(Heart_Disease_Death_Perc) +
+  geom_histogram(bins = 20)
+
+heart_disease_box <- df %>%
+  ggplot() +
+  aes(Heart_Disease_Death_Perc) +
+  geom_boxplot()
+
+heart_disease_scatter <- df %>%
+  ggplot() +
+  aes(Heart_Disease_Death_Perc, Fatality_Rate) +
+  geom_point() + geom_smooth()
+
+heart_disease_scatter_log <- df %>%
+  ggplot() +
+  aes(log(Heart_Disease_Death_Perc), Fatality_Rate) +
+  geom_point() + geom_smooth()
+
+(heart_disease_hist | heart_disease_box) / (heart_disease_scatter | heart_disease_scatter_log)
+summary(df$Heart_Disease_Death_Perc)
+```
+
+`Heart_Disease_Death_Perc` appears to be slightly skewed. Data above the median appears to have more spread. There is not a clear positive or negative correlation between `Heart_Disease_Death_Perc` and `Fatality_Rate`. The relationship is relatively flat except for a step between 0.0015 and 0.001625. This variable does not appear to be a good predictor for `Fatality_Rate`
+
+## Smoker_Perc
+
+```{r model 2 eda - smokers, echo = FALSE, message = FALSE, warning = FALSE}
+smoker_hist <- df %>% 
+  ggplot() +
+  aes(Smoker_Perc) +
+  geom_histogram(bins = 20)
+
+smoker_box <- df %>%
+  ggplot() +
+  aes(Smoker_Perc) +
+  geom_boxplot()
+
+smoker_scatter <- df %>%
+  ggplot() +
+  aes(Smoker_Perc, Fatality_Rate) +
+  geom_point() + geom_smooth()
+
+smoker_scatter_log <- df %>%
+  ggplot() +
+  aes(log(Smoker_Perc), Fatality_Rate) +
+  geom_point() + geom_smooth()
+
+(smoker_hist | smoker_box) / (smoker_scatter | smoker_scatter_log)
+summary(df$Smoker_Perc)
+```
+
+`Smoker_Perc` has a relative normal distribution, but there is no clear linear relationship between `Smoker_Perc` and `Fatality_Rate`. Applying a log transformation does not make the relationship any more linear.
+
+## Chronic_Respiratory_Disease_Death_Perc
+
+```{r model 2 eda - chronic respiratory disease, echo = FALSE, message = FALSE, warning = FALSE}
+chron_resp_dis_hist <- df %>% 
+  ggplot() +
+  aes(Chronic_Respiratory_Disease_Death_Perc) +
+  geom_histogram(bins = 20)
+
+chron_resp_dis_box <- df %>%
+  ggplot() +
+  aes(Chronic_Respiratory_Disease_Death_Perc) +
+  geom_boxplot()
+
+chron_resp_dis_scatter <- df %>%
+  ggplot() +
+  aes(Chronic_Respiratory_Disease_Death_Perc, Fatality_Rate) +
+  geom_point() + geom_smooth()
+
+chron_resp_dis_scatter_log <- df %>%
+  ggplot() +
+  aes(log(Chronic_Respiratory_Disease_Death_Perc), Fatality_Rate) +
+  geom_point() + geom_smooth()
+
+(chron_resp_dis_hist | chron_resp_dis_box) / (chron_resp_dis_scatter | chron_resp_dis_scatter_log)
+summary(df$Chronic_Respiratory_Disease_Death_Perc)
+```
+
+`Chronic_Respiratory_Disease_Death_Perc` has a relatively normal distribution and does not have any outliers. There is not a clear linear relationship between `Chronic_Respiratory_Disease_Death_Perc` and `Fatality_Rate`. There appears to be some parabolic relationship when `Chronic_Respiratory_Disease_Death_Perc` is less than 5e-4, but greater than this number, there is no relationship.
+
+# Model 3
+
+## Asthma_Deaths_Perc
+         
+```{r model 3 eda - asthma, echo = FALSE, message = FALSE, warning = FALSE}
+asthma_hist <- df %>% 
+  ggplot() +
+  aes(Asthma_Deaths_Perc) +
+  geom_histogram(bins = 20)
+
+asthma_box <- df %>%
+  ggplot() +
+  aes(Asthma_Deaths_Perc) +
+  geom_boxplot()
+
+asthma_scatter <- df %>%
+  ggplot() +
+  aes(Asthma_Deaths_Perc, Fatality_Rate) +
+  geom_point() + geom_smooth()
+
+asthma_scatter_log <- df %>%
+  ggplot() +
+  aes(log(Asthma_Deaths_Perc), Fatality_Rate) +
+  geom_point() + geom_smooth()
+
+(asthma_hist | asthma_box) / (asthma_scatter | asthma_scatter_log)
+summary(df$Asthma_Deaths_Perc)
+```
+
+`Asthma_Deaths_Perc` has a few outliers at each of its tails. The distribution is not quite normal. There appears to be somewhat of a linear relationship between `Fatality_Rate` and `Asthma_Deaths_Perc`, but if anything, it looks like the correlation is negative, which does not support our intuition. Applying a log transformation to `Asthma_Deaths_Perc` does not help make the relationship more linear.
+
+## Obesity_Perc
+
+```{r model 3 eda - obesity, echo = FALSE, message = FALSE, warning = FALSE}
+obesity_hist <- df %>% 
+  ggplot() +
+  aes(Obesity_Perc) +
+  geom_histogram(bins = 20)
+
+obesity_box <- df %>%
+  ggplot() +
+  aes(Obesity_Perc) +
+  geom_boxplot()
+
+obesity_scatter <- df %>%
+  ggplot() +
+  aes(Obesity_Perc, Fatality_Rate) +
+  geom_point() + geom_smooth()
+
+obesity_scatter_log <- df %>%
+  ggplot() +
+  aes(log(Obesity_Perc), Fatality_Rate) +
+  geom_point() + geom_smooth()
+
+(obesity_hist | obesity_box) / (obesity_scatter | obesity_scatter_log)
+summary(df$Obesity_Perc)
+```
+
+`Obesity_Perc` does not have any outliers, but it does not appear to follow a normal distribution either. The relationship between `Obesity_Perc` and `Fatality_Rate` appears quadratic or cubic (especially when a log transformation is applied to `Obesity_Perc`). Applying a transformation does not make the data appear more linear.
