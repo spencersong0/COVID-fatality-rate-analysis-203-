@@ -24,7 +24,7 @@ library(dplyr)
 library(patchwork)
 ```
 ```{r}
-read_csv('')
+state_icu_data <- read_csv('data/raw_data.csv')
 ```
 
 
@@ -492,15 +492,47 @@ merge_sum_var <- merge4 %>%
 merge_mean_var <- merge4 %>%
       subset(select = -c(cases, deaths, Staffed.All.Beds, Staffed.ICU.Beds, Population, Population..20.., Population..65.., num_diabetes_diagnosed, Staffed_ICU_Beds_Elderly, Staffed_ICU_Beds_People, Staffed_ICU_Beds_Adults, Asthma_Deaths, Obesity, Stroke_Deaths, Heart_Disease_Deaths, Smoking, Chronic_Respiratory_Disease_Deaths, Unemployment, Minority, Crowding, Multi_Unit, Poverty))
 
-v1 <- aggregate(cbind(cases, deaths, Staffed.All.Beds, Staffed.ICU.Beds, Population, Population..20.., Population..65.., num_diabetes_diagnosed, Staffed_ICU_Beds_Elderly, Staffed_ICU_Beds_People, Staffed_ICU_Beds_Adults, Asthma_Deaths, Obesity, Stroke_Deaths, Heart_Disease_Deaths, Smoking, Chronic_Respiratory_Disease_Deaths, Unemployment, Minority, Crowding, Multi_Unit, Poverty) ~ state, data = merge_4, FUN = sum)
-v2 <- aggregate(cbind(mask_ratio, home_ratio, Income) ~ state, data = merge_4, FUN = mean)
-#   v1 <- aggregate(  ~ state, data = df, sum)
-# v2 <- aggregate( v2 ~ c1 + c2, data = df, mean)
-# out <- merge(v1, v2, by=c("c1","c2"))
+v1 <- aggregate(cbind(cases, deaths, Staffed.All.Beds, Staffed.ICU.Beds, Population, Population..20.., Population..65.., num_diabetes_diagnosed, Staffed_ICU_Beds_Elderly, Staffed_ICU_Beds_People, Staffed_ICU_Beds_Adults, Asthma_Deaths, Obesity, Stroke_Deaths, Heart_Disease_Deaths, Smoking, Chronic_Respiratory_Disease_Deaths, Unemployment, Minority, Crowding, Multi_Unit, Poverty) ~ state, data = merge4, FUN = sum)
+
+v2 <- aggregate(cbind(mask_ratio, home_ratio, Income) ~ state, data = merge4, FUN = mean)
+
+final_merge <- merge(v1, v2, by=c("state", "state"))
 
 ```
+
 ```{r}
-colnames(merge4)
+final_merge <- final_merge %>%
+  subset(select = -c(Staffed.All.Beds, Staffed.ICU.Beds, Staffed_ICU_Beds_Elderly, Staffed_ICU_Beds_People,Staffed_ICU_Beds_Adults))
+```
+```{r}
+colnames(final_merge)
+
+#df_final <- merge(x = final_merge, y = state_icu_data, by.x = "state", by.y = "Location", all.x = TRUE)
+```
+
+```{r}
+clean_final <- final_merge %>%
+  mutate(
+    Fatality_Rate = deaths / cases,
+    Diabetes_Diagnosed_Perc = num_diabetes_diagnosed / Population,
+    Asthma_Deaths_Perc = Asthma_Deaths / Population,
+    Obesity_Perc = Obesity / Population,
+    Stroke_Death_Perc = Stroke_Deaths / Population,
+    Heart_Disease_Death_Perc = Heart_Disease_Deaths / Population,
+    Smoker_Perc = Smoking / Population,
+    Chronic_Respiratory_Disease_Death_Perc = Chronic_Respiratory_Disease_Deaths / Population,
+    Unemployment_Perc = Unemployment / Population,
+    Minority_Percentage = Minority / Population,
+    Crowding_Perc = Crowding / Population,
+    Multi_Unit_Perc = Multi_Unit / Population,
+    Poverty_Perc = Poverty / Population,
+    Income_Mean = Income / Population
+  )
+```
+
+```{r}
+
+clean_final_join <- merge(x = clean_final, y = state_icu_data, by.x = "state", by.y = "Location", all.x = TRUE)
 ```
 
 
