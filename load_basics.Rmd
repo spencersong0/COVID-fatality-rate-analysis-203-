@@ -531,8 +531,14 @@ clean_final <- final_merge %>%
 ```
 
 ```{r}
-
 clean_final_join <- merge(x = clean_final, y = state_icu_data, by.x = "state", by.y = "Location", all.x = TRUE)
 ```
 
+```{r}
+final_final <- clean_final_join %>%
+  subset(select = -c(Income, Income_Mean, num_diabetes_diagnosed, Asthma_Deaths, Obesity, Stroke_Deaths, Heart_Disease_Deaths, Smoking, Chronic_Respiratory_Disease_Deaths, Unemployment, Minority, Crowding, Multi_Unit, Poverty))
+```
 
+```{r}
+write_csv(final_final, "FinalDF.csv")
+```
