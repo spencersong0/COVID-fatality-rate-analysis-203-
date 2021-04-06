@@ -27,6 +27,9 @@ library(patchwork)
 state_icu_data <- read_csv('data/raw_data.csv')
 ```
 
+```{r}
+income_data <- read_csv('data/incomestatedata.csv')
+```
 
 ```{r}
 # Load county-level COVID case and death data from NY times
