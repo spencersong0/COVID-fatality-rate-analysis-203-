@@ -540,7 +540,9 @@ clean_final_join <- merge(x = clean_final, y = state_icu_data, by.x = "state", b
 
 ```{r}
 final_final <- clean_final_join %>%
-  subset(select = -c(Income, Income_Mean, num_diabetes_diagnosed, Asthma_Deaths, Obesity, Stroke_Deaths, Heart_Disease_Deaths, Smoking, Chronic_Respiratory_Disease_Deaths, Unemployment, Minority, Crowding, Multi_Unit, Poverty))
+  subset(select = -c(Income, Income_Mean, num_diabetes_diagnosed, Asthma_Deaths, Obesity, Stroke_Deaths, Heart_Disease_Deaths, Smoking, Chronic_Respiratory_Disease_Deaths, Unemployment, Minority, Crowding, Multi_Unit, Poverty)) %>%
+  rename(ICUBeds = `ICU Beds`) %>%
+  rename(ICUBedsPer10000 = `ICU Beds per 10,000 Population`)
 ```
 
 ```{r}

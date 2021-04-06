@@ -27,5 +27,6 @@ df <- read_csv("FinalDF.csv")
 ```
 
 ```{r}
-ggplot(aes())
+ggplot(df, aes(x = ICU Beds, y = Fatality_Rate)) + geom_point()
+
 ```
