@@ -529,7 +529,8 @@ clean_final <- final_merge %>%
     Crowding_Perc = Crowding / Population,
     Multi_Unit_Perc = Multi_Unit / Population,
     Poverty_Perc = Poverty / Population,
-    Income_Mean = Income / Population
+    Income_Mean = Income / Population,
+    Senior_Perc = Population..65.. / Population
   )
 ```
 
@@ -543,5 +544,8 @@ final_final <- clean_final_join %>%
 ```
 
 ```{r}
-write_csv(final_final, "FinalDF.csv")
+join_income = merge(x = final_final, y= income_data, by.x = "state", by.y = "State", all.x = TRUE)
+```
+```{r}
+write_csv(join_income, "FinalDF.csv")
 ```

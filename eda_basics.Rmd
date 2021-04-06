@@ -1,0 +1,31 @@
+---
+title: "eda_basics"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+install.packages("googlesheets")
+library(gsheet)
+library(readr)
+library(readxl)
+library(tidyverse)
+library(car)
+library(lmtest)
+library(sandwich)
+library(stargazer)
+library(tidyverse)
+library(magrittr)
+library(ggplot2)
+library(dplyr)
+library(patchwork)
+df <- read_csv("FinalDF.csv")
+```
+
+
+```{r}
+#colnames(df) #state, Fatality_rate, Population..65.., ICU Beds per 10,000 Population, ICU Beds
+```
+
+```{r}
+ggplot(aes())
+```
