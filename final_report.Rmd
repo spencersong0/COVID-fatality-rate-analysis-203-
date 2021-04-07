@@ -1,7 +1,8 @@
 ---
-title: "final_report"
-output: html_document
-authors: Jenny Conde, Spencer Hong, Kevin Lu, Spencer Song
+title: "Causes of Varying Death Rates in the U.S."
+subtitle: "W203 Lab 2"
+author: "Jenny Conde, Spencer Hong, Kevin Lu, Spencer Song"
+output: pdf_document
 ---
 
 ```{r, echo = FALSE, message = FALSE, warning = FALSE}
@@ -19,26 +20,35 @@ library(patchwork)
 
 
 
-### 1. An Introduction
+# Introduction
 
-Your introduction should present a research question and explain the concept that you're attempting to measure and how it will be operationalized. This section should pave the way for the body of the report, preparing the reader to understand why the models are constructed the way that they are. It is not enough to simply say "We are looking for policies that help against COVID."  Your introduction must do work for you, focusing the reader on a specific measurement goal, making them care about it, and propelling the narrative forward. This is also good time to put your work into context, discuss cross-cutting issues, and assess the overall appropriateness of the data.
+<!-- Your introduction should present a research question and explain the concept that you're attempting to measure and how it will be operationalized. This section should pave the way for the body of the report, preparing the reader to understand why the models are constructed the way that they are. It is not enough to simply say "We are looking for policies that help against COVID."  Your introduction must do work for you, focusing the reader on a specific measurement goal, making them care about it, and propelling the narrative forward. This is also good time to put your work into context, discuss cross-cutting issues, and assess the overall appropriateness of the data.
 
 (From Rubric) Is the introduction clear? Is the research question specific and well defined? Does the introduction motivate a specific concept to be measured and explain how it will be operationalized. Does it do a good job of preparing the reader to understand the model specifications?
 
 TODO: jenny conde
 Driving question: What causes higher death rates in some states versus others?
   What factors impact ___
-Variable categories: Health, policy, socioeconomic, other
+Variable categories: Health, policy, socioeconomic, other -->
 
-The COVID-19 pandemic has overturned nearly all aspects of normal life over the past year. The U.S. has particularly suffered, with 550,000 COVID-19 deaths, more than any other nation in the world. However, not all areas of the U.S. have been equally affected. While some states have seen relatively few cases and deaths, others have been significantly impacted, seeing overwhelmed healthcare systems and lockdowns. This motivates our primary research question: What causes higher death rates in some states versus others? What are the primary factors driving higher death rates across states?
+The COVID-19 pandemic has overturned nearly all aspects of normal life over the past year. The U.S. has particularly suffered, with 550,000 COVID-19 deaths, more than any other nation in the world (https://www.nytimes.com/interactive/2020/us/coronavirus-us-cases.html). However, not all areas of the U.S. have been equally affected. While some states have seen relatively few cases and deaths, others have been significantly impacted, seeing overwhelmed healthcare systems and lockdowns. This motivates our primary research question: What causes higher death rates in some states versus others? What are the primary factors driving higher death rates across states?
 
-To answer this question, we operationalize several categories of "factors," including pre-existing health conditions, enacted policy, socioeconomic characteristics, and miscellaneous factors that media has claimed to have a significant impact on death rates.   
+To answer this question, we analyze the cumulative COVID-19 death rate from ____ through ____. We calculate the death rate as the number of deaths per positive cases. We operationalize several categories of factors that likely have a causal relationship with death rate based on our research from media articles, publications, and government sources. These categories include pre-existing health conditions, enacted policy, socioeconomic characteristics. We include a few miscellaneous features not captured in these broad categories, including concentration of ICU beds.
+
+With this background knowledge about factors making people more prone to catching a severe case of COVID-19, we can perform a causal analysis to determine how prevalent these factors are at a state-level. Our causal analysis consists of three models. Our first model contains the variables we believe have the largest causal impact on death rate. Our second model builds on this to include more of our dataset, and finally, our third model includes all data we collected.
 
 ### Intermediate section: data collection/aggregation/cleaning
 
 TODO: spencer song
 - explain dropping of Hawaii, Alaska, D.C.
-- explain how we define "death rate" (i.e. deaths/cases)--why is this operationalization more relevant than alternatives (ex. deaths per capita)
+- explain how we define "death rate" (i.e. deaths/cases)--why is this operationalization more relevant than alternatives (ex. deaths per capita) -- Jenny explains this in the intro a bit but this operationalization probably merits further explanation
+
+<!-- 
+Note from Jenny: I originally wrote this section for the intro, but it's probably too detailed?? Feel free to use snipets of this.
+
+Our operationalized pre-existing health conditions were largely informed by the Center for Disease Control's list of medical conditions (https://www.cdc.gov/coronavirus/2019-ncov/need-extra-precautions/people-with-medical-conditions.html) that make adults more likely to get severely ill from COVID-19. We focused our policy data on mask requirements and stay at home orders. Individuals' socioeconomic status has also been known to make them more vulnerable to COVID-19 (https://www.mckinsey.com/featured-insights/coronavirus-leading-through-the-crisis/charting-the-path-to-the-next-normal/socioeconomic-vulnerability-increases-the-risk-of-dying-from-covid-19#:~:text=Socioeconomic%20vulnerability%20increases%20the%20risk%20of%20dying%20from%20COVID%2D19,-COVID%2D19%20Inequality&text=September%2010%2C%202020%20People%20who,coronavirus%20than%20the%20general%20population.), so we include features like unemployment, income, and crowding. Finally, we analyze a few additional factors: percent of people over age 65 and concentration of ICU beds, which have also been known to have an impact on COVID-19. 
+
+-->
 
 ### 2. A Model Building Process -- EVERYONE go through your vars and determine how your EDA should impact model building (All, led by Spencer Hong)
 
