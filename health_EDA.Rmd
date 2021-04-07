@@ -57,6 +57,20 @@ Smoker_Perc, Chronic_Respiratory_Disease_Death_Perc
 Population..65.., Diabetes_Diagnosed_Perc, Stroke_Death_Perc, Heart_Disease_Death_Perc,
 Smoker_Perc, Chronic_Respiratory_Disease_Death_Perc, Asthma_Deaths_Perc, Obesity_Perc
 
+\begin{tabular}{ |c|c|c|c| }
+ \hline
+ Variable & Linear Relationship? & Correlation & Recommendation \\ 
+ \hline
+ Diabetes & Yes & Positive (0.33) & Include in limited model, no transformation \\  
+ Stroke & No & Basically 0 (0.0095) & Don't include at all \\ 
+ Heart Disease & Slightly & Positive (0.21) & Include in model 2, no transformation \\ 
+ Smokers & Not Really & Positive (0.118) & Include in model 3, no transformation \\ 
+ Chronic Resp Dis & Yes & Negative (-0.2239) & Model 2? no transformation \\ 
+ Asthma & Slightly & Negative (-0.195) & Model 3 only? no transformation \\ 
+ Obesity & Not Really & Basically 0 (0.0348) & Model 3 only? no transformation \\
+ \hline
+\end{tabular}
+
 # Model 1 EDA
          
 ```{r model 1 eda, echo = FALSE, message = FALSE, warning = FALSE}
@@ -100,7 +114,7 @@ diabetes_box <- df %>%
 diabetes_scatter <- df %>%
   ggplot() +
   aes(Diabetes_Diagnosed_Perc, Fatality_Rate) +
-  geom_point() + geom_smooth() + geom_text(aes(label=state),hjust=0, vjust=0)
+  geom_point() + geom_smooth()
 
 diabetes_scatter_log <- df %>%
   ggplot() +
@@ -109,10 +123,13 @@ diabetes_scatter_log <- df %>%
 
 (diabetes_hist | diabetes_box) / (diabetes_scatter | diabetes_scatter_log)
 
-diabetes_scatter
-
 summary(df$Diabetes_Diagnosed_Perc)
 ```
+
+```{r}
+cor(df$Diabetes_Diagnosed_Perc, df$Fatality_Rate)
+```
+
 
 `Diabetes_Diagnosed_Perc` has a small right tail, though not highly significant, so there is no major deviation from normality. There is one outlier at 11.7%. `Diabetes_Diagnosed_Perc` and `Fatality_Rate` have a positive correlation. Log transformations do not significantly make the relationship between these two variables more linear.
 
@@ -132,7 +149,7 @@ stroke_box <- df %>%
 stroke_scatter <- df %>%
   ggplot() +
   aes(Stroke_Death_Perc, Fatality_Rate) +
-  geom_point() + geom_smooth() + geom_text(aes(label=state),hjust=0, vjust=0)
+  geom_point() + geom_smooth()
 
 stroke_scatter_log <- df %>%
   ggplot() +
@@ -141,10 +158,13 @@ stroke_scatter_log <- df %>%
 
 (stroke_hist | stroke_box) / (stroke_scatter | stroke_scatter_log)
 
-stroke_scatter
-
 summary(df$Stroke_Death_Perc)
 ```
+
+```{r}
+cor(df$Stroke_Death_Perc, df$Fatality_Rate)
+```
+
 
 `Stroke_Death_Perc` has a relatively normal distribution. There are no outliers. The `Fatality_Rate` vs `Stroke_Death_Perc` scatterplot has a parabolic shape, but this shape cannot be made more linear using log transformations.
 
@@ -164,7 +184,7 @@ heart_disease_box <- df %>%
 heart_disease_scatter <- df %>%
   ggplot() +
   aes(Heart_Disease_Death_Perc, Fatality_Rate) +
-  geom_point() + geom_smooth() + geom_text(aes(label=state),hjust=0, vjust=0)
+  geom_point() + geom_smooth()
 
 heart_disease_scatter_log <- df %>%
   ggplot() +
@@ -173,10 +193,13 @@ heart_disease_scatter_log <- df %>%
 
 (heart_disease_hist | heart_disease_box) / (heart_disease_scatter | heart_disease_scatter_log)
 
-heart_disease_scatter
-
 summary(df$Heart_Disease_Death_Perc)
 ```
+
+```{r}
+cor(df$Heart_Disease_Death_Perc, df$Fatality_Rate)
+```
+
 
 `Heart_Disease_Death_Perc` appears to be slightly skewed. Data above the median appears to have more spread. There is not a clear positive or negative correlation between `Heart_Disease_Death_Perc` and `Fatality_Rate`. The relationship is relatively flat except for a step between 0.0015 and 0.001625. This variable does not appear to be a good predictor for `Fatality_Rate`
 
@@ -196,7 +219,7 @@ smoker_box <- df %>%
 smoker_scatter <- df %>%
   ggplot() +
   aes(Smoker_Perc, Fatality_Rate) +
-  geom_point() + geom_smooth() + geom_text(aes(label=state),hjust=0, vjust=0)
+  geom_point() + geom_smooth()
 
 smoker_scatter_log <- df %>%
   ggplot() +
@@ -205,10 +228,13 @@ smoker_scatter_log <- df %>%
 
 (smoker_hist | smoker_box) / (smoker_scatter | smoker_scatter_log)
 
-smoker_scatter
-
 summary(df$Smoker_Perc)
 ```
+
+```{r}
+cor((df$Smoker_Perc), df$Fatality_Rate)
+```
+
 
 `Smoker_Perc` has a relative normal distribution, but there is no clear linear relationship between `Smoker_Perc` and `Fatality_Rate`. Applying a log transformation does not make the relationship any more linear.
 
@@ -228,7 +254,7 @@ chron_resp_dis_box <- df %>%
 chron_resp_dis_scatter <- df %>%
   ggplot() +
   aes(Chronic_Respiratory_Disease_Death_Perc, Fatality_Rate) +
-  geom_point() + geom_smooth() + geom_text(aes(label=state),hjust=0, vjust=0)
+  geom_point() + geom_smooth()
 
 chron_resp_dis_scatter_log <- df %>%
   ggplot() +
@@ -237,12 +263,21 @@ chron_resp_dis_scatter_log <- df %>%
 
 (chron_resp_dis_hist | chron_resp_dis_box) / (chron_resp_dis_scatter | chron_resp_dis_scatter_log)
 
-chron_resp_dis_scatter
-
 summary(df$Chronic_Respiratory_Disease_Death_Perc)
 ```
 
+```{r}
+cor(df$Chronic_Respiratory_Disease_Death_Perc, df$Fatality_Rate)
+```
+
+
+Pre-Removing Outliers:
+
 `Chronic_Respiratory_Disease_Death_Perc` has a relatively normal distribution and does not have any outliers. There is not a clear linear relationship between `Chronic_Respiratory_Disease_Death_Perc` and `Fatality_Rate`. There appears to be some parabolic relationship when `Chronic_Respiratory_Disease_Death_Perc` is less than 5e-4, but greater than this number, there is no relationship.
+
+Post-Removing Outliers:
+
+Overall negative relationship between `Chronic_Respiratory_Disease_Death_Perc` and `Fatality_Rate`
 
 # Model 3
 
@@ -262,7 +297,7 @@ asthma_box <- df %>%
 asthma_scatter <- df %>%
   ggplot() +
   aes(Asthma_Deaths_Perc, Fatality_Rate) +
-  geom_point() + geom_smooth() + geom_text(aes(label=state),hjust=0, vjust=0)
+  geom_point() + geom_smooth()
 
 asthma_scatter_log <- df %>%
   ggplot() +
@@ -271,10 +306,13 @@ asthma_scatter_log <- df %>%
 
 (asthma_hist | asthma_box) / (asthma_scatter | asthma_scatter_log)
 
-asthma_scatter
-
 summary(df$Asthma_Deaths_Perc)
 ```
+
+```{r}
+cor((df$Asthma_Deaths_Perc), df$Fatality_Rate)
+```
+
 
 `Asthma_Deaths_Perc` has a few outliers at each of its tails. The distribution is not quite normal. There appears to be somewhat of a linear relationship between `Fatality_Rate` and `Asthma_Deaths_Perc`, but if anything, it looks like the correlation is negative, which does not support our intuition. Applying a log transformation to `Asthma_Deaths_Perc` does not help make the relationship more linear.
 
@@ -294,7 +332,7 @@ obesity_box <- df %>%
 obesity_scatter <- df %>%
   ggplot() +
   aes(Obesity_Perc, Fatality_Rate) +
-  geom_point() + geom_smooth() + geom_text(aes(label=state),hjust=0, vjust=0)
+  geom_point() + geom_smooth()
 
 obesity_scatter_log <- df %>%
   ggplot() +
@@ -303,12 +341,34 @@ obesity_scatter_log <- df %>%
 
 (obesity_hist | obesity_box) / (obesity_scatter | obesity_scatter_log)
 
-obesity_scatter
-
 summary(df$Obesity_Perc)
 ```
+
+```{r}
+cor((df$Obesity_Perc), df$Fatality_Rate)
+```
+
 
 `Obesity_Perc` does not have any outliers, but it does not appear to follow a normal distribution either. The relationship between `Obesity_Perc` and `Fatality_Rate` appears quadratic or cubic (especially when a log transformation is applied to `Obesity_Perc`). Applying a transformation does not make the data appear more linear.
 
 
+Population..65.., Diabetes_Diagnosed_Perc, Stroke_Death_Perc, Heart_Disease_Death_Perc,
+Smoker_Perc, Chronic_Respiratory_Disease_Death_Perc, Asthma_Deaths_Perc, Obesity_Perc
 
+```{r}
+model <- lm(Fatality_Rate ~ Diabetes_Diagnosed_Perc + Chronic_Respiratory_Disease_Death_Perc + Obesity_Perc, data = df)
+coeftest(model)
+# + Stroke_Death_Perc + Heart_Disease_Death_Perc + Smoker_Perc + 
+# + Asthma_Deaths_Perc
+```
+
+```{r}
+df %>% 
+  mutate(
+    model_preds = predict(model), 
+    model_resids = resid(model)
+  ) %>% 
+  ggplot(aes(model_preds, model_resids)) + 
+  geom_point() + 
+  stat_smooth()
+```
