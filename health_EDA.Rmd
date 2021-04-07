@@ -19,6 +19,7 @@ library(patchwork)
 
 ```{r, echo = FALSE, message = FALSE, warning = FALSE}
 df <- read_csv('FinalDF.csv')
+df <- df[-c(2, 9, 12), ]
 ```
 
 # Fatality_Rate
@@ -79,7 +80,7 @@ age_scatter <- df %>%
 summary(df$Population..65../df$Population)
 ```
 
-The percentage of the population > 65 has a few outliers on each end. It appears that `Fatality_Rate` and % of 65+ have a postiive correlation up to a certain point (~17.5% or so). No combination of log transformations makes a more linear relationship between the two variables. % of 65+ is relatively normally distributed. 
+The percentage of the population > 65 has a few outliers on each end. It appears that `Fatality_Rate` and % of 65+ have a positive correlation up to a certain point (~17.5% or so). No combination of log transformations makes a more linear relationship between the two variables. % of 65+ is relatively normally distributed. 
 
 # Model 2 EDA
          
@@ -99,14 +100,16 @@ diabetes_box <- df %>%
 diabetes_scatter <- df %>%
   ggplot() +
   aes(Diabetes_Diagnosed_Perc, Fatality_Rate) +
-  geom_point() + geom_smooth()
+  geom_point() + geom_smooth() + geom_text(aes(label=state),hjust=0, vjust=0)
 
 diabetes_scatter_log <- df %>%
   ggplot() +
-  aes(log(Diabetes_Diagnosed_Perc), Fatality_Rate) +
+  aes((Diabetes_Diagnosed_Perc), sqrt(Fatality_Rate)) +
   geom_point() + geom_smooth()
 
 (diabetes_hist | diabetes_box) / (diabetes_scatter | diabetes_scatter_log)
+
+diabetes_scatter
 
 summary(df$Diabetes_Diagnosed_Perc)
 ```
@@ -129,7 +132,7 @@ stroke_box <- df %>%
 stroke_scatter <- df %>%
   ggplot() +
   aes(Stroke_Death_Perc, Fatality_Rate) +
-  geom_point() + geom_smooth()
+  geom_point() + geom_smooth() + geom_text(aes(label=state),hjust=0, vjust=0)
 
 stroke_scatter_log <- df %>%
   ggplot() +
@@ -137,6 +140,8 @@ stroke_scatter_log <- df %>%
   geom_point() + geom_smooth()
 
 (stroke_hist | stroke_box) / (stroke_scatter | stroke_scatter_log)
+
+stroke_scatter
 
 summary(df$Stroke_Death_Perc)
 ```
@@ -159,7 +164,7 @@ heart_disease_box <- df %>%
 heart_disease_scatter <- df %>%
   ggplot() +
   aes(Heart_Disease_Death_Perc, Fatality_Rate) +
-  geom_point() + geom_smooth()
+  geom_point() + geom_smooth() + geom_text(aes(label=state),hjust=0, vjust=0)
 
 heart_disease_scatter_log <- df %>%
   ggplot() +
@@ -167,6 +172,9 @@ heart_disease_scatter_log <- df %>%
   geom_point() + geom_smooth()
 
 (heart_disease_hist | heart_disease_box) / (heart_disease_scatter | heart_disease_scatter_log)
+
+heart_disease_scatter
+
 summary(df$Heart_Disease_Death_Perc)
 ```
 
@@ -188,7 +196,7 @@ smoker_box <- df %>%
 smoker_scatter <- df %>%
   ggplot() +
   aes(Smoker_Perc, Fatality_Rate) +
-  geom_point() + geom_smooth()
+  geom_point() + geom_smooth() + geom_text(aes(label=state),hjust=0, vjust=0)
 
 smoker_scatter_log <- df %>%
   ggplot() +
@@ -196,6 +204,9 @@ smoker_scatter_log <- df %>%
   geom_point() + geom_smooth()
 
 (smoker_hist | smoker_box) / (smoker_scatter | smoker_scatter_log)
+
+smoker_scatter
+
 summary(df$Smoker_Perc)
 ```
 
@@ -217,7 +228,7 @@ chron_resp_dis_box <- df %>%
 chron_resp_dis_scatter <- df %>%
   ggplot() +
   aes(Chronic_Respiratory_Disease_Death_Perc, Fatality_Rate) +
-  geom_point() + geom_smooth()
+  geom_point() + geom_smooth() + geom_text(aes(label=state),hjust=0, vjust=0)
 
 chron_resp_dis_scatter_log <- df %>%
   ggplot() +
@@ -225,6 +236,9 @@ chron_resp_dis_scatter_log <- df %>%
   geom_point() + geom_smooth()
 
 (chron_resp_dis_hist | chron_resp_dis_box) / (chron_resp_dis_scatter | chron_resp_dis_scatter_log)
+
+chron_resp_dis_scatter
+
 summary(df$Chronic_Respiratory_Disease_Death_Perc)
 ```
 
@@ -248,7 +262,7 @@ asthma_box <- df %>%
 asthma_scatter <- df %>%
   ggplot() +
   aes(Asthma_Deaths_Perc, Fatality_Rate) +
-  geom_point() + geom_smooth()
+  geom_point() + geom_smooth() + geom_text(aes(label=state),hjust=0, vjust=0)
 
 asthma_scatter_log <- df %>%
   ggplot() +
@@ -256,6 +270,9 @@ asthma_scatter_log <- df %>%
   geom_point() + geom_smooth()
 
 (asthma_hist | asthma_box) / (asthma_scatter | asthma_scatter_log)
+
+asthma_scatter
+
 summary(df$Asthma_Deaths_Perc)
 ```
 
@@ -277,7 +294,7 @@ obesity_box <- df %>%
 obesity_scatter <- df %>%
   ggplot() +
   aes(Obesity_Perc, Fatality_Rate) +
-  geom_point() + geom_smooth()
+  geom_point() + geom_smooth() + geom_text(aes(label=state),hjust=0, vjust=0)
 
 obesity_scatter_log <- df %>%
   ggplot() +
@@ -285,7 +302,13 @@ obesity_scatter_log <- df %>%
   geom_point() + geom_smooth()
 
 (obesity_hist | obesity_box) / (obesity_scatter | obesity_scatter_log)
+
+obesity_scatter
+
 summary(df$Obesity_Perc)
 ```
 
 `Obesity_Perc` does not have any outliers, but it does not appear to follow a normal distribution either. The relationship between `Obesity_Perc` and `Fatality_Rate` appears quadratic or cubic (especially when a log transformation is applied to `Obesity_Perc`). Applying a transformation does not make the data appear more linear.
+
+
+

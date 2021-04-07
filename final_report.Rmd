@@ -4,13 +4,37 @@ output: html_document
 authors: Jenny Conde, Spencer Hong, Kevin Lu, Spencer Song
 ---
 
+```{r, echo = FALSE, message = FALSE, warning = FALSE}
+library(tidyverse)
+library(car)
+library(lmtest)
+library(sandwich)
+library(stargazer)
+library(tidyverse)
+library(magrittr)
+library(ggplot2)
+library(dplyr)
+library(patchwork)
+```
+
+
+
 ### 1. An Introduction
 
 Your introduction should present a research question and explain the concept that you're attempting to measure and how it will be operationalized. This section should pave the way for the body of the report, preparing the reader to understand why the models are constructed the way that they are. It is not enough to simply say "We are looking for policies that help against COVID."  Your introduction must do work for you, focusing the reader on a specific measurement goal, making them care about it, and propelling the narrative forward. This is also good time to put your work into context, discuss cross-cutting issues, and assess the overall appropriateness of the data.
 
 TODO: jenny conde
+Driving question: What causes higher death rates in some states versus others?
+  What factors impact ___
+Variable categories: Health, policy, socioeconomic, other
 
-### 2. A Model Building Process
+
+### Intermediate section: data collection/aggregation/cleaning
+
+TODO: spencer song
+TODO: explain dropping of Hawaii, Alaska, D.C.
+
+### 2. A Model Building Process -- EVERYONE go through your vars and determine how your EDA should impact model building (All, led by Spencer Hong)
 
 You will next build a set of models to investigate your research question, documenting your decisions. Here are some things to keep in mind during your model building process:
 
@@ -19,6 +43,14 @@ You will next build a set of models to investigate your research question, docum
 3. What [covariates](https://en.wikipedia.org/wiki/Dependent_and_independent_variables#Statistics_synonyms) help you achieve your modeling goals? What covariates are problematic, either due to *collinearity*, or because they will absorb some of a causal effect you want to measure?
 4. What *transformations*, if any, should you apply to each variable? These transformations might reveal linearities in the data, make your results relevant, or help you meet model assumptions.
 5. Are your choices supported by exploratory data analysis (*EDA*)? You will likely start with some general EDA to *detect anomalies* (missing values, top-coded variables, etc.). From then on, your EDA should be interspersed with your model building. Use visual tools to *guide* your decisions. You can also leverage statistical *tests* to help assess whether variables, or groups of variables, are improving model fit.
+  - remove mask policy?
+
+TODO: each person individually does their own EDA and write-up
+TODO: EDA for all 3 model types and reasoning for specific applied transformations
+  - remove NA and check for reasoning with why they existed (make sure not all from one state, etc.)
+  - scatter, hists, bar?, box 
+  - variable summary, outlier removal? / reasoning
+  - transformation logic (transformations to use,etc. include reasoning)
 
 At the same time, it is important to remember that you are not trying to create one perfect model. You will create several specifications, giving the reader a sense of how robust (or sensitive) your results are to modeling choices, and to show that you're not just cherry-picking the specification that leads to the largest effects.
 
@@ -29,21 +61,18 @@ At a minimum, you should include the following three specifications:
 1. **Model Three**: A model that includes the *previous covariates, and many other covariates*, erring on the side of inclusion. A key purpose of this model is to evaluate how parameters of interest change (if at all) when additional, potentially colinear variables are included in the model specification.
 TODO: data summary paragraph / report
   TODO: anomaly report
-spencer TODO: clean up data loading code and documentation
-******TODO: consistency check on data  *******
 
-TODO: EDA for all 3 model types and reasoning for specific applied transformations
-  - remove NA and check for reasoning with why they existed (make sure not all from one state, etc.)
-  - scatter, hists, bar?, box 
-  - variable summary, outlier removal? / reasoning
-  - transformation logic (transformations to use,etc. include reasoning)
-TODO: causality concerns / collinearity
-  - check plots of var v. var
-  - correlation matrix
-  - draw causal theories?
+
+TODO: Spencer Hong
 
 TODO: assess addition of each category of data from model 1 to model 2? (how does adding all ___ data to limited model impact the model?)
   TODO: everyone can try this for their section. Take the limited model, and then add vars for model 2 from your section to the linear model. Analyze the difference and see how your variables impacted the model.
+  
+```{r, echo = FALSE, message = FALSE, warning = FALSE}
+df <- read_csv('FinalDF.csv')
+df <- df[-c(2, 9, 12), ] # remove Alaska, Hawaii, D.C.
+```
+
 
 TODO: Limited:
   1. health, 1. policy, 1. socioeconomic
@@ -52,17 +81,35 @@ TODO: Limited:
   socioeconomic: poverty / minority
   general: over 65%
   
+```{r}
+model_limited <- lm(Fatality_Rate ~ mask_ratio + Senior_Perc + Poverty_Perc, data = df)
+coeftest(model_limited)
+```
+
+  
 TODO: Model 2: do NOT include these:
   policy - include all
   demographics - ICU data
   socioeconomic - multi unit dwelling, income/unemployment/one or the other
   health - asthma death, obesity
+
+```{r}
+model_goldilocks <- lm(Fatality_Rate ~ mask_ratio + home_ratio + Diabetes_Diagnosed_Perc + Stroke_Death_Perc+ Heart_Disease_Death_Perc + Smoker_Perc + Chronic_Respiratory_Disease_Death_Perc + Senior_Perc + Poverty_Perc + log(Minority_Percentage) + Unemployment_Perc  + Crowding_Perc, data = df)
+coeftest(model_goldilocks)
+```
+
 TODO: Model 3:
   everything we have
+  
+```{r}
+model_big <- lm(Fatality_Rate ~ mask_ratio + home_ratio + Diabetes_Diagnosed_Perc + Stroke_Death_Perc+ Heart_Disease_Death_Perc + Smoker_Perc + Chronic_Respiratory_Disease_Death_Perc + Asthma_Deaths_Perc +  Obesity_Perc + Senior_Perc + Poverty_Perc + log(Minority_Percentage) + Unemployment_Perc  + Crowding_Perc + Multi_Unit_Perc + HouseholdIncome + ICUBedsPer10000, data = df)
+coeftest(model_big)
+```
+
 
 Although the models have different emphases, each one must still be a reasonable choice given your modeling goals.  The idea is to choose models that encircle the space of reasonable modeling choices, and to give an overall understanding of how these choices impact results.
 
-### 3. A Regression Table
+### 3. A Regression Table -- Kevin
 
 You should display all of your model specifications in a regression table, using a package like [`stargazer`](https://cran.r-project.org/web/packages/stargazer/vignettes/stargazer.pdf) to format your output. It should be easy for the reader to find the coefficients that represent key effects at the top of the regression table, and scan horizontally to see how they change from specification to specification. Make sure that you display the most appropriate standard errors in your table, along with significance stars.
 
@@ -71,7 +118,7 @@ In your text, comment on both *statistical significance and practical significan
 TODO: run packages on data
 TODO: comment on statistical and practical significance
 
-### 4. Limitations of your Model 
+### 4. Limitations of your Model -- All, led by Jenny
 
 As a team, evaluate all of the CLM assumptions that must hold for your model. However, do not report an exhaustive examination all 5 CLM assumption. Instead, bring forward only those assumptions that you think pose significant problems for your analysis. For each problem that you identify, describe the statistical consequences. If you are able to identify any strategies to mitigate the consequences, explain these strategies. 
 
@@ -81,8 +128,107 @@ TODO: CLM Assumptions and reasoning for violations
   TODO: how those violations should change our model specifications
 TODO: strategies to mitigate violations
 
+TODO: causality concerns / collinearity
+  - check plots of var v. var
+  - correlation matrix
+  - draw causal theories?
 
-### 5. Discussion of Omitted Variables
+- IID
+
+- Linear conditional expectation
+###> To assess whether there is a linear conditional expectation, we've learned to look at the predicted vs. residuals of the model.
+```{r}
+df %>% 
+  mutate(
+    model_limited_preds = predict(model_limited), 
+    model_limited_resids = resid(model_limited)
+  ) %>% 
+  ggplot(aes(model_limited_preds, model_limited_resids)) + 
+  geom_point() + 
+  stat_smooth()
+```
+Our comments
+- edge effects not lookin too good
+
+###> This doesn't look good. There seems to be a pretty clear non-linear relationship in this data -- perhaps parabolic or logarithmic.
+###> To correct this, we will try variable transformations, hoping to end up with a more linear pattern in this plot.
+### > Additionally, you may sometimes want to create predictor versus fitted plots, which may give you clues about what variables you need to transform.
+```{r}
+df <- df %>% 
+  mutate(
+    model_limited_preds = predict(model_limited), 
+    model_limited_resids = resid(model_limited)
+  ) 
+mask_resids <- df %>% 
+  ggplot(aes(mask_ratio, model_limited_resids)) + 
+  geom_point() + 
+  stat_smooth()
+senior_resids <- df %>% 
+  ggplot(aes(Senior_Perc, model_limited_resids)) + 
+  geom_point() + 
+  stat_smooth()
+unemployment_resids <- df %>% 
+  ggplot(aes(Unemployment_Perc, model_limited_resids)) + 
+  geom_point() + 
+  stat_smooth()
+```
+
+```{r}
+mask_resids
+senior_resids
+unemployment_resids
+```
+- looks a bit worse, edge effects still
+
+
+- No perfect collinearity
+### > First, we can look at our coefficients, and notice that R has not dropped any variables.
+```{r}
+model_limited$coefficients
+```
+- no perfect collinearity
+
+```{r, message = FALSE}
+df %>% 
+  select(
+    Fatality_Rate, mask_ratio, Senior_Perc, Poverty_Perc, model_limited_resids
+  ) %>%
+  GGally::ggpairs()
+```
+
+
+### > This tells us that there is no perfect collinearity.  This assumption also includes the requirement that a BLP exists, which may not happen if there are heavy tails.  In this case, though, we don't see any distributions that look like they have unusually low or high values.
+- Homoskedastic errors
+### > To assess whether the distribution of the errors is homoskedastic, we can examine the residuals versus fitted plot again.  We are interested in whether there is a band of even thickness from left to right. Looking at the plot above, indeed, it does look like there might be some increase in the variance of the residuals at the upper side of the predicted values, but it is not severe.  We may hope that a log transform fixes this small problem
+### > Another idea is to examine the scale-location plot.  Homoskedasticity would show up on this plot as a flat smoothing curve.
+ 
+```{r}
+plot(model_limited, which=3)
+```
+- heteroskedasticity is prevalent here
+
+### > This plot looks quite good, suggesting no major problem with heteroskedasticity.
+- Normally distributed errors
+```{r}
+plot_one <- df %>% 
+  ggplot(aes(x = model_limited_resids)) + 
+  geom_histogram()
+  
+plot_two <- df %>% 
+  ggplot(aes(sample = model_limited_resids)) + 
+  stat_qq() + stat_qq_line()
+plot_one / plot_two
+```
+- not too bad?? some minor deviation from normality towards the tails
+- long right tail
+- high frequency of values just below -0.005
+
+> The histogram of residuals and the qqplot shows some some deviation from normality, specifically a right skew and perhaps an unusual concentration on the right tail.
+>
+> This is not a problem for unbiasedness, and it is not a problem for our standard errors.  However, this will threaten the validity of our t-tests and confidence intervals.  We may hope to fix this problem with a variable transformatin.
+
+
+### 5. Discussion of Omitted Variables -- All, led by Spencer Song
 
 If the team has taken up an explanatory (i.e. causal) question to evaluate, then identify what you think are the 5 most important *omitted variables* that bias results you care about. For each variable, you should *reason about the direction of bias* caused by omitting this variable. If you can argue whether the bias is large or small, that is even better. State whether you have any variables available that may proxy (even imperfectly) for the omitted variable. Pay particular attention to whether each omitted variable bias is *towards zero or away from zero*. You will use this information to judge whether the effects you find are likely to be real, or whether they might be entirely an artifact of omitted variable bias.
 TODO: health
@@ -91,7 +237,7 @@ TODO: socioeconomic
 TODO: other - weather, travel zones, travel patterns, political demographics, vaccine distribution, total cases, city density
 
 
-### 6. Conclusion
+### 6. Conclusion -- save 4 later
 
 Make sure that you end your report with a discussion that distills key insights from your estimates and addresses your research question.
 
