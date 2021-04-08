@@ -114,7 +114,7 @@ diabetes_box <- df %>%
 diabetes_scatter <- df %>%
   ggplot() +
   aes(Diabetes_Diagnosed_Perc, Fatality_Rate) +
-  geom_point() + geom_smooth()
+  geom_point() + geom_smooth() 
 
 diabetes_scatter_log <- df %>%
   ggplot() +
@@ -372,3 +372,19 @@ df %>%
   geom_point() + 
   stat_smooth()
 ```
+
+
+```{r}
+# install.packages("corrplot")
+library(corrplot)
+
+health_vars <- subset(df, select = -c(state, deaths, cases, Population, Population..20.., Population..65.., ICUBeds, Fatality_Rate))
+
+res <- cor(health_vars)
+corrplot(res, type = "upper", order = "hclust", 
+         tl.col = "black", tl.srt = 90, tl.cex = 0.7)
+```
+```{r}
+?corrplot
+```
+
