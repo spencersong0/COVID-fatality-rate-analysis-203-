@@ -35,7 +35,7 @@ To answer this question, we analyze the cumulative COVID-19 death rate from ____
 
 With this background knowledge about factors making people more prone to catching a severe case of COVID-19, we can perform a causal analysis to determine how prevalent these factors are at a state-level. Our causal analysis consists of three models. Our first model contains the variables we believe have the largest causal impact on death rate. Our second model builds on this to include more of our dataset, and finally, our third model includes all data we collected.
 
-## Intermediate section: data collection/aggregation/cleaning
+### Intermediate section: data collection/aggregation/cleaning
 
 TODO: spencer song
 - explain dropping of Hawaii, Alaska, D.C.
@@ -46,75 +46,9 @@ Note from Jenny: I originally wrote this section for the intro, but it's probabl
 
 Our operationalized pre-existing health conditions were largely informed by the Center for Disease Control's list of medical conditions (https://www.cdc.gov/coronavirus/2019-ncov/need-extra-precautions/people-with-medical-conditions.html) that make adults more likely to get severely ill from COVID-19. We focused our policy data on mask requirements and stay at home orders. Individuals' socioeconomic status has also been known to make them more vulnerable to COVID-19 (https://www.mckinsey.com/featured-insights/coronavirus-leading-through-the-crisis/charting-the-path-to-the-next-normal/socioeconomic-vulnerability-increases-the-risk-of-dying-from-covid-19#:~:text=Socioeconomic%20vulnerability%20increases%20the%20risk%20of%20dying%20from%20COVID%2D19,-COVID%2D19%20Inequality&text=September%2010%2C%202020%20People%20who,coronavirus%20than%20the%20general%20population.), so we include features like unemployment, income, and crowding. Finally, we analyze a few additional factors: percent of people over age 65 and concentration of ICU beds, which have also been known to have an impact on COVID-19. 
 
-Also, maybe we should make a table of our data, showing how they're grouped into categories and the sources?
-
 -->
 
-1. \textbf{Response Variable}
-\vspace{-5pt}
-
-> Fatality Rate [(USA Facts)](https://usafacts.org/visualizations/coronavirus-covid-19-spread-map/): calculated as the ratio of cumulative deaths to cumulative cases
-
-2. \textbf{Health Variables}
-\vspace{-5pt}
-
-> 1. % Adults with Diabetes [(CDC)](https://gis.cdc.gov/grasp/diabetes/DiabetesAtlas.html#)
-\vspace{-5pt}
-
-> 2. % Deaths from Stroke [(CDC)](https://nccd.cdc.gov/DHDSPAtlas/?state=County)
-\vspace{-5pt}
-
-> 3. % Deaths from Heart Disease [(CDC)](https://nccd.cdc.gov/DHDSPAtlas/?state=County)
-\vspace{-5pt}
-
-> 4. % Adults who Smoke [(CHR)](https://www.countyhealthrankings.org/explore-health-rankings/rankings-data-documentation)
-\vspace{-5pt}
-
-> 5. % Deaths from Chronic Respiratory Disease [(GHDx)](http://ghdx.healthdata.org/record/ihme-data/united-states-chronic-respiratory-disease-mortality-rates-county-1980-2014)
-\vspace{-5pt}
-
-> 6. % Deaths from Asthma [(GHDx)](http://ghdx.healthdata.org/record/ihme-data/united-states-chronic-respiratory-disease-mortality-rates-county-1980-2014)
-\vspace{-5pt}
-
-> 7. % Adults with Obesity [(CHR)](https://www.countyhealthrankings.org/explore-health-rankings/rankings-data-documentation)
-
-3. \textbf{Policy Variables}
-\vspace{-5pt}
-
-> 1. Mask Ratio [(W203)](https://docs.google.com/spreadsheets/d/1zu9qEWI8PsOI_i8nI_S29HDGHlIp2lfVMsGxpQ5tvAQ/edit#gid=1348247662): calculated as the proportion of days each state had a mask mandate between April 8, 2020, and April 4, 2021
-\vspace{-5pt}
-
-> 2. Stay at Home Ratio [(W203)](https://docs.google.com/spreadsheets/d/1zu9qEWI8PsOI_i8nI_S29HDGHlIp2lfVMsGxpQ5tvAQ/edit#gid=1348247662): calculated as the proportion of days each state had a stay at home mandate between March 19, 2020, and January 25, 2021
-
-4. \textbf{Socioeconomic Variables}
-\vspace{-5pt}
-
-> 1. % Unemployed [(CDC)](https://www.atsdr.cdc.gov/placeandhealth/svi/data_documentation_download.html)
-\vspace{-5pt}
-
-> 2. % Minority [(CDC)](https://www.atsdr.cdc.gov/placeandhealth/svi/data_documentation_download.html)
-\vspace{-5pt}
-
-> 3. % Crowding [(CDC)](https://www.atsdr.cdc.gov/placeandhealth/svi/data_documentation_download.html)
-\vspace{-5pt}
-
-> 4. % Adults Living in Multi-Unit Dwellings [(CDC)](https://www.atsdr.cdc.gov/placeandhealth/svi/data_documentation_download.html)
-\vspace{-5pt}
-
-> 5. % Adults Living in Poverty [(CDC)](https://www.atsdr.cdc.gov/placeandhealth/svi/data_documentation_download.html)
-\vspace{-5pt}
-
-> 6. Median Household Income [(World Population Review)](https://worldpopulationreview.com/state-rankings/median-household-income-by-state)
-
-5. \textbf{Miscellaneous Variables}
-\vspace{-5pt}
-
-> 1. % Adults Over Age 65 [(CHR)](https://www.countyhealthrankings.org/explore-health-rankings/rankings-data-documentation)
-\vspace{-5pt}
-
-> 2. ICU Beds per 10,000 people [(KFF)](https://www.kff.org/other/state-indicator/icu-beds/?currentTimeframe=0&sortModel=%7B%22colId%22:%22Location%22,%22sort%22:%22asc%22%7D)
-
-# Model Building Process -- EVERYONE go through your vars and determine how your EDA should impact model building (All, led by Spencer Hong)
+### 2. A Model Building Process -- EVERYONE go through your vars and determine how your EDA should impact model building (All, led by Spencer Hong)
 
 <!--You will next build a set of models to investigate your research question, documenting your decisions. Here are some things to keep in mind during your model building process:
 
@@ -129,109 +63,93 @@ Also, maybe we should make a table of our data, showing how they're grouped into
 5. Are your choices supported by exploratory data analysis (*EDA*)? You will likely start with some general EDA to *detect anomalies* (missing values, top-coded variables, etc.). From then on, your EDA should be interspersed with your model building. Use visual tools to *guide* your decisions. You can also leverage statistical *tests* to help assess whether variables, or groups of variables, are improving model fit.
   - remove mask policy?-->
 
-<!-- 1. What do you want to measure? -->
-## Measurement/Response Variable
+1. What do you want to measure?
+The team identified fatality rates as the key variable to be measured as we look to understand the relationship between fatality rates and several chosen variables that fall within the health, policy, or socioeconomic realms. Fatality rates are calculated as CHECK THIS!!!!!
 
-The team identified fatality rates as the key variable to be measured as we look to understand the relationship between fatality rates and several chosen variables that fall within the health, policy, or socioeconomic realms.
+2. Is your modeling goal one of description or explanation?
+Our model is an explanatory one as we not only describe the COVID data and trends but also provide causal relationships between each chosen indepedent and dependent variables. We plan on explaining causes in the changes in fatality rates.
 
-<!-- 2. Is your modeling goal one of description or explanation? -->
-## An Explanatory Analsis
-Our model is an explanatory one as we not only describe the COVID data and trends but also provide causal relationships between each chosen independent and dependent variables. We plan on explaining causes in the changes in fatality rates.
+3. What [covariates](https://en.wikipedia.org/wiki/Dependent_and_independent_variables#Statistics_synonyms) help you achieve your modeling goals? What covariates are problematic, either due to *collinearity*, or because they will absorb some of a causal effect you want to measure?
 
-<!-- 3. What [covariates](https://en.wikipedia.org/wiki/Dependent_and_independent_variables#Statistics_synonyms) help you achieve your modeling goals? What covariates are problematic, either due to *collinearity*, or because they will absorb some of a causal effect you want to measure? -->
+Health:
 
-## Covariate Descriptions
+Policy: The covariates for both mask mandate and stay-at-home policy durations are of concern as they both show a positive linear relationship with fatality rates; however, they are small as both are less than 0.008.
 
-\textbf{Health}: We selected seven different health covariates as listed out above. These variables were chosen because the CDC has claimed that adults with these conditions are more likely to suffer from severe cases of COVID-19 [(CDC)](https://www.cdc.gov/coronavirus/2019-ncov/need-extra-precautions/people-with-medical-conditions.html). It is likely that a few causal relationships exist among these health variables. For example, it is plausible that obesity causes diabetes and that smoking causes asthma. We additionally found high correlations between our health varaibles. Because of this, we will limit our use of health variables in our models and ensure that no causal relationships exist between remaining variables.
+Socioeconomic:
 
-\textbf{Policy}: The covariates for both mask mandate and stay-at-home policy durations are of concern as they both show a positive linear relationship with fatality rates.
+Miscellaneous:
 
-\textbf{Socioeconomic}:
+4. What *transformations*, if any, should you apply to each variable? These transformations might reveal linearities in the data, make your results relevant, or help you meet model assumptions.
 
-\textbf{Miscellaneous}:
+Health:
 
-## Covariate Transformations
+Policy: No transformations will be performed on either mask or stay-at-home policy variables.
 
-<!-- 4. What *transformations*, if any, should you apply to each variable? These transformations might reveal linearities in the data, make your results relevant, or help you meet model assumptions. -->
+Socioeconomic:
 
-When performing EDA on our features, we plotted and analyzed scatterplots of fatality rate versus each explanatory variable. We assessed how transformations could make the relationships between our explanatory and response variables more linear and tried various combinations of logarithmic and polynomial transformations. Based on our analysis, we decided to apply no transformation to fatality rate, our response variable, and the subsections below outline the transformations made to the variables within each subset.
+Miscellaneous:
 
-\textbf{Health}: For health variables, we observed that transformations did not improve the linear relationships between our explanatory variables and fatality rate. Therefore, no transformations were appropriate for any of the health variables. Overall, our diabetes, heart disease, and smoker features had positive correlations with fatality rate. Chronic respiratory disease and asthma both had negative correlations, which seemed counterintuitive, and obesity and stroke essentially had zero correlation.
-
-\textbf{Policy}: The covariates for both mask mandate and stay-at-home policy durations are of concern as they both show a positive linear relationship with fatality rates.
-
-\textbf{Socioeconomic}:
-
-\textbf{Miscellaneous}:
-
-<!--5. Are your choices supported by exploratory data analysis (*EDA*)? You will likely start with some general EDA to *detect anomalies* (missing values, top-coded variables, etc.). From then on, your EDA should be interspersed with your model building. Use visual tools to *guide* your decisions. You can also leverage statistical *tests* to help assess whether variables, or groups of variables, are improving model fit.
-  - remove mask policy?-->
+<!--5. Are your choices supported by exploratory data analysis (*EDA*)? You will likely start with some general EDA to *detect anomalies* (missing values, top-coded variables, etc.). From then on, your EDA should be interspersed with your model building. Use visual tools to *guide* your decisions. You can also leverage statistical *tests* to help assess whether variables, or groups of variables, are improving model fit.-->
   
 5. Are your choices supported by exploratory data analysis (*EDA*)?
 
 TODO: each person individually does their own EDA and write-up
-TODO: EDA for all 3 model types and reasoning for specific applied transformations
-  - remove NA and check for reasoning with why they existed (make sure not all from one state, etc.)
-  - scatter, hists, bar?, box 
-  - variable summary, outlier removal? / reasoning
-  - transformation logic (transformations to use,etc. include reasoning)
-
-At the same time, it is important to remember that you are not trying to create one perfect model. You will create several specifications, giving the reader a sense of how robust (or sensitive) your results are to modeling choices, and to show that you're not just cherry-picking the specification that leads to the largest effects.
+  
+TODO: Spencer Hong
+<!--At the same time, it is important to remember that you are not trying to create one perfect model. You will create several specifications, giving the reader a sense of how robust (or sensitive) your results are to modeling choices, and to show that you're not just cherry-picking the specification that leads to the largest effects.
 
 At a minimum, you should include the following three specifications:
 
 1. **Limited Model**: A model that includes *only the key variable* you want to measure and nothing (or almost nothing) else. This variables might be transformed, as determined by your EDA, but the model should include the absolute minimum number of covariates (perhaps one, or at most two-three, covariates if they are so crucial that it would be unreasonable to omit them). 
 1. **Model Two**: A model that includes *key explanatory variables and covariates that you believe advance your modeling* goals without introducing too much multicollinearity or causing other issues. This model should strike a balance between accuracy and parsimony and reflect your best understanding of the relationships among key variables.
-1. **Model Three**: A model that includes the *previous covariates, and many other covariates*, erring on the side of inclusion. A key purpose of this model is to evaluate how parameters of interest change (if at all) when additional, potentially colinear variables are included in the model specification.
-TODO: data summary paragraph / report
-  TODO: anomaly report
+1. **Model Three**: A model that includes the *previous covariates, and many other covariates*, erring on the side of inclusion. A key purpose of this model is to evaluate how parameters of interest change (if at all) when additional, potentially colinear variables are included in the model specification.-->
 
-
-TODO: Spencer Hong
-
-TODO: assess addition of each category of data from model 1 to model 2? (how does adding all ___ data to limited model impact the model?)
-  TODO: everyone can try this for their section. Take the limited model, and then add vars for model 2 from your section to the linear model. Analyze the difference and see how your variables impacted the model.
-  
 ```{r, echo = FALSE, message = FALSE, warning = FALSE}
 df <- read_csv('FinalDF.csv')
 df <- df[-c(2, 9, 12), ] # remove Alaska, Hawaii, D.C.
 ```
 
-
-TODO: Limited:
-  1. health, 1. policy, 1. socioeconomic
-  health var: chronic respitory disease / smoking
-  policy var: mask policy ratio
-  socioeconomic: poverty / minority
-  general: over 65%
-  
+1. **Limited Model**: Independent variables: duration of mask policy, percentage of seniors, poverty percentage.
 ```{r}
 model_limited <- lm(Fatality_Rate ~ mask_ratio + Senior_Perc + Poverty_Perc, data = df)
 coeftest(model_limited)
+ols_vif_tol(model_limited)
+#plot(density(resid(model_limited)))
+qqnorm(resid(model_limited))
+qqline(resid(model_limited))
 ```
 
-  
-TODO: Model 2: do NOT include these:
-  policy - include all
-  demographics - ICU data
-  socioeconomic - multi unit dwelling, income/unemployment/one or the other
-  health - asthma death, obesity
+The limited model investigates the relationship between fatality rates and the duration of mask policies, the percentage of seniors, and the poverty percentage for each state. After running the coefficient test, we observe that both mask duration and poverty percentage are both statistically significant at a 95% significance level or greater. However, mask duration has a positive impact on predicted fatality rates, which goes against our assumption that states that implemented mask mandates longer would observe a decrease in predicted fatality rates. Except, the model calculates that a one day increase in mask mandates has a 0.005 increase in predicted fatality rates. For poverty percentage, the model describes that a one percentage increase in poverty leads to a 0.04 increase in predicted fatality rate. The VIF values for all three independent variables are all less than two, which indicates that there is minimal multicollinearity among them. With that said, the tolerance, or percent of variance in each variable that cannot be accounted for by the other predictors, of each variable is greater than 0.94. This suggests that there are variables not in the model that account for those predictors. The QQ plot shows that the model is under-representing the data as it has a light-tail indicating that the actual values are larger than the predicted values. Therefore, the next model will include additional variables to provide more clarity. 
+
+1. **Model Two**: Independent variables: duration of mask policy, duration of home policy, percentage of seniors, poverty percentage, diabetes percentage, stroke death percentage, heart disease percentage, smoker percentage, chronic respiratory death percentage, minority percentage, unemployment percentage, crowding percentage.
+```{r}
+model_two <- lm(Fatality_Rate ~ mask_ratio + home_ratio + Diabetes_Diagnosed_Perc + Stroke_Death_Perc+ Heart_Disease_Death_Perc + Smoker_Perc + Chronic_Respiratory_Disease_Death_Perc + Senior_Perc + Poverty_Perc + log(Minority_Percentage) + Unemployment_Perc  + Crowding_Perc, data = df)
+coeftest(model_two)
+ols_vif_tol(model_two)
+#plot(density(resid(model_two)))
+#qqnorm(resid(model_two))
+#qqline(resid(model_two))
+
+print(anova(model_limited, model_two))
+```
+
+Model Two includes all the variables from the Limited Model and adds several more variables. The variables that are statistically significant at a 95% significance level or greater in this model include stroke death percentage (negative effect), chronic respiratory death percentage (negative effect), and unemployment percentage (positive effect). Concerning are the two first because as both increase, predicted fatality rates decrease, which goes against our assumptions that states with higher stroke or chronic respiratory death percentage would have higher fatality rates as those groups of people are more susceptible to COVID-19. The VIF values are only concerning for smoker percentage and poverty percentage as both are larger than five and could suggest that multicollinearity is present. The added variables do decrease the tolerance of each variable from the present model. This means that the variance of each variable is less accounted for by the variables not present in the model. The Anova test we ran to compare the fits of the Limited Model and Model Two calculates a p-value less than a 0.05 level of significance level. This shows that by adding the new nine variables leads to a significant improvement of predict fatality rates compared to the Limited Model.
+
+1. **Model Three**: Independent variables: duration of mask policy, duration of home policy, percentage of seniors, poverty percentage, diabetes percentage, stroke death percentage, heart disease percentage, smoker percentage, chronic respiratory death percentage, asthma death percentage, obesity percentage, minority percentage, unemployment percentage, crowding percentage, multi-unit percentage, and ICU beds per 10,000 people.
 
 ```{r}
-model_goldilocks <- lm(Fatality_Rate ~ mask_ratio + home_ratio + Diabetes_Diagnosed_Perc + Stroke_Death_Perc+ Heart_Disease_Death_Perc + Smoker_Perc + Chronic_Respiratory_Disease_Death_Perc + Senior_Perc + Poverty_Perc + log(Minority_Percentage) + Unemployment_Perc  + Crowding_Perc, data = df)
-coeftest(model_goldilocks)
+model_three <- lm(Fatality_Rate ~ mask_ratio + home_ratio + Diabetes_Diagnosed_Perc + Stroke_Death_Perc+ Heart_Disease_Death_Perc + Smoker_Perc + Chronic_Respiratory_Disease_Death_Perc + Asthma_Deaths_Perc +  Obesity_Perc + Senior_Perc + Poverty_Perc + log(Minority_Percentage) + Unemployment_Perc  + Crowding_Perc + Multi_Unit_Perc + HouseholdIncome + ICUBedsPer10000, data = df)
+
+coeftest(model_three)
+ols_vif_tol(model_three)
+#plot(density(resid(model_three)))
+#qqnorm(resid(model_three))
+#qqline(resid(model_three))
+
+print(anova(model_two, model_three))
 ```
 
-TODO: Model 3:
-  everything we have
-  
-```{r}
-model_big <- lm(Fatality_Rate ~ mask_ratio + home_ratio + Diabetes_Diagnosed_Perc + Stroke_Death_Perc+ Heart_Disease_Death_Perc + Smoker_Perc + Chronic_Respiratory_Disease_Death_Perc + Asthma_Deaths_Perc +  Obesity_Perc + Senior_Perc + Poverty_Perc + log(Minority_Percentage) + Unemployment_Perc  + Crowding_Perc + Multi_Unit_Perc + HouseholdIncome + ICUBedsPer10000, data = df)
-coeftest(model_big)
-```
-
-
-Although the models have different emphases, each one must still be a reasonable choice given your modeling goals.  The idea is to choose models that encircle the space of reasonable modeling choices, and to give an overall understanding of how these choices impact results.
+Model Three includes all the variables from the Model Two and adds several more variables. The variables that are statistically significant at a 90% significance level or greater in this model include stroke death percentage (negative effect), chronic respiratory death percentage (negative effect), household income (positive effect), and poverty percentage (positive effect). Concerning are the first three, we commented earlier on our concerns with positive coefficients for stroke and chronic respiratory death percentage, but now the model suggests that states with larger household incomes will have higher predicted fatality rates. We would assume that states wiith higher household incomes would have more resources to combat COVID-19, but this model implies a different meaning that would require additional research. The model indicates high multicollinearity as several variables have VIF values higher than 5, including: diabetes diagnosed percentage, heart disease death percentage, smoker percentage, chronic respiratory disease death percentage, obesity percentage, senior percentage, poverty percentage, unemployment percentage, multi-unit percentage, and household income. Between the Limited Model and Model Two, Model Two was a better fit model. The Anova test we ran to compare the fits of the Model Two and Model Three and has a p-value greater than a 0.05 level of significance. This indicates that by adding the new five variables we do not observe a significant improvement of predict fatality rates compared to Model Two. Therefore, Model Two is the best fitted model of the three models we constructed.
 
 ### 3. A Regression Table -- Kevin
 
