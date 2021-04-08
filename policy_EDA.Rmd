@@ -14,6 +14,7 @@ library(magrittr)
 library(ggplot2)
 library(dplyr)
 library(patchwork)
+library(olsrr)
 ```
 
 ```{r, echo = FALSE, message = FALSE, warning = FALSE}
@@ -53,6 +54,8 @@ mask_scatter <- df %>%
 (mask_hist | mask_box) / mask_scatter
 
 summary(df$mask_ratio)
+
+cor(df$mask_ratio, df$Fatality_Rate)
 ```
 
 There are no outliers for the percentage duration that states enacted mask mandate policies. It appears that `Fatality_Rate` and percentage duration of mask policies of states has a positive correlation. No combination of log transformations makes a more linear relationship between the two variables. `mask_ratio` has a non-normal distribution with two modal groups of states. One is for states that implemented a mask mandate for 25% or less of the total duration time while the other group of states implemented mask-wearing for more than 60% of the duration. Given that 13 states did not implement a mask policy there is a left-tail skewness, which is confirmed by the larger median than mean.
@@ -79,9 +82,23 @@ home_scatter <- df %>%
 (home_hist | home_box) / home_scatter
 
 summary(df$home_ratio)
+
+cor(df$home_ratio, df$Fatality_Rate)
 ```
 
 New Mexico and California represent the two outliers for the percentage duration that states enacted stay-at-home policies. New Mexico never ended its policy while California had the longest tenured policy representing 100%. It appears that `Fatality_Rate` and percentage duration of stay-at-home policies of states has a positive correlation until 0.20. No combination of log transformations makes a more linear relationship between the two variables. Without the two outliers, `home_ratio` has a normal distribution with no significant skewness and ranging from 0.0% to 100.0%.
 
+```{r Covariance, echo = FALSE, message = FALSE, warning = FALSE}
+cov(df$mask_ratio, df$Fatality_Rate)
 
+cov(df$home_ratio, df$Fatality_Rate)
+```
 
+The covariance for both the duration of a mask mandate and the duration of a stay-at-home policy to fatality rate are positive, albeit quite small as both are less than 0.0008. The positive covariance metrics indicate a positive relationship, which is concerning as we assumed they would be negative as longer mask and stay-at-home policies were used with the idea that they would curb infections and therefore deaths.
+
+```{r Multi-Collinearity Check, echo = FALSE, message = FALSE, warning = FALSE}
+vif_model <- lm(Fatality_Rate ~ mask_ratio + home_ratio, data = df)
+
+ols_vif_tol(vif_model)
+```
+The low VIF values indicate that the mask and stay-at-home policy variables are not highly collinear with one another.
