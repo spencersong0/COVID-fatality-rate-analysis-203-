@@ -35,7 +35,7 @@ To answer this question, we analyze the cumulative COVID-19 death rate from ____
 
 With this background knowledge about factors making people more prone to catching a severe case of COVID-19, we can perform a causal analysis to determine how prevalent these factors are at a state-level. Our causal analysis consists of three models. Our first model contains the variables we believe have the largest causal impact on death rate. Our second model builds on this to include more of our dataset, and finally, our third model includes all data we collected.
 
-### Intermediate section: data collection/aggregation/cleaning
+## Intermediate section: data collection/aggregation/cleaning
 
 TODO: spencer song
 - explain dropping of Hawaii, Alaska, D.C.
@@ -50,91 +50,71 @@ Also, maybe we should make a table of our data, showing how they're grouped into
 
 -->
 
-1. \textbf{Explanatory Variable}
-
+1. \textbf{Response Variable}
 \vspace{-5pt}
 
-> Fatality Rate [(NY Times)](https://github.com/nytimes/covid-19-data/blob/master/live/us-counties.csv): calculated as the ratio of cumulative deaths to cumulative cases
+> Fatality Rate [(USA Facts)](https://usafacts.org/visualizations/coronavirus-covid-19-spread-map/): calculated as the ratio of cumulative deaths to cumulative cases
 
 2. \textbf{Health Variables}
-
 \vspace{-5pt}
 
-> % Adults with Diabetes [(CDC)](https://gis.cdc.gov/grasp/diabetes/DiabetesAtlas.html#)
-
+> 1. % Adults with Diabetes [(CDC)](https://gis.cdc.gov/grasp/diabetes/DiabetesAtlas.html#)
 \vspace{-5pt}
 
-> % Deaths from Stroke [(CDC)](https://nccd.cdc.gov/DHDSPAtlas/?state=County)
-
+> 2. % Deaths from Stroke [(CDC)](https://nccd.cdc.gov/DHDSPAtlas/?state=County)
 \vspace{-5pt}
 
-> % Deaths from Heart Disease [(CDC)](https://nccd.cdc.gov/DHDSPAtlas/?state=County)
-
+> 3. % Deaths from Heart Disease [(CDC)](https://nccd.cdc.gov/DHDSPAtlas/?state=County)
 \vspace{-5pt}
 
-> % Adults who Smoke [(CHR)](https://www.countyhealthrankings.org/explore-health-rankings/rankings-data-documentation)
-
+> 4. % Adults who Smoke [(CHR)](https://www.countyhealthrankings.org/explore-health-rankings/rankings-data-documentation)
 \vspace{-5pt}
 
-> % Deaths from Chronic Respiratory Disease [(GHDx)](http://ghdx.healthdata.org/record/ihme-data/united-states-chronic-respiratory-disease-mortality-rates-county-1980-2014)
-
+> 5. % Deaths from Chronic Respiratory Disease [(GHDx)](http://ghdx.healthdata.org/record/ihme-data/united-states-chronic-respiratory-disease-mortality-rates-county-1980-2014)
 \vspace{-5pt}
 
-> % Deaths from Asthma [(GHDx)](http://ghdx.healthdata.org/record/ihme-data/united-states-chronic-respiratory-disease-mortality-rates-county-1980-2014)
-
+> 6. % Deaths from Asthma [(GHDx)](http://ghdx.healthdata.org/record/ihme-data/united-states-chronic-respiratory-disease-mortality-rates-county-1980-2014)
 \vspace{-5pt}
 
-> % Adults with Obesity [(CHR)](https://www.countyhealthrankings.org/explore-health-rankings/rankings-data-documentation)
-
-
+> 7. % Adults with Obesity [(CHR)](https://www.countyhealthrankings.org/explore-health-rankings/rankings-data-documentation)
 
 3. \textbf{Policy Variables}
-
 \vspace{-5pt}
 
-> Mask Ratio [(W203)](https://docs.google.com/spreadsheets/d/1zu9qEWI8PsOI_i8nI_S29HDGHlIp2lfVMsGxpQ5tvAQ/edit#gid=1348247662): calculated as the proportion of days each state had a mask mandate between April 8, 2020, and April 4, 2021
-
+> 1. Mask Ratio [(W203)](https://docs.google.com/spreadsheets/d/1zu9qEWI8PsOI_i8nI_S29HDGHlIp2lfVMsGxpQ5tvAQ/edit#gid=1348247662): calculated as the proportion of days each state had a mask mandate between April 8, 2020, and April 4, 2021
 \vspace{-5pt}
 
-> Stay at Home Ratio [(W203)](https://docs.google.com/spreadsheets/d/1zu9qEWI8PsOI_i8nI_S29HDGHlIp2lfVMsGxpQ5tvAQ/edit#gid=1348247662): calculated as the proportion of days each state had a stay at home mandate between March 19, 2020, and January 25, 2021
+> 2. Stay at Home Ratio [(W203)](https://docs.google.com/spreadsheets/d/1zu9qEWI8PsOI_i8nI_S29HDGHlIp2lfVMsGxpQ5tvAQ/edit#gid=1348247662): calculated as the proportion of days each state had a stay at home mandate between March 19, 2020, and January 25, 2021
 
 4. \textbf{Socioeconomic Variables}
-
 \vspace{-5pt}
 
-> % Unemployed [(CDC)](https://www.atsdr.cdc.gov/placeandhealth/svi/data_documentation_download.html)
-
+> 1. % Unemployed [(CDC)](https://www.atsdr.cdc.gov/placeandhealth/svi/data_documentation_download.html)
 \vspace{-5pt}
 
-> % Minority [(CDC)](https://www.atsdr.cdc.gov/placeandhealth/svi/data_documentation_download.html)
-
+> 2. % Minority [(CDC)](https://www.atsdr.cdc.gov/placeandhealth/svi/data_documentation_download.html)
 \vspace{-5pt}
 
-> % Crowding [(CDC)](https://www.atsdr.cdc.gov/placeandhealth/svi/data_documentation_download.html)
-
+> 3. % Crowding [(CDC)](https://www.atsdr.cdc.gov/placeandhealth/svi/data_documentation_download.html)
 \vspace{-5pt}
 
-> % Adults Living in Multi-Unit Dwellings [(CDC)](https://www.atsdr.cdc.gov/placeandhealth/svi/data_documentation_download.html)
-
+> 4. % Adults Living in Multi-Unit Dwellings [(CDC)](https://www.atsdr.cdc.gov/placeandhealth/svi/data_documentation_download.html)
 \vspace{-5pt}
 
-> % Adults Living in Poverty [(CDC)](https://www.atsdr.cdc.gov/placeandhealth/svi/data_documentation_download.html)
-
+> 5. % Adults Living in Poverty [(CDC)](https://www.atsdr.cdc.gov/placeandhealth/svi/data_documentation_download.html)
 \vspace{-5pt}
 
-> Median (?) Household Income
+> 6. Median Household Income [(World Population Review)](https://worldpopulationreview.com/state-rankings/median-household-income-by-state)
 
 5. \textbf{Miscellaneous Variables}
-
 \vspace{-5pt}
 
-> % Adults Over Age 65 [(CHR)](https://www.countyhealthrankings.org/explore-health-rankings/rankings-data-documentation)
-
+> 1. % Adults Over Age 65 [(CHR)](https://www.countyhealthrankings.org/explore-health-rankings/rankings-data-documentation)
 \vspace{-5pt}
 
-> ICU Beds per 10,000 people [(KFF)](https://www.kff.org/other/state-indicator/icu-beds/?currentTimeframe=0&sortModel=%7B%22colId%22:%22Location%22,%22sort%22:%22asc%22%7D)
+> 2. ICU Beds per 10,000 people [(KFF)](https://www.kff.org/other/state-indicator/icu-beds/?currentTimeframe=0&sortModel=%7B%22colId%22:%22Location%22,%22sort%22:%22asc%22%7D)
 
-### 2. A Model Building Process -- EVERYONE go through your vars and determine how your EDA should impact model building (All, led by Spencer Hong)
+# Model Building Process -- EVERYONE go through your vars and determine how your EDA should impact model building (All, led by Spencer Hong)
 
 <!--You will next build a set of models to investigate your research question, documenting your decisions. Here are some things to keep in mind during your model building process:
 
@@ -149,32 +129,40 @@ Also, maybe we should make a table of our data, showing how they're grouped into
 5. Are your choices supported by exploratory data analysis (*EDA*)? You will likely start with some general EDA to *detect anomalies* (missing values, top-coded variables, etc.). From then on, your EDA should be interspersed with your model building. Use visual tools to *guide* your decisions. You can also leverage statistical *tests* to help assess whether variables, or groups of variables, are improving model fit.
   - remove mask policy?-->
 
-1. What do you want to measure?
+<!-- 1. What do you want to measure? -->
+## Measurement/Response Variable
+
 The team identified fatality rates as the key variable to be measured as we look to understand the relationship between fatality rates and several chosen variables that fall within the health, policy, or socioeconomic realms.
 
-2. Is your modeling goal one of description or explanation?
-Our model is an explanatory one as we not only describe the COVID data and trends but also provide causal relationships between each chosen indepedent and dependent variables. We plan on explaining causes in the changes in fatality rates.
+<!-- 2. Is your modeling goal one of description or explanation? -->
+## An Explanatory Analsis
+Our model is an explanatory one as we not only describe the COVID data and trends but also provide causal relationships between each chosen independent and dependent variables. We plan on explaining causes in the changes in fatality rates.
 
-3. What [covariates](https://en.wikipedia.org/wiki/Dependent_and_independent_variables#Statistics_synonyms) help you achieve your modeling goals? What covariates are problematic, either due to *collinearity*, or because they will absorb some of a causal effect you want to measure?
+<!-- 3. What [covariates](https://en.wikipedia.org/wiki/Dependent_and_independent_variables#Statistics_synonyms) help you achieve your modeling goals? What covariates are problematic, either due to *collinearity*, or because they will absorb some of a causal effect you want to measure? -->
 
-Health: We selected seven different health covariates  Diabetes_Diagnosed_Perc, Stroke_Death_Perc, Heart_Disease_Death_Perc,
-Smoker_Perc, Chronic_Respiratory_Disease_Death_Perc, Asthma_Deaths_Perc, Obesity_Perc
+## Covariate Descriptions
 
-Policy: The covariates for both mask mandate and stay-at-home policy durations are of concern as they both show a positive linear relationship with fatality rates.
+\textbf{Health}: We selected seven different health covariates as listed out above. These variables were chosen because the CDC has claimed that adults with these conditions are more likely to suffer from severe cases of COVID-19 [(CDC)](https://www.cdc.gov/coronavirus/2019-ncov/need-extra-precautions/people-with-medical-conditions.html). It is likely that a few causal relationships exist among these health variables. For example, it is plausible that obesity causes diabetes and that smoking causes asthma. We additionally found high correlations between our health varaibles. Because of this, we will limit our use of health variables in our models and ensure that no causal relationships exist between remaining variables.
 
-Socioeconomic:
+\textbf{Policy}: The covariates for both mask mandate and stay-at-home policy durations are of concern as they both show a positive linear relationship with fatality rates.
 
-Miscellaneous:
+\textbf{Socioeconomic}:
 
-4. What *transformations*, if any, should you apply to each variable? These transformations might reveal linearities in the data, make your results relevant, or help you meet model assumptions.
+\textbf{Miscellaneous}:
 
-Health:
+## Covariate Transformations
 
-Policy: The covariates for both mask mandate and stay-at-home policy duratiions are of concern as they both show a positive linear relationship with fatality rates.
+<!-- 4. What *transformations*, if any, should you apply to each variable? These transformations might reveal linearities in the data, make your results relevant, or help you meet model assumptions. -->
 
-Socioeconomic:
+When performing EDA on our features, we plotted and analyzed scatterplots of fatality rate versus each explanatory variable. We assessed how transformations could make the relationships between our explanatory and response variables more linear and tried various combinations of logarithmic and polynomial transformations. Based on our analysis, we decided to apply no transformation to fatality rate, our response variable, and the subsections below outline the transformations made to the variables within each subset.
 
-Miscellaneous:
+\textbf{Health}: For health variables, we observed that transformations did not improve the linear relationships between our explanatory variables and fatality rate. Therefore, no transformations were appropriate for any of the health variables. Overall, our diabetes, heart disease, and smoker features had positive correlations with fatality rate. Chronic respiratory disease and asthma both had negative correlations, which seemed counterintuitive, and obesity and stroke essentially had zero correlation.
+
+\textbf{Policy}: The covariates for both mask mandate and stay-at-home policy durations are of concern as they both show a positive linear relationship with fatality rates.
+
+\textbf{Socioeconomic}:
+
+\textbf{Miscellaneous}:
 
 <!--5. Are your choices supported by exploratory data analysis (*EDA*)? You will likely start with some general EDA to *detect anomalies* (missing values, top-coded variables, etc.). From then on, your EDA should be interspersed with your model building. Use visual tools to *guide* your decisions. You can also leverage statistical *tests* to help assess whether variables, or groups of variables, are improving model fit.
   - remove mask policy?-->
