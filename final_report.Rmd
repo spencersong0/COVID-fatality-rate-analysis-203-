@@ -46,7 +46,93 @@ Note from Jenny: I originally wrote this section for the intro, but it's probabl
 
 Our operationalized pre-existing health conditions were largely informed by the Center for Disease Control's list of medical conditions (https://www.cdc.gov/coronavirus/2019-ncov/need-extra-precautions/people-with-medical-conditions.html) that make adults more likely to get severely ill from COVID-19. We focused our policy data on mask requirements and stay at home orders. Individuals' socioeconomic status has also been known to make them more vulnerable to COVID-19 (https://www.mckinsey.com/featured-insights/coronavirus-leading-through-the-crisis/charting-the-path-to-the-next-normal/socioeconomic-vulnerability-increases-the-risk-of-dying-from-covid-19#:~:text=Socioeconomic%20vulnerability%20increases%20the%20risk%20of%20dying%20from%20COVID%2D19,-COVID%2D19%20Inequality&text=September%2010%2C%202020%20People%20who,coronavirus%20than%20the%20general%20population.), so we include features like unemployment, income, and crowding. Finally, we analyze a few additional factors: percent of people over age 65 and concentration of ICU beds, which have also been known to have an impact on COVID-19. 
 
+Also, maybe we should make a table of our data, showing how they're grouped into categories and the sources?
+
 -->
+
+1. \textbf{Explanatory Variable}
+
+\vspace{-5pt}
+
+> Fatality Rate [(NY Times)](https://github.com/nytimes/covid-19-data/blob/master/live/us-counties.csv): calculated as the ratio of cumulative deaths to cumulative cases
+
+2. \textbf{Health Variables}
+
+\vspace{-5pt}
+
+> % Adults with Diabetes [(CDC)](https://gis.cdc.gov/grasp/diabetes/DiabetesAtlas.html#)
+
+\vspace{-5pt}
+
+> % Deaths from Stroke [(CDC)](https://nccd.cdc.gov/DHDSPAtlas/?state=County)
+
+\vspace{-5pt}
+
+> % Deaths from Heart Disease [(CDC)](https://nccd.cdc.gov/DHDSPAtlas/?state=County)
+
+\vspace{-5pt}
+
+> % Adults who Smoke [(CHR)](https://www.countyhealthrankings.org/explore-health-rankings/rankings-data-documentation)
+
+\vspace{-5pt}
+
+> % Deaths from Chronic Respiratory Disease [(GHDx)](http://ghdx.healthdata.org/record/ihme-data/united-states-chronic-respiratory-disease-mortality-rates-county-1980-2014)
+
+\vspace{-5pt}
+
+> % Deaths from Asthma [(GHDx)](http://ghdx.healthdata.org/record/ihme-data/united-states-chronic-respiratory-disease-mortality-rates-county-1980-2014)
+
+\vspace{-5pt}
+
+> % Adults with Obesity [(CHR)](https://www.countyhealthrankings.org/explore-health-rankings/rankings-data-documentation)
+
+
+
+3. \textbf{Policy Variables}
+
+\vspace{-5pt}
+
+> Mask Ratio [(W203)](https://docs.google.com/spreadsheets/d/1zu9qEWI8PsOI_i8nI_S29HDGHlIp2lfVMsGxpQ5tvAQ/edit#gid=1348247662): calculated as the proportion of days each state had a mask mandate between April 8, 2020, and April 4, 2021
+
+\vspace{-5pt}
+
+> Stay at Home Ratio [(W203)](https://docs.google.com/spreadsheets/d/1zu9qEWI8PsOI_i8nI_S29HDGHlIp2lfVMsGxpQ5tvAQ/edit#gid=1348247662): calculated as the proportion of days each state had a stay at home mandate between March 19, 2020, and January 25, 2021
+
+4. \textbf{Socioeconomic Variables}
+
+\vspace{-5pt}
+
+> % Unemployed [(CDC)](https://www.atsdr.cdc.gov/placeandhealth/svi/data_documentation_download.html)
+
+\vspace{-5pt}
+
+> % Minority [(CDC)](https://www.atsdr.cdc.gov/placeandhealth/svi/data_documentation_download.html)
+
+\vspace{-5pt}
+
+> % Crowding [(CDC)](https://www.atsdr.cdc.gov/placeandhealth/svi/data_documentation_download.html)
+
+\vspace{-5pt}
+
+> % Adults Living in Multi-Unit Dwellings [(CDC)](https://www.atsdr.cdc.gov/placeandhealth/svi/data_documentation_download.html)
+
+\vspace{-5pt}
+
+> % Adults Living in Poverty [(CDC)](https://www.atsdr.cdc.gov/placeandhealth/svi/data_documentation_download.html)
+
+\vspace{-5pt}
+
+> Median (?) Household Income
+
+5. \textbf{Miscellaneous Variables}
+
+\vspace{-5pt}
+
+> % Adults Over Age 65 [(CHR)](https://www.countyhealthrankings.org/explore-health-rankings/rankings-data-documentation)
+
+\vspace{-5pt}
+
+> ICU Beds per 10,000 people [(KFF)](https://www.kff.org/other/state-indicator/icu-beds/?currentTimeframe=0&sortModel=%7B%22colId%22:%22Location%22,%22sort%22:%22asc%22%7D)
 
 ### 2. A Model Building Process -- EVERYONE go through your vars and determine how your EDA should impact model building (All, led by Spencer Hong)
 
@@ -71,9 +157,10 @@ Our model is an explanatory one as we not only describe the COVID data and trend
 
 3. What [covariates](https://en.wikipedia.org/wiki/Dependent_and_independent_variables#Statistics_synonyms) help you achieve your modeling goals? What covariates are problematic, either due to *collinearity*, or because they will absorb some of a causal effect you want to measure?
 
-Health:
+Health: We selected seven different health covariates  Diabetes_Diagnosed_Perc, Stroke_Death_Perc, Heart_Disease_Death_Perc,
+Smoker_Perc, Chronic_Respiratory_Disease_Death_Perc, Asthma_Deaths_Perc, Obesity_Perc
 
-Policy: The covariates for both mask mandate and stay-at-home policy duratiions are of concern as they both show a positive linear relationship with fatality rates.
+Policy: The covariates for both mask mandate and stay-at-home policy durations are of concern as they both show a positive linear relationship with fatality rates.
 
 Socioeconomic:
 
