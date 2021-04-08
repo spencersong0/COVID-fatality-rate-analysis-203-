@@ -18,8 +18,6 @@ library(dplyr)
 library(patchwork)
 ```
 
-
-
 # Introduction
 
 <!-- Your introduction should present a research question and explain the concept that you're attempting to measure and how it will be operationalized. This section should pave the way for the body of the report, preparing the reader to understand why the models are constructed the way that they are. It is not enough to simply say "We are looking for policies that help against COVID."  Your introduction must do work for you, focusing the reader on a specific measurement goal, making them care about it, and propelling the narrative forward. This is also good time to put your work into context, discuss cross-cutting issues, and assess the overall appropriateness of the data.
@@ -44,7 +42,7 @@ TODO: spencer song
 - explain how we define "death rate" (i.e. deaths/cases)--why is this operationalization more relevant than alternatives (ex. deaths per capita) -- Jenny explains this in the intro a bit but this operationalization probably merits further explanation
 
 <!-- 
-Note from Jenny: I originally wrote this section for the intro, but it's probably too detailed?? Feel free to use snipets of this.
+Note from Jenny: I originally wrote this section for the intro, but it's probably too detailed?? Feel free to use snippets of this.
 
 Our operationalized pre-existing health conditions were largely informed by the Center for Disease Control's list of medical conditions (https://www.cdc.gov/coronavirus/2019-ncov/need-extra-precautions/people-with-medical-conditions.html) that make adults more likely to get severely ill from COVID-19. We focused our policy data on mask requirements and stay at home orders. Individuals' socioeconomic status has also been known to make them more vulnerable to COVID-19 (https://www.mckinsey.com/featured-insights/coronavirus-leading-through-the-crisis/charting-the-path-to-the-next-normal/socioeconomic-vulnerability-increases-the-risk-of-dying-from-covid-19#:~:text=Socioeconomic%20vulnerability%20increases%20the%20risk%20of%20dying%20from%20COVID%2D19,-COVID%2D19%20Inequality&text=September%2010%2C%202020%20People%20who,coronavirus%20than%20the%20general%20population.), so we include features like unemployment, income, and crowding. Finally, we analyze a few additional factors: percent of people over age 65 and concentration of ICU beds, which have also been known to have an impact on COVID-19. 
 
@@ -52,14 +50,49 @@ Our operationalized pre-existing health conditions were largely informed by the 
 
 ### 2. A Model Building Process -- EVERYONE go through your vars and determine how your EDA should impact model building (All, led by Spencer Hong)
 
-You will next build a set of models to investigate your research question, documenting your decisions. Here are some things to keep in mind during your model building process:
+<!--You will next build a set of models to investigate your research question, documenting your decisions. Here are some things to keep in mind during your model building process:
 
 1. *What do you want to measure*? Make sure you identify one key variable (possibly more in rare cases) that will allow you to derive conclusions relevant to your research question, and include this variables in all model specifications.
-2. Is your modeling goal one of description or explanation? 
+
+2. Is your modeling goal one of description or explanation?-
+
 3. What [covariates](https://en.wikipedia.org/wiki/Dependent_and_independent_variables#Statistics_synonyms) help you achieve your modeling goals? What covariates are problematic, either due to *collinearity*, or because they will absorb some of a causal effect you want to measure?
+
 4. What *transformations*, if any, should you apply to each variable? These transformations might reveal linearities in the data, make your results relevant, or help you meet model assumptions.
+
 5. Are your choices supported by exploratory data analysis (*EDA*)? You will likely start with some general EDA to *detect anomalies* (missing values, top-coded variables, etc.). From then on, your EDA should be interspersed with your model building. Use visual tools to *guide* your decisions. You can also leverage statistical *tests* to help assess whether variables, or groups of variables, are improving model fit.
-  - remove mask policy?
+  - remove mask policy?-->
+
+1. What do you want to measure?
+The team identified fatality rates as the key variable to be measured as we look to understand the relationship between fatality rates and several chosen variables that fall within the health, policy, or socioeconomic realms.
+
+2. Is your modeling goal one of description or explanation?
+Our model is an explanatory one as we not only describe the COVID data and trends but also provide causal relationships between each chosen indepedent and dependent variables. We plan on explaining causes in the changes in fatality rates.
+
+3. What [covariates](https://en.wikipedia.org/wiki/Dependent_and_independent_variables#Statistics_synonyms) help you achieve your modeling goals? What covariates are problematic, either due to *collinearity*, or because they will absorb some of a causal effect you want to measure?
+
+Health:
+
+Policy: The covariates for both mask mandate and stay-at-home policy duratiions are of concern as they both show a positive linear relationship with fatality rates.
+
+Socioeconomic:
+
+Miscellaneous:
+
+4. What *transformations*, if any, should you apply to each variable? These transformations might reveal linearities in the data, make your results relevant, or help you meet model assumptions.
+
+Health:
+
+Policy: The covariates for both mask mandate and stay-at-home policy duratiions are of concern as they both show a positive linear relationship with fatality rates.
+
+Socioeconomic:
+
+Miscellaneous:
+
+<!--5. Are your choices supported by exploratory data analysis (*EDA*)? You will likely start with some general EDA to *detect anomalies* (missing values, top-coded variables, etc.). From then on, your EDA should be interspersed with your model building. Use visual tools to *guide* your decisions. You can also leverage statistical *tests* to help assess whether variables, or groups of variables, are improving model fit.
+  - remove mask policy?-->
+  
+5. Are your choices supported by exploratory data analysis (*EDA*)?
 
 TODO: each person individually does their own EDA and write-up
 TODO: EDA for all 3 model types and reasoning for specific applied transformations
