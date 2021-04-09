@@ -378,13 +378,29 @@ df %>%
 # install.packages("corrplot")
 library(corrplot)
 
-health_vars <- subset(df, select = -c(state, deaths, cases, Population, Population..20.., Population..65.., ICUBeds, Fatality_Rate))
+health_vars <- subset(df, select = -c(state, deaths, cases, Population, Population..20.., Population..65.., ICUBeds, Fatality_Rate, Poverty_Perc, Heart_Disease_Death_Perc, HouseholdIncome, Smoker_Perc, Obesity_Perc))
 
 res <- cor(health_vars)
 corrplot(res, type = "upper", order = "hclust", 
-         tl.col = "black", tl.srt = 90, tl.cex = 0.7)
+         tl.col = "black", tl.srt = 45, tl.cex = 0.7)
 ```
+mask_ratio, Diabetes_Diagnosed_Perc, Unemployment_Perc, home_ratio, Chronic_Respiratory_Disease_Death_Perc, Minority_Percentage
+
+Removed: Poverty, heart disease
+
+
 ```{r}
-?corrplot
+library(corrplot)
+
+vars <- subset(df, select = c(mask_ratio, Diabetes_Diagnosed_Perc, Unemployment_Perc, home_ratio, Chronic_Respiratory_Disease_Death_Perc, Minority_Percentage))
+
+
+
+res <- cor(vars)
+corrplot(res, type = "upper", order = "hclust", 
+         tl.col = "black", tl.srt = 45, tl.cex = 0.7)
 ```
 
+mask_ratio, Diabetes_Diagnosed_Perc, Unemployment_Perc, home_ratio, Chronic_Respiratory_Disease_Death_Perc, Minority_Percentage
+
+Removed heart disease death, removed poverty perc
