@@ -19,14 +19,215 @@ library(ggplot2)
 library(dplyr)
 library(patchwork)
 df <- read_csv("FinalDF.csv")
+df <- df[-c(2, 9, 12),]
+colnames(df)
+```
+
+### Intermediate section: data collection/aggregation/cleaning
+- **The Initial Data Loading and Cleaning.** Did the team notice any anomalous values? Is there a sufficient justification for any data points that are removed? Did the report note any coding features that affect the meaning of variables (e.g. top-coding or bottom-coding)? Overall, does the report demonstrate a thorough understanding of the data? Does the report convey this understand to its reader -- can the reader, through reading this report, come to the same understanding that the team has come to? 
+
+- explain dropping of Hawaii, Alaska, D.C.
+- explain how we define "death rate" (i.e. deaths/cases)--why is this operationalization more relevant than alternatives (ex. deaths per capita) -- Jenny explains this in the intro a bit but this operationalization probably merits further explanation
+
+Our operationalized pre-existing health conditions were largely informed by the Center for Disease Control's list of medical conditions (https://www.cdc.gov/coronavirus/2019-ncov/need-extra-precautions/people-with-medical-conditions.html) that make adults more likely to get severely ill from COVID-19. We focused our policy data on mask requirements and stay at home orders. Individuals' socioeconomic status has also been known to make them more vulnerable to COVID-19 (https://www.mckinsey.com/featured-insights/coronavirus-leading-through-the-crisis/charting-the-path-to-the-next-normal/socioeconomic-vulnerability-increases-the-risk-of-dying-from-covid-19#:~:text=Socioeconomic%20vulnerability%20increases%20the%20risk%20of%20dying%20from%20COVID%2D19,-COVID%2D19%20Inequality&text=September%2010%2C%202020%20People%20who,coronavirus%20than%20the%20general%20population.), so we include features like unemployment, income, and crowding. Finally, we analyze a few additional factors: percent of people over age 65 and concentration of ICU beds, which have also been known to have an impact on COVID-19. 
+
+Much of this data was collected  from a variety of sources, but we were able to join on FIPS (Federal Information Processing System) Codes. Our data was only primarily on a county level, so we aggregated our county data to a state level and converted the data to percentage rates to use for our regression. 
+
+Our data time period is: 
+
+We also made the choice to omit Hawaii, Alaska, and District of Columbia from our states, as we found that these states were massive outliers in our socioeconomic analysis and policy factors. District of Columbia is an urban-only 'state', so the demographics, multi-unit housing percentages, and crowding were all drastically different from the rest of our data points, causing non linearity with our regressions and such a small dataset. Similarly, Hawaii and Alaska are not a part of the contiguous United States, so their COVID management was much more travel/flight dependent, whereas the rest of the United States was openly exposed to travel. These states had many different factors that would impact the fatality of their COVID cases, so for the purpose of our question, we are bounding our dataset to the lower 48 states.
+
+EDA
+
+```{r}
+cor(df$Fatality_Rate, df$Senior_Perc)
+
+cor(df$Fatality_Rate, df$ICUBedsPer10000)
+
+```
+
+```{r}
+#colnames(df) #state, Fatality_Rate, Population..65.., ICU Beds per 10,000 Population
+```
+
+```{r}
+ggplot(df, aes(x = Population..65.., y = ICUBedsPer10000)) + geom_point() + geom_smooth() + geom_text(aes(label=state),hjust=0, vjust=0)
+```
+
+```{r}
+ggplot(df, aes(x = ICUBedsPer10000, y = Fatality_Rate)) + geom_point() + geom_smooth() + geom_text(aes(label=state),hjust=0, vjust=0)
 ```
 
 
 ```{r}
-#colnames(df) #state, Fatality_rate, Population..65.., ICU Beds per 10,000 Population, ICU Beds
+ggplot(df, aes(x = Senior_Perc, y = Fatality_Rate)) + geom_point() + geom_smooth() + geom_text(aes(label=state),hjust=0, vjust=0)
+```
+```{r}
+model1 <- lm(Fatality_Rate ~ Senior_Perc + log(ICUBedsPer10000), data = df)
+coeftest(model1)
+```
+
+
+
+
+If the team has taken up an explanatory (i.e. causal) question to evaluate, then identify what you think are the 5 most important *omitted variables* that bias results you care about. For each variable, you should *reason about the direction of bias* caused by omitting this variable. If you can argue whether the bias is large or small, that is even better. State whether you have any variables available that may proxy (even imperfectly) for the omitted variable. Pay particular attention to whether each omitted variable bias is *towards zero or away from zero*. You will use this information to judge whether the effects you find are likely to be real, or whether they might be entirely an artifact of omitted variable bias.
+TODO: health
+TODO: policy
+TODO: socioeconomic
+TODO: other - weather, travel zones, travel patterns, political demographics, vaccine distribution, total cases, city density
+
+Vaccine distribution
+
+We want to apply OVB concepts to our second regression model. We have determined the following as our 5 most important omitted variables:
+
+| Regression                                     | Omitted Variable                |
+|------------------------------------------------|---------------------------------|
+| $Fatality Rate = \beta_0 + \beta_1 attendance + u$     | $extremity\_of\_weather$                |
+| $lifespan = \beta_0 + \beta_1 cigarettes + u$  | $exercise$                      |
+| $lifespan = \beta_0 + \beta_1 cigarettes + u$  | $time\_socializing$             |
+| $wage = \beta_0 + \beta_1 grad\_education + u$ | $experience$                    |
+| $wage = \beta_0 + \beta_1 grad\_education + u$ | desire to effect $social\_good$ |
+
+1. Diets and quality of food distribution (tied to distribution of healthy restaurants)
+Aggregated health of food availability throughout a state would likely be negatively correlated with COVID19 fatality cases. Overall, a healthier population will likely be more adverse to higher fatality rates and severe reactions to COVID19.
+
+2. Vaccine distribution
+
+3*. Weather
+One could make the argument that extreme temperature swings and humidity will be positively correlated with fatality rates. 
+<!-- It is well known that extreme temperature changeswill weaken a person's immune system and their body's ability to fight a virus. This would imply that states with less moderate weather will have higher fatality rates with COVID. A similar omitted variable that relates could be the humidity of the air-- as we know, virus' spread when there are lower humidity rates.  -->
+This bias could be relatively large given the lower percentage of fatality rates in the first place. 
+
+6*. Political party ideology on COVID 19 and the distribution of their ideas
+I believe that political ideology (Positive opinions on the media reporting of COVID severity) will have a negative? correlation with fatality rates. The bias of this would likely be smaller, but the at-risk population that believes in COVID's severity will likely take more drastic measures to protect themselves.
+
+7*. Tourist Hotspots / travel patterns / travel zones: 
+I believe that distances from tourist hotspots / urban zones will likely have a negative correlation with fatality rates. A further distance that cities are from unpredictable and unwanted influxes of tourists would likely correlate with lower fatality rates.
+
+8. Informational resources on COVID 19 / Misspreading of information about COVID across states:
+
+Example::
+<!-- | Regression                                     | Omitted Variable                | -->
+<!-- |------------------------------------------------|---------------------------------| -->
+<!-- | $grade = \beta_0 + \beta_1 attendance + u$     | $time\_studying$                | -->
+<!-- | $lifespan = \beta_0 + \beta_1 cigarettes + u$  | $exercise$                      | -->
+<!-- 1. I think that time studying and attendance are positively related. And, I think that time studying and grades are also positively related. And, so, if we measure **only** attendance, what we estimate will be larger than the true effect.  -->
+<!-- 2. I think that exercise and cigarette smoking are negatively correlated. I think that exercise and lifespan are positively related. And so, if we only measure smoking and lifespan, our estimate of the relationship will be **more negative** than the true negative relationship. This is because if someone smokes, they also don't exercise, so we've got a feedback loop. This is a little bit of a tricky one to write out, and so a strategy might be to simulate data that fits with your beliefs of the world, and then estimate the models. -->
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+- Linear conditional expectation
+
+###> To assess whether there is a linear conditional expectation, we've learned to look at the predicted vs. residuals of the model.
+
+```{r}
+df %>% 
+  mutate(
+    model_two_preds = predict(model_two), 
+    model_two_resids = resid(model_two)
+  ) %>% 
+  ggplot(aes(model_two_preds, model_two_resids)) + 
+  geom_point() + 
+  stat_smooth()
+```
+
+###> This doesn't look good. There seems to be a pretty clear non-linear relationship in this data -- perhaps parabolic or logarithmic.
+###> To correct this, we will try variable transformations, hoping to end up with a more linear pattern in this plot.
+### > Additionally, you may sometimes want to create predictor versus fitted plots, which may give you clues about what variables you need to transform.
+
+
+```{r}
+df <- df %>% 
+  mutate(
+    model_two_preds = predict(model_two), 
+    model_two_resids = resid(model_two)
+  ) 
+
+mask_resids <- df %>% 
+  ggplot(aes(mask_ratio, model_two_resids)) + 
+  geom_point() + 
+  stat_smooth()
+
+senior_resids <- df %>% 
+  ggplot(aes(Senior_Perc, model_two_resids)) + 
+  geom_point() + 
+  stat_smooth()
+
+unemployment_resids <- df %>% 
+  ggplot(aes(unemployment, model_two_resids)) + 
+  geom_point() + 
+  stat_smooth()
+
 ```
 
 ```{r}
-ggplot(df, aes(x = ICU Beds, y = Fatality_Rate)) + geom_point()
-
+mask_resids
+senior_resids
+unemployment_resids
 ```
+
+- No perfect collinearity
+
+### > First, we can look at our coefficients, and notice that R has not dropped any variables.
+
+```{r}
+model_two$coefficients
+```
+
+### > This tells us that there is no perfect collinearity.  This assumption also includes the requirement that a BLP exists, which may not happen if there are heavy tails.  In this case, though, we don't see any distributions that look like they have unusually low or high values.
+
+- Homoskedastic errors
+
+### > To assess whether the distribution of the errors is homoskedastic, we can examine the residuals versus fitted plot again.  We are interested in whether there is a band of even thickness from left to right. Looking at the plot above, indeed, it does look like there might be some increase in the variance of the residuals at the upper side of the predicted values, but it is not severe.  We may hope that a log transform fixes this small problem
+
+### > Another idea is to examine the scale-location plot.  Homoskedasticity would show up on this plot as a flat smoothing curve.
+ 
+```{r}
+plot(model_two, which=3)
+```
+
+### > This plot looks quite good, suggesting no major problem with heteroskedasticity.
+
+- Normally distributed errors
+
+```{r}
+plot_one <- df %>% 
+  ggplot(aes(x = model_two_resids)) + 
+  geom_histogram()
+  
+plot_two <- df %>% 
+  ggplot(aes(sample = model_two_resids)) + 
+  stat_qq() + stat_qq_line()
+
+plot_one / plot_two
+```
+
+> The histogram of residuals and the qqplot shows some some deviation from normality, specifically a right skew and perhaps an unusual concentration on the right tail.
+>
+> This is not a problem for unbiasedness, and it is not a problem for our standard errors.  However, this will threaten the validity of our t-tests and confidence intervals.  We may hope to fix this problem with a variable transformatin.
+
+
+

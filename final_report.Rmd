@@ -38,15 +38,16 @@ With this background knowledge about factors making people more prone to catchin
 ### Intermediate section: data collection/aggregation/cleaning
 
 TODO: spencer song
-- explain dropping of Hawaii, Alaska, D.C.
-- explain how we define "death rate" (i.e. deaths/cases)--why is this operationalization more relevant than alternatives (ex. deaths per capita) -- Jenny explains this in the intro a bit but this operationalization probably merits further explanation
 
-<!-- 
-Note from Jenny: I originally wrote this section for the intro, but it's probably too detailed?? Feel free to use snippets of this.
+- explain how we define "death rate" (i.e. deaths/cases)--why is this operationalization more relevant than alternatives (ex. deaths per capita) -- Jenny explains this in the intro a bit but this operationalization probably merits further explanation
 
 Our operationalized pre-existing health conditions were largely informed by the Center for Disease Control's list of medical conditions (https://www.cdc.gov/coronavirus/2019-ncov/need-extra-precautions/people-with-medical-conditions.html) that make adults more likely to get severely ill from COVID-19. We focused our policy data on mask requirements and stay at home orders. Individuals' socioeconomic status has also been known to make them more vulnerable to COVID-19 (https://www.mckinsey.com/featured-insights/coronavirus-leading-through-the-crisis/charting-the-path-to-the-next-normal/socioeconomic-vulnerability-increases-the-risk-of-dying-from-covid-19#:~:text=Socioeconomic%20vulnerability%20increases%20the%20risk%20of%20dying%20from%20COVID%2D19,-COVID%2D19%20Inequality&text=September%2010%2C%202020%20People%20who,coronavirus%20than%20the%20general%20population.), so we include features like unemployment, income, and crowding. Finally, we analyze a few additional factors: percent of people over age 65 and concentration of ICU beds, which have also been known to have an impact on COVID-19. 
 
--->
+Much of this data was collected  from a variety of sources, but we were able to join on FIPS (Federal Information Processing System) Codes. Our data was only primarily on a county level, so we aggregated our county data to a state level and converted the data to percentage rates to use for our regression. We made the choice to define "Fatality_Rate" as the total number of deaths / total number of cases from start to finish. We do NOT use COVID-19 deaths per capita, as are question of causality does not care for differences in the number of COVID-19 cases per state.
+
+Our data time period is: 
+
+We also made the choice to omit Hawaii, Alaska, and District of Columbia from our states, as we found that these states were massive outliers in our socioeconomic analysis and policy factors. District of Columbia is an urban-only 'state', so the demographics, multi-unit housing percentages, and crowding were all drastically different from the rest of our data points, causing non linearity with our regressions and such a small dataset. Similarly, Hawaii and Alaska are not a part of the contiguous United States, so their COVID management was much more travel/flight dependent, whereas the rest of the United States was openly exposed to travel. These states had many different factors that would impact the fatality of their COVID cases, so for the purpose of our question, we are bounding our dataset to the lower 48 states.
 
 ### 2. A Model Building Process -- EVERYONE go through your vars and determine how your EDA should impact model building (All, led by Spencer Hong)
 
@@ -64,7 +65,7 @@ Our operationalized pre-existing health conditions were largely informed by the 
   - remove mask policy?-->
 
 1. What do you want to measure?
-The team identified fatality rates as the key variable to be measured as we look to understand the relationship between fatality rates and several chosen variables that fall within the health, policy, or socioeconomic realms. Fatality rates are calculated as CHECK THIS!!!!!
+The team identified fatality rates as the key variable to be measured as we look to understand the relationship between fatality rates and several chosen variables that fall within the health, policy, or socioeconomic realms. Fatality rates are calculated as CHECK THIS!!!!! number of deaths / number of cases in a state over the entire course of our dataset.
 
 2. Is your modeling goal one of description or explanation?
 Our model is an explanatory one as we not only describe the COVID data and trends but also provide causal relationships between each chosen indepedent and dependent variables. We plan on explaining causes in the changes in fatality rates.
@@ -77,7 +78,7 @@ Policy: The covariates for both mask mandate and stay-at-home policy durations a
 
 Socioeconomic:
 
-Miscellaneous:
+Miscellaneous: The covariates for senior percentages and ICU beds per 10000 actually appear to be of little concern. Neither seem to be overly problematic due to collinearity. 
 
 4. What *transformations*, if any, should you apply to each variable? These transformations might reveal linearities in the data, make your results relevant, or help you meet model assumptions.
 
@@ -87,7 +88,7 @@ Policy: No transformations will be performed on either mask or stay-at-home poli
 
 Socioeconomic:
 
-Miscellaneous:
+Miscellaneous: ICU Beds per 10000 should be used with a log transformation, while senior percentage should not take any transformations. With ICU Beds per 10000, we found that there is a lot of change in the lower ICU Bed values, so the covariate becomes more linear and evenly distributed with a log transformation.
 
 <!--5. Are your choices supported by exploratory data analysis (*EDA*)? You will likely start with some general EDA to *detect anomalies* (missing values, top-coded variables, etc.). From then on, your EDA should be interspersed with your model building. Use visual tools to *guide* your decisions. You can also leverage statistical *tests* to help assess whether variables, or groups of variables, are improving model fit.-->
   
@@ -273,10 +274,35 @@ plot_one / plot_two
 ### 5. Discussion of Omitted Variables -- All, led by Spencer Song
 
 If the team has taken up an explanatory (i.e. causal) question to evaluate, then identify what you think are the 5 most important *omitted variables* that bias results you care about. For each variable, you should *reason about the direction of bias* caused by omitting this variable. If you can argue whether the bias is large or small, that is even better. State whether you have any variables available that may proxy (even imperfectly) for the omitted variable. Pay particular attention to whether each omitted variable bias is *towards zero or away from zero*. You will use this information to judge whether the effects you find are likely to be real, or whether they might be entirely an artifact of omitted variable bias.
-TODO: health
-TODO: policy
-TODO: socioeconomic
-TODO: other - weather, travel zones, travel patterns, political demographics, vaccine distribution, total cases, city density
+Vaccine distribution
+
+We want to apply OVB concepts to our second regression model. We have determined the following as our 5 most important omitted variables:
+
+| Regression                                     | Omitted Variable                |
+|------------------------------------------------|---------------------------------|
+| $Fatality Rate = \beta_0 + \beta_1 attendance + u$     | $extremity\_of\_weather$                |
+| $lifespan = \beta_0 + \beta_1 cigarettes + u$  | $exercise$                      |
+| $lifespan = \beta_0 + \beta_1 cigarettes + u$  | $time\_socializing$             |
+| $wage = \beta_0 + \beta_1 grad\_education + u$ | $experience$                    |
+| $wage = \beta_0 + \beta_1 grad\_education + u$ | desire to effect $social\_good$ |
+
+1. Diets and quality of food distribution (tied to distribution of healthy restaurants)
+Aggregated health of food availability throughout a state would likely be negatively correlated with COVID19 fatality cases. Overall, a healthier population will likely be more adverse to higher fatality rates and severe reactions to COVID19.
+
+2. Vaccine distribution
+
+3*. Weather
+One could make the argument that extreme temperature swings and humidity will be positively correlated with fatality rates. 
+<!-- It is well known that extreme temperature changeswill weaken a person's immune system and their body's ability to fight a virus. This would imply that states with less moderate weather will have higher fatality rates with COVID. A similar omitted variable that relates could be the humidity of the air-- as we know, virus' spread when there are lower humidity rates.  -->
+This bias could be relatively large given the lower percentage of fatality rates in the first place. 
+
+6*. Political party ideology on COVID 19 and the distribution of their ideas
+I believe that political ideology (Positive opinions on the media reporting of COVID severity) will have a negative? correlation with fatality rates. The bias of this would likely be smaller, but the at-risk population that believes in COVID's severity will likely take more drastic measures to protect themselves.
+
+7*. Tourist Hotspots / travel patterns / travel zones: 
+I believe that distances from tourist hotspots / urban zones will likely have a negative correlation with fatality rates. A further distance that cities are from unpredictable and unwanted influxes of tourists would likely correlate with lower fatality rates.
+
+8. Informational resources on COVID 19 / Misspreading of information about COVID across states:
 
 
 ### 6. Conclusion -- save 4 later
