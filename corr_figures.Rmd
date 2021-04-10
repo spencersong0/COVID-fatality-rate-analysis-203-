@@ -1,0 +1,45 @@
+---
+title: "corr_figures"
+output: pdf_document
+---
+
+```{r, echo = FALSE, message = FALSE, warning = FALSE}
+library(tidyverse)
+library(car)
+library(lmtest)
+library(sandwich)
+library(stargazer)
+library(tidyverse)
+library(magrittr)
+library(ggplot2)
+library(dplyr)
+library(patchwork)
+library(corrplot)
+library(knitr)
+library(ggcorrplot)
+```
+
+```{r, echo = FALSE, message = FALSE, warning = FALSE, fig.show="hold"}
+
+df <- read_csv('FinalDF_nicecols.csv')
+
+vars_2_reduced <- subset(df, select = c('Mask Ratio', "% Adults with Diabetes", '% Unemployed', 'Home Ratio', '% Deaths from Chronic
+Resp Disease', '% Minority'))
+
+vars_2_orig <- subset(df, select = c('% Deaths from Heart Disease', '% Adults in Poverty', 'Mask Ratio', "% Adults with Diabetes", '% Unemployed', 'Home Ratio', '% Minority', '% Deaths from Chronic
+Resp Disease'))
+
+res_2_orig <- cor(vars_2_orig)
+plot1 <- ggcorrplot(res_2_orig, type = "upper", method = "circle", tl.cex = 8, hc.order = FALSE, colors = c("#6D9EC1", "white", "#E46726"), show.legend = FALSE) 
+# crop.borders(model_2_corrplot_orig, nx = 100)
+# , order = "original",
+#         tl.col = "black", tl.srt = 90, tl.cex = 0.75
+
+res_2_reduced <- cor(vars_2_reduced)
+plot2 <- ggcorrplot(res_2_reduced, type = "upper", method = "circle", tl.cex = 8, show.legend = FALSE, colors = c("#6D9EC1", "white", "#E46726"))
+
+combined_plot <- (plot1 | plot2) + theme(legend.position='bottom')
+
+combined_plot
+
+```
