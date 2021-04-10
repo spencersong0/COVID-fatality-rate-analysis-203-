@@ -389,17 +389,30 @@ mask_ratio, Diabetes_Diagnosed_Perc, Unemployment_Perc, home_ratio, Chronic_Resp
 Removed: Poverty, heart disease
 
 
-```{r}
+```{r, figures-side, fig.show="hold", out.width="70%"}
 library(corrplot)
 
-vars <- subset(df, select = c(mask_ratio, Diabetes_Diagnosed_Perc, Unemployment_Perc, home_ratio, Chronic_Respiratory_Disease_Death_Perc, Minority_Percentage))
+df_cols <- read_csv('FinalDF_nicecols.csv')
 
+vars_2_reduced <- subset(df_cols, select = c('Mask Ratio', "% Adults with Diabetes", '% Unemployed', 'Home Ratio', '% Deaths from Chronic Resp Disease', '% Minority'))
 
+vars_2_orig <- subset(df_cols, select = c('Mask Ratio', "% Adults with Diabetes", '% Unemployed', 'Home Ratio', '% Deaths from Chronic Resp Disease', '% Minority', '% Deaths from Heart Disease', '% Adults in Poverty'))
 
-res <- cor(vars)
-corrplot(res, type = "upper", order = "hclust", 
-         tl.col = "black", tl.srt = 45, tl.cex = 0.7)
+res_2_orig <- cor(vars_2_orig)
+model_2_corrplot_orig <- corrplot(res_2_orig, type = "upper", order = "hclust",
+         tl.col = "black", tl.srt = 45, tl.cex = 0.8)
+
+res_2_reduced <- cor(vars_2_reduced)
+model_2_corrplot_reduced <- corrplot(res_2_reduced, type = "upper", order = "hclust", 
+          tl.col = "black", tl.srt = 45, tl.cex = 0.8)
+
+# model_2_corrplot_orig | model_2_corrplot_reduced
 ```
+
+```{r}
+?rename
+```
+
 
 mask_ratio, Diabetes_Diagnosed_Perc, Unemployment_Perc, home_ratio, Chronic_Respiratory_Disease_Death_Perc, Minority_Percentage
 
