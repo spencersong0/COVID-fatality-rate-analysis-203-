@@ -41,7 +41,7 @@ The COVID-19 pandemic has overturned nearly all aspects of normal life over the 
 
 To answer this question, we analyze the cumulative COVID-19 fatality rate from January 22, 2020 through March 31, 2021. We calculate the fatality rate as the number of deaths per positive cases. We operationalize several categories of factors that likely have a causal relationship with fatality rate based on our research from media articles, publications, and government sources. These categories include pre-existing health conditions, enacted policy, and socioeconomic characteristics. We additionally include number of ICU beds per 10,000 people to represent the capacity of healthcare systems in each state.
 
-With this background knowledge about factors making people more prone to catching a severe case of COVID-19, we can perform a causal analysis to determine how prevalent these factors are at a state-level. Our causal analysis consists of three models. Our first model contains the variables we believe have the largest causal impact on death rate. Our second model builds on this to include more of our dataset, and finally, our third model includes all data we collected.
+With this background knowledge about factors making people more prone to catching a severe case of COVID-19, we can perform a causal analysis using the one-equation structural model to determine how prevalent these factors are at a state-level. Our causal analysis consists of three models. Our first model contains the variables we believe have the largest causal impact on death rate. Our second model builds on this to include more of our dataset, and finally, our third model includes all data we collected.
 
 ## Data Collection and Cleaning
 
@@ -196,7 +196,7 @@ TODO:
 
   
 
-```{r, echo=FALSE, warning = FALSE, message = FALSE, fig.cap="Changes in correlations between explanatory variables after removing some features in Model 2", fig.pos='!h', out.extra='trim={0 1cm 0 1cm},clip', fig.align="center"}
+```{r, echo=FALSE, warning = FALSE, message = FALSE, fig.cap="Changes in correlations between explanatory variables before (left) and after (right) removing some features in Model 2.", fig.pos='!h', out.extra='', fig.align="center"}
 df_figs <- read_csv('FinalDF_nicecols.csv')
 df_figs <- df_figs[-c(2, 9, 12), ] # remove Alaska, Hawaii, D.C.
 
@@ -207,27 +207,27 @@ vars_2_orig <- subset(df_figs, select = c('% Deaths from Heart Disease', '% Adul
 Resp Disease'))
 
 res_2_orig <- cor(vars_2_orig)
-model_2_plot1 <- ggcorrplot(res_2_orig, type = "upper", method = "square", tl.cex = 8, hc.order = FALSE, colors = c("#6D9EC1", "white", "#E46726"), show.legend = FALSE) 
+model_2_plot1 <- ggcorrplot(res_2_orig, type = "upper", method = "square", tl.cex = 8, tl.srt = 90, hc.order = FALSE, colors = c("#6D9EC1", "white", "#E46726"), show.legend = FALSE) 
 
 res_2_reduced <- cor(vars_2_reduced)
-model_2_plot2 <- ggcorrplot(res_2_reduced, type = "upper", method = "square", tl.cex = 8, show.legend = FALSE, colors = c("#6D9EC1", "white", "#E46726"))
+model_2_plot2 <- ggcorrplot(res_2_reduced, type = "upper", method = "square", tl.cex = 8, tl.srt = 90, show.legend = FALSE, colors = c("#6D9EC1", "white", "#E46726"))
 
 model_2_combined_plot <- (model_2_plot1 | model_2_plot2) + theme(legend.position='bottom')
 
 model_2_combined_plot
 ```
 
-```{r, echo=FALSE, warning = FALSE, message = FALSE, fig.cap="Changes in correlations between explanatory variables after removing some features in Model 3", fig.pos='!h', out.extra='trim={0 1cm 0 1cm},clip', fig.align="center"}
+```{r, echo=FALSE, warning = FALSE, message = FALSE, fig.cap="Changes in correlations between explanatory variables before (left) and after (right) removing some features in Model 3.", fig.pos='!h', out.extra='', fig.align="center"}
 
 vars_3_orig <- subset(df_figs, select = -c(`State`, `Deaths`, `Cases`, `Population`, `Population..20..`, `Population >65`, `ICUBeds`, `Fatality Rate`, `% Adults in Poverty`, `% Deaths from Heart Disease`))
 
 vars_3_reduced <- subset(df_figs, select = -c(`State`, `Deaths`, `Cases`, `Population`, `Population..20..`, `Population >65`, `ICUBeds`, `Fatality Rate`, `% Adults in Poverty`, `% Deaths from Heart Disease`, `Household Income`, `% Adults who Smoke`, `% Adults with Obesity`))
 
 res_3_orig <- cor(vars_3_orig)
-model_3_plot1 <- ggcorrplot(res_3_orig, type = "upper", method = "square", tl.cex = 6, hc.order = FALSE, colors = c("#6D9EC1", "white", "#E46726"), show.legend = FALSE) 
+model_3_plot1 <- ggcorrplot(res_3_orig, type = "upper", method = "square", tl.cex = 6, tl.srt = 90, hc.order = FALSE, colors = c("#6D9EC1", "white", "#E46726"), show.legend = FALSE) 
 
 res_3_reduced <- cor(vars_3_reduced)
-model_3_plot2 <- ggcorrplot(res_3_reduced, type = "upper", method = "square", tl.cex = 6, show.legend = FALSE, colors = c("#6D9EC1", "white", "#E46726"))
+model_3_plot2 <- ggcorrplot(res_3_reduced, type = "upper", method = "square", tl.cex = 6, tl.srt = 90, show.legend = FALSE, colors = c("#6D9EC1", "white", "#E46726"))
 
 model_3_combined_plot <- (model_3_plot1 | model_3_plot2) + theme(legend.position='bottom')
 
@@ -381,7 +381,7 @@ How Models 1 and 3 differed from Model 2. How it impacted our interpretations?
 
 # Limitations on Model
 
-As a team, evaluate all of the CLM assumptions that must hold for your model. However, do not report an exhaustive examination all 5 CLM assumption. Instead, bring forward only those assumptions that you think pose significant problems for your analysis. For each problem that you identify, describe the statistical consequences. If you are able to identify any strategies to mitigate the consequences, explain these strategies. 
+<!-- As a team, evaluate all of the CLM assumptions that must hold for your model. However, do not report an exhaustive examination all 5 CLM assumption. Instead, bring forward only those assumptions that you think pose significant problems for your analysis. For each problem that you identify, describe the statistical consequences. If you are able to identify any strategies to mitigate the consequences, explain these strategies. 
 
 Note that you may need to change your model specifications in response to violations of the CLM. 
 
@@ -394,7 +394,13 @@ TODO: causality concerns / collinearity
   - correlation matrix
   - draw causal theories?
 
-- IID
+- IID -->
+
+We assess the five classical linear model (CLM) assumptions and the violations of the one-equation structural model for our Model 2. This causal analysis relies on the CLM because our dataset consists of only 48 observations, one for each state in the contiguous U.S. Because of this, an accurate interpretation of our results requires analyzing the CLM assumptions: independent and identically distributed random variables, linear conditional expectation, no perfect collinearity, homoskedastic errors, and normally distributed errors. Additionally, we assess if our causal analysis violates any assumptions of the one-equation structural model, including omitted variables, reverse causality, and causal relationships between explanatory variables.
+
+Our model met the CLM assumptions surprisingly well. *Need help assessing IID* We observed that our model tends to slightly underpredict states with particularly low or high fatality rates and overpredict states with mid-range fatality rates. Our residuals versus predictions plot was not exactly linear around zero, which implies our linear model may not be the best fit. However, applying additional logarithmic transformations did not significantly improve the residuals, so we left our model with only % Minority having a log transformation. We proceed with caution when interpreting the model coefficients. A nonlinear model may have fit the data better, but this is out of scope for our work. 
+
+We believe there are several concerns with our model and the assumptions of the one-equation structural model.
 
 - Linear conditional expectation
 ###> To assess whether there is a linear conditional expectation, we've learned to look at the predicted vs. residuals of the model.
@@ -415,6 +421,9 @@ Our comments
 ###> To correct this, we will try variable transformations, hoping to end up with a more linear pattern in this plot.
 ### > Additionally, you may sometimes want to create predictor versus fitted plots, which may give you clues about what variables you need to transform.
 ```{r}
+# vars_2_reduced <- subset(df_figs, select = c('Mask Ratio', "% Adults with Diabetes", '% Unemployed', 'Home Ratio', '% Deaths from Chronic
+# Resp Disease', '% Minority'))
+
 df <- df %>% 
   mutate(
     model_two_preds = predict(model_two), 
@@ -432,12 +441,27 @@ unemployment_resids <- df %>%
   ggplot(aes(Unemployment_Perc, model_two_resids)) + 
   geom_point() + 
   stat_smooth()
+home_resids <- df %>% 
+  ggplot(aes(home_ratio, model_two_resids)) + 
+  geom_point() + 
+  stat_smooth()
+resp_resids <- df %>% 
+  ggplot(aes(Chronic_Respiratory_Disease_Death_Perc, model_two_resids)) + 
+  geom_point() + 
+  stat_smooth()
+minority_resids <- df %>% 
+  ggplot(aes(Minority_Percentage, model_two_resids)) + 
+  geom_point() + 
+  stat_smooth()
 ```
 
 ```{r}
 mask_resids
 diabetes_resids
 unemployment_resids
+home_resids
+resp_resids
+minority_resids
 ```
 - looks a bit worse, edge effects still
 
@@ -452,7 +476,7 @@ model_two$coefficients
 ```{r, message = FALSE}
 df %>% 
   select(
-    Fatality_Rate, mask_ratio, Diabetes_Diagnosed_Perc, Poverty_Perc, model_two_resids
+    Fatality_Rate, mask_ratio, Diabetes_Diagnosed_Perc, Poverty_Perc, home_ratio, Chronic_Respiratory_Disease_Death_Perc, Minority_Percentage, model_two_resids
   ) %>%
   GGally::ggpairs()
 ```
