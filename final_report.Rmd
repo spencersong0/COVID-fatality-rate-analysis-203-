@@ -562,34 +562,44 @@ If the team has taken up an explanatory (i.e. causal) question to evaluate, then
 Vaccine distribution
 
 We want to apply OVB concepts to our second regression model. We have determined the following as our 5 most important omitted variables:
+| Regression                          |
+|------------------------------------------------|
+| $Fatality Rate = \beta_0 + \beta_1 maskRatio + \beta_2 DiabetesDiagnosedPerc  +\beta_3 UnemploymentPerc +\beta_4 HomeRatio +\beta_5 ChronicRespiratoryDiseaseDeathPerc +\beta_6 log(MinorityPerc) + u$ |
+| Omitted Variables                   |
+| $extremity\_of\_weather$            |
+| $food\_quality$                     |
+| $registered\_Republican$            |
+| $distance\_from\_tourist\_hotspots$ |
+| $perception\_of\_COVID\_severity$   |
 
-| Regression                                     | Omitted Variable                |
-|------------------------------------------------|---------------------------------|
-| $Fatality Rate = \beta_0 + \beta_1 attendance + u$     | $extremity\_of\_weather$                |
-| $lifespan = \beta_0 + \beta_1 cigarettes + u$  | $exercise$                      |
-| $lifespan = \beta_0 + \beta_1 cigarettes + u$  | $time\_socializing$             |
-| $wage = \beta_0 + \beta_1 grad\_education + u$ | $experience$                    |
-| $wage = \beta_0 + \beta_1 grad\_education + u$ | desire to effect $social\_good$ |
 
-1. Diets and quality of food distribution (tied to distribution of healthy restaurants)
-Aggregated health of food availability throughout a state would likely be negatively correlated with COVID19 fatality cases. Overall, a healthier population will likely be more adverse to higher fatality rates and severe reactions to COVID19.
+1. "Food Quality": Quality and availability of healthy food throughout a state.
+"Food Quality" throughout a state would likely be negatively correlated with COVID19 fatality cases. Overall, a healthie
+r population will likely be more adverse to higher fatality rates and severe reactions to COVID-19.
+Next, we need to look at how the OVB correlates with each of the independent variables from our model.
+"Food Quality" will likely have no correlation with state mask policies or stay at home policies, as COVID1-19 policies are more correlated with government factors. "Food Quality" will likely have a high negative correlation with diabetes diagnoses and a negative correlation with unemployment percentages, no correlation with chronic respiratory disease percentages, and a positive with minority percentages. There may not necessarily be a good 'replacement' for this variable in the data that we have gathered.
+This leads us to conclude that the bias for this OVB is towards zero?, as the majority of correlations with independent variables have a positive correlation.
 
-3*. Weather
-One could make the argument that extreme temperature swings and humidity will be positively correlated with fatality rates. 
-<!-- It is well known that extreme temperature changeswill weaken a person's immune system and their body's ability to fight a virus. This would imply that states with less moderate weather will have higher fatality rates with COVID. A similar omitted variable that relates could be the humidity of the air-- as we know, virus' spread when there are lower humidity rates.  -->
-This bias could be relatively large given the lower percentage of fatality rates in the first place. 
+2. "Extreme Temperatures": Mean range of temperature changes across the state over the course of our dataset's time frame.
+We will argue that more extreme teperature ranges will be positively correlated with fatality rates. It is well known that extreme temperature changes will weaken a person's immune system and their body's ability to fight a virus. This would imply that states with more moderate weather will have a lower fatality rates with COVID-19. A similar omitted variable that relates could be the humidity of the air-- as we know, virus' spread when there are lower humidity rates. This bias could be relatively large given the lower percentage of fatality rates in the first place. 
+"Extreme Temperatures" will likely have no correlation with state mask policies and no correlation with state stay at home policies. Temperatures should not have an impact on state policies. "Extreme Temperatures" will also likely have no correlation with diabetes diagnoses, no correlation with unemployment percentages, no correlation with chronic respiratory disease percentages, and no correlation with minority percentages. Because we see weather and temperatures as uncorrelated with each of our independent variables, we can say that the direction of the OVB is towards zero? because of our assumption that it is positively correlated with fatality rates.
 
-6*. Political party ideology on COVID 19 and the distribution of their ideas
+3. "% registered Republican": A higher percentage of Republican voters in a state.
+We believe that political distributions of Republicans will lead to different state and government messages / resources concerning COVID-19 from state leaders. Downplaying the severity of COVID-19 by keeping available resources scarce could lead to uninformed state members, which should increase the fatality rate within a state.
+We believe that "% registered Republican" will have a negative correlation with fatality rates. The bias of this would likely be smaller, but the at-risk population that believes in COVID's severity through government infrastrucutre and messagin will likely take more drastic measures to protect themselves.
+"% registered Republican" will like have a strong negative correlation with state mask policies and stay-at-home policies."% registered Republican" will likely have no correlation with diabetes percentages and chronic respiratory percentages. This variable will likely have a strong negative correlation with minority percentages and unemployment rates.
+This leads us to conclude that the bias for this OVB is towards zero?, as the correlations with the independent variables are evenly distributed, and we have reason to believe that there is a negative correlation with fatality rates.
 
-% (of registered voters that are?) Republican --> different policies implemented?? different messaging about covid from leaders? --> impacts fatality rates
+4. "Distance from Tourist Hotspots": Aggregated Distance from Tourist Hotspots / High Frequency travel zones across a state.
+We believe that distances from tourist hotspots / urban zones will likely have a negative correlation with fatality rates. A further distance that cities are from unpredictable and unwanted influxes of tourists would likely correlate with lower fatality rates.
+"Distance from Tourist Hotspots" will likely have no correlation with state mask policies and stay-at-home policies. This variable will also likely have no correlation with minority percentages and unemployment rates, as well as with diabetes and chronic respiratory percentages. This variable is more related to unwanted influxes of tourists during COVID-19, and we will conclude that the direction of the bias is towards zero because of the 
 
-I believe that political ideology (Positive opinions on the media reporting of COVID severity) will have a negative? correlation with fatality rates. The bias of this would likely be smaller, but the at-risk population that believes in COVID's severity will likely take more drastic measures to protect themselves.
+5. "Perception of COVID-19 Severity": A survey value of the average perception of how severe / fatal COVID-19 is.
+I believe that a higher perception of how severe / fatal COVID-19 is would lead to lower fatality rates. People who are more concerned about the severity of COVID-19 will likely take many more personal precautions to watch for their own health and isolate if they have underlying health conditions or are immunocompromised.
+"Perception of COVID-19 Severity" will likely have a strong positive correlation with state mask policies, no correlation with diabetes diagnoses, no correlation with unemployment percentages, a positive correlation with state stay at home policies, no correlation with chronic respiratory disease percentages, and no correlation with minority percentages.
+This leads us to conclude that the bias for this OVB is towards zero?, as the correlations with the independent variables are evenly distributed, and we have reason to believe that there is a negative correlation with fatality rates.
 
-7*. Tourist Hotspots / travel patterns / travel zones: 
-I believe that distances from tourist hotspots / urban zones will likely have a negative correlation with fatality rates. A further distance that cities are from unpredictable and unwanted influxes of tourists would likely correlate with lower fatality rates.
-
-8. Informational resources on COVID 19 / Misspreading of information about COVID across states:
-opinion on covid severity
+Given our findings using our ANOVA testing and modeling, we see that a majority of our OVBs will induce bias that likely tends ____ zero.
 
 ### 6. Conclusion -- save 4 later
 
