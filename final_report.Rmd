@@ -19,6 +19,9 @@ library(ggplot2)
 library(dplyr)
 library(patchwork)
 library(olsrr)
+library(magick)
+library(knitr)
+library(ggcorrplot)
 ```
 
 # Introduction
@@ -190,6 +193,46 @@ TODO:
   - show scatterplots of Fatality_Rate vs everything else --> Spencer Hong
   - show correlation of "before and after" --> Jenny
   - boxplot to show outliers --> Spencer Song
+
+  
+
+```{r, echo=FALSE, warning = FALSE, message = FALSE, fig.cap="Changes in correlations between explanatory variables after removing some features in Model 2", fig.pos='!h', out.extra='trim={0 1cm 0 1cm},clip', fig.align="center"}
+df_figs <- read_csv('FinalDF_nicecols.csv')
+df_figs <- df_figs[-c(2, 9, 12), ] # remove Alaska, Hawaii, D.C.
+
+vars_2_reduced <- subset(df_figs, select = c('Mask Ratio', "% Adults with Diabetes", '% Unemployed', 'Home Ratio', '% Deaths from Chronic
+Resp Disease', '% Minority'))
+
+vars_2_orig <- subset(df_figs, select = c('% Deaths from Heart Disease', '% Adults in Poverty', 'Mask Ratio', "% Adults with Diabetes", '% Unemployed', 'Home Ratio', '% Minority', '% Deaths from Chronic
+Resp Disease'))
+
+res_2_orig <- cor(vars_2_orig)
+model_2_plot1 <- ggcorrplot(res_2_orig, type = "upper", method = "square", tl.cex = 8, hc.order = FALSE, colors = c("#6D9EC1", "white", "#E46726"), show.legend = FALSE) 
+
+res_2_reduced <- cor(vars_2_reduced)
+model_2_plot2 <- ggcorrplot(res_2_reduced, type = "upper", method = "square", tl.cex = 8, show.legend = FALSE, colors = c("#6D9EC1", "white", "#E46726"))
+
+model_2_combined_plot <- (model_2_plot1 | model_2_plot2) + theme(legend.position='bottom')
+
+model_2_combined_plot
+```
+
+```{r, echo=FALSE, warning = FALSE, message = FALSE, fig.cap="Changes in correlations between explanatory variables after removing some features in Model 3", fig.pos='!h', out.extra='trim={0 1cm 0 1cm},clip', fig.align="center"}
+
+vars_3_orig <- subset(df_figs, select = -c(`State`, `Deaths`, `Cases`, `Population`, `Population..20..`, `Population >65`, `ICUBeds`, `Fatality Rate`, `% Adults in Poverty`, `% Deaths from Heart Disease`))
+
+vars_3_reduced <- subset(df_figs, select = -c(`State`, `Deaths`, `Cases`, `Population`, `Population..20..`, `Population >65`, `ICUBeds`, `Fatality Rate`, `% Adults in Poverty`, `% Deaths from Heart Disease`, `Household Income`, `% Adults who Smoke`, `% Adults with Obesity`))
+
+res_3_orig <- cor(vars_3_orig)
+model_3_plot1 <- ggcorrplot(res_3_orig, type = "upper", method = "square", tl.cex = 6, hc.order = FALSE, colors = c("#6D9EC1", "white", "#E46726"), show.legend = FALSE) 
+
+res_3_reduced <- cor(vars_3_reduced)
+model_3_plot2 <- ggcorrplot(res_3_reduced, type = "upper", method = "square", tl.cex = 6, show.legend = FALSE, colors = c("#6D9EC1", "white", "#E46726"))
+
+model_3_combined_plot <- (model_3_plot1 | model_3_plot2) + theme(legend.position='bottom')
+
+model_3_combined_plot
+```
 
 <!-- At the same time, it is important to remember that you are not trying to create one perfect model. You will create several specifications, giving the reader a sense of how robust (or sensitive) your results are to modeling choices, and to show that you're not just cherry-picking the specification that leads to the largest effects. -->
 
@@ -409,7 +452,7 @@ model_two$coefficients
 ```{r, message = FALSE}
 df %>% 
   select(
-    Fatality_Rate, mask_ratio, Diabetes_Diagnosed_Perc, Poverty_Perc, model_limited_resids
+    Fatality_Rate, mask_ratio, Diabetes_Diagnosed_Perc, Poverty_Perc, model_two_resids
   ) %>%
   GGally::ggpairs()
 ```
