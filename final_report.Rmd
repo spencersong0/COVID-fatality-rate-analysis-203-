@@ -297,7 +297,7 @@ model_2_combined_plot <- (model_2_plot1 | model_2_plot2) + theme(legend.position
 model_2_combined_plot
 ```
 
-```{r, echo=FALSE, warning = FALSE, message = FALSE, fig.cap="Changes in correlations between explanatory variables before (left) and after (right) removing some features in Model 3.", fig.pos='!h', out.extra='', fig.align="center"}
+```{r, echo=FALSE, warning = FALSE, message = FALSE, fig.cap='Changes in correlations between explanatory variables before (left) and after (right) removing some features in Model 3.', fig.pos='!h', out.extra='', fig.align="center"}
 
 vars_3_orig <- subset(df_figs, select = -c(`State`, `Deaths`, `Cases`, `Population`, `Population..20..`, `Population >65`, `ICUBeds`, `Fatality Rate`, `% Adults in Poverty`, `% Deaths from Heart Disease`))
 
@@ -444,7 +444,7 @@ We assess the five classical linear model (CLM) assumptions and the violations o
 
 Our model met the CLM assumptions surprisingly well. *Need help assessing IID* We observed that our model tends to slightly underpredict states with particularly low or high fatality rates and overpredict states with mid-range fatality rates. Our residuals versus predictions plot was not exactly linear around zero, which implies our linear model may not be the best fit. However, applying additional logarithmic transformations did not significantly improve the residuals, so we left our model with only % Minority having a log transformation. We proceed with caution when interpreting the model coefficients. A nonlinear model may have fit the data better, but this is out of scope for our work. 
 
-We believe there are several concerns with our model and the assumptions of the one-equation structural model.
+We believe there are several concerns with our model and the assumptions of the one-equation structural model. First, there could plausibly exist some reverse causality in our model, particularly with the policy variables. For example, our model currently assumes that longer mask mandates will cause an impact on COVID-19 fatality rates. However, it is also reasonable to say that high COVID-19 fatality rates will cause mask mandates to last longer. The latter causality statement is likely stronger than the first, which is why our coefficient on Mask Ratio is positive. The coefficient on this feature, therefore, explains the correlation between Mask Ratio and Fatality rate but not the causality. Second, it is also plausible that causal relationships exist between our explanatory variables. This is likely most prevalent among our health features. We tried to account for this by limiting the number of health variables we use. For instance, we omitted % of Adults with Obesity but left % of Adults with Diabetes in our model because obesity is a direct cause of diabetes. However, it is likely that we did not catch all of these relationships, which causes some causal concerns with our health features. Finally, omitted variable bias is another concern, which is discussed further in the next section.
 
 - Linear conditional expectation
 ###> To assess whether there is a linear conditional expectation, we've learned to look at the predicted vs. residuals of the model.
