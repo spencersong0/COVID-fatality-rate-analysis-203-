@@ -148,7 +148,7 @@ The team identified fatality rates as the key variable to be measured as we look
 
 The team identified fatality rates as the key variable to be measured as we look to understand the relationship between fatality rates and several chosen variables that fall within the health, policy, or socioeconomic categories.
 
-## An Explanatory Analsis
+## An Explanatory Analysis
 Our model is an explanatory one, as we not only describe the COVID-19 data and trends but also provide causal relationships between each chosen independent and dependent variables. We plan on explaining causes in the changes in fatality rates.
 
 <!-- 3. What [covariates](https://en.wikipedia.org/wiki/Dependent_and_independent_variables#Statistics_synonyms) help you achieve your modeling goals? What covariates are problematic, either due to *collinearity*, or because they will absorb some of a causal effect you want to measure? -->
@@ -175,6 +175,7 @@ When performing EDA on our features, we plotted and analyzed scatterplots of fat
 \textbf{Policy}: For policy variables, no logarithmic or polynomial transformation conducted improved linear relationships between our explanatory variables (duration of each state's mask mandate & stay-at-home policies) and fatality rate.
 
 \textbf{Socioeconomic}: TODO
+
 ```{r}
 #- show minority percentage scatterplots: normal vs logged --> Kevin
 plot3 <- ggplot(df, aes(y = Fatality_Rate, x = Minority_Percentage)) +
@@ -208,7 +209,7 @@ TODO:
 TODO: description of scatter below: From EDA, justification
 This scatter plot is why we chose to use unemployment to represent our socioeconomic sectors.
 
-```{r, echo=FALSE, warning = FALSE, message = FALSE, fig.cap="Scatterplots for each explanatory variable vs Fatality Rate", fig.pos='!h', out.extra='trim={0 1cm 0 1cm},clip', fig.align="center"}
+```{r, echo=FALSE, warning = FALSE, message = FALSE, fig.cap="Scatterplots for each explanatory variable vs Fatality Rate", fig.pos='!h', out.extra='', fig.align="center"}
 df_figs <- read_csv('FinalDF_nicecols.csv')
 df_figs <- df_figs[-c(2, 9, 12), ] # remove Alaska, Hawaii, D.C.
 
@@ -336,7 +337,7 @@ model_3_combined_plot
 
 
 ## Limited Model 
-$\text{Fatality Rate} = \beta_0 + \beta_1 \text{ Mask Policy} + \beta_2 \text{ % Adults with Diabetes} + \beta_3 \text{ % Unemployment} + u$
+$\text{Fatality Rate} = \beta_0 + \beta_1 \text{ Mask Policy} + \beta_2 \text{ \% Adults with Diabetes} + \beta_3 \text{ \% Unemployment} + u$
 
 Of all the variables we considered, we chose to include the duration a mask mandate policy was in place, the % of adults diagnosed with diabetes, and the percent unemployment for each state. We chose one variable from each specific topic as to provide an encompassing view of possible causes for the change in fatality rates. These three were determined to be the most crucial from all the explanatory variables. For mask mandate, public health officials consistently stressed the efficacy to reduce transmission of COVID-19, which would reduce the number of fatalities. For percent adults with diabetes, we made the assumption that it encompasses several other health conditions as people with diabetes can tend to have additional underlying health conditions. Therefore, we wanted to include this variable as it would provide an overarching health explanatory variable. For percent unemployment, individuals without a job would have no or inadequate health care, which could lead them to having less accessibility and opportunities to receive medical treatments. During the pandemic, research shows that low-income areas have been severly impacted by COVID-19, which led to us choosing percent unemployment as the socioeconomic explanatory variable for the limited model.
 
@@ -354,7 +355,8 @@ After running the coefficient test, we observe that both mask duration and unemp
 The VIF values for all three independent variables are all less than two, which indicates that there is minimal multicollinearity among them. With that said, the tolerance, or percent of variance in each variable that cannot be accounted for by the other predictors, of each variable is greater than 0.60. This suggests that there are variables not in the model that account for those predictors. Given this information, we will construct a second model that includes a few more explanatory variables in order to lower the tolerance values. Then, Model Two will be compared to the Limited Model to determine which model provides a better fit for predicted values. The variables to be added are the duration of stay-at-home policies, percentage of deaths from chronic respiratory diseases, and the log-transformation of minority percentage of each state.
 
 ## Model Two
-$\text{Fatality Rate} = \beta_0 + \beta_1 \text{ Mask Policy} + \beta_2 \text{ % Adults with Diabetes} + \beta_3 \text{ % Unemployment} + \beta_4 \text{ Home Policy} + \beta_5 \text{ % Chronic Resp Deaths} + \beta_6 \text{ log(% Minority)} + u$
+
+$\text{Fatality Rate} = \beta_0 + \beta_1 \text{ Mask Policy} + \beta_2 \text{ \% Adults with Diabetes} + \beta_3 \text{ \% Unemployment} + \beta_4 \text{ Home Policy} + \beta_5 \text{ \% Chronic Resp Deaths} + \beta_6 \text{ log(\% Minority)} + u$
 
 ```{r}
 model_two <- lm(Fatality_Rate ~ mask_ratio + Diabetes_Diagnosed_Perc + Unemployment_Perc + home_ratio + Chronic_Respiratory_Disease_Death_Perc + log(Minority_Percentage), data = df)
@@ -372,7 +374,7 @@ With the additional variables, Model Two has three statistically significant exp
 The VIF values for all six independent variables are all less than four, which indicates that there is minimal multicollinearity among them. In addition, the tolerance levels of each variable were lower than the Limited Model indicating that the added variables accounted for more for one another than the previous model. The Anova test we ran to compare the fits of the Limited Model and Model Two calculates a p-value less than a 0.05 level of significance level. This shows that by adding the new nine variables leads to a more significant improvement of predicted fatality rates compared to the Limited Model. We will proceed to constructing a third model that will add six other explanatory variables to include: percent of adults living in multi-unit dwellings, percent of crowding, percent of asthma deaths, ICU beds per 10,000, percent of stroke deaths, and percent of adults over the age of 65. Model Three will similarly be examined if it is a better fit than Model Two as currently Model Two is our preferred model.
 
 ## Model Three
-$\text{Fatality Rate} = \beta_0 + \beta_1 \text{ Mask Policy} + \beta_2 \text{ % Adults with Diabetes} + \beta_3 \text{ % Unemployment} + \beta_4 \text{ Home Policy} + \beta_5 \text{ % Chronic Resp Deaths} + \beta_6 \text{ log(% Minority)} + \beta_7 \text{ % Multi-Unit Dwelling)} + \beta_8 \text{ % Crowding} + \beta_9 \text{ % Asthma Deaths} + \beta_10 \text{ % ICUBedsPer10K} + \beta_11 \text{ % Stroke Deaths} + \beta_12 \text{ % Adults >65} + u$
+$\text{Fatality Rate} = \beta_0 + \beta_1 \text{ Mask Policy} + \beta_2 \text{ \% Adults with Diabetes} + \beta_3 \text{ \% Unemployment} + \beta_4 \text{ Home Policy} + \beta_5 \text{ \% Chronic Resp Deaths} + \beta_6 \text{ log(\% Minority)} + \beta_7 \text{ \% Multi-Unit Dwelling)} + \beta_8 \text{ \% Crowding} + \beta_9 \text{ \% Asthma Deaths} + \beta_10 \text{ \% ICUBedsPer10K} + \beta_11 \text{ \% Stroke Deaths} + \beta_12 \text{ \% Adults >65} + u$
 
 ```{r}
 model_three <- lm(Fatality_Rate ~ Multi_Unit_Perc + Unemployment_Perc + home_ratio + log(Minority_Percentage) + Crowding_Perc + Asthma_Deaths_Perc + Chronic_Respiratory_Disease_Death_Perc + ICUBedsPer10000 + Diabetes_Diagnosed_Perc + Stroke_Death_Perc + mask_ratio + Senior_Perc, data = df)
@@ -393,7 +395,7 @@ Other than the predictor variable for percent of adults diagnosed with diabetes 
 ## Comparing and Selecting our Model
 Comparing the three models above, we have chosen to emphasize Model Two. First, Model Two includes more explanatory features than the Limited Model and Model Two has proven to be a better fit than the Limited Model via the Anova test we ran. Model Three does appear to be statistically a better fit than Model Two; however, we have concerns about causality and the presence of multicollinearity. Additionally, the large negative coefficient for the percent of stroke deaths predictor variable in Model Three is worrying. Therefore, we have chosen Model Two as our preferred model for the rest of our analysis.
 
-$\text{Fatality Rate} = \beta_0 + \beta_1 \text{ Mask Policy} + \beta_2 \text{ % Adults with Diabetes} + \beta_3 \text{ % Unemployment} + \beta_4 \text{ Home Policy} + \beta_5 \text{ % Chronic Resp Deaths} + \beta_6 \text{ log(% Minority)} + u$
+<!--$\text{Fatality Rate} = \beta_0 + \beta_1 \text{ Mask Policy} + \beta_2 \text{ % Adults with Diabetes} + \beta_3 \text{ % Unemployment} + \beta_4 \text{ Home Policy} + \beta_5 \text{ % Chronic Resp Deaths} + \beta_6 \text{ log(% Minority)} + u$-->
 
 
 <!-- Although the models have different emphases, each one must still be a reasonable choice given your modeling goals.  The idea is to choose models that encircle the space of reasonable modeling choices, and to give an overall understanding of how these choices impact results. -->
@@ -481,65 +483,65 @@ Our comments
 ###> This doesn't look good. There seems to be a pretty clear non-linear relationship in this data -- perhaps parabolic or logarithmic.
 ###> To correct this, we will try variable transformations, hoping to end up with a more linear pattern in this plot.
 ### > Additionally, you may sometimes want to create predictor versus fitted plots, which may give you clues about what variables you need to transform.
-```{r}
+```{r, echo = FALSE, message = FALSE, warning = FALSE}
 # vars_2_reduced <- subset(df_figs, select = c('Mask Ratio', "% Adults with Diabetes", '% Unemployed', 'Home Ratio', '% Deaths from Chronic
 # Resp Disease', '% Minority'))
 
-df <- df %>% 
-  mutate(
-    model_two_preds = predict(model_two), 
-    model_two_resids = resid(model_two)
-  ) 
-mask_resids <- df %>% 
-  ggplot(aes(mask_ratio, model_two_resids)) + 
-  geom_point() + 
-  stat_smooth()
-diabetes_resids <- df %>% 
-  ggplot(aes(Diabetes_Diagnosed_Perc, model_two_resids)) + 
-  geom_point() + 
-  stat_smooth()
-unemployment_resids <- df %>% 
-  ggplot(aes(Unemployment_Perc, model_two_resids)) + 
-  geom_point() + 
-  stat_smooth()
-home_resids <- df %>% 
-  ggplot(aes(home_ratio, model_two_resids)) + 
-  geom_point() + 
-  stat_smooth()
-resp_resids <- df %>% 
-  ggplot(aes(Chronic_Respiratory_Disease_Death_Perc, model_two_resids)) + 
-  geom_point() + 
-  stat_smooth()
-minority_resids <- df %>% 
-  ggplot(aes(Minority_Percentage, model_two_resids)) + 
-  geom_point() + 
-  stat_smooth()
+# df <- df %>% 
+#   mutate(
+#     model_two_preds = predict(model_two), 
+#     model_two_resids = resid(model_two)
+#   ) 
+# mask_resids <- df %>% 
+#   ggplot(aes(mask_ratio, model_two_resids)) + 
+#   geom_point() + 
+#   stat_smooth()
+# diabetes_resids <- df %>% 
+#   ggplot(aes(Diabetes_Diagnosed_Perc, model_two_resids)) + 
+#   geom_point() + 
+#   stat_smooth()
+# unemployment_resids <- df %>% 
+#   ggplot(aes(Unemployment_Perc, model_two_resids)) + 
+#   geom_point() + 
+#   stat_smooth()
+# home_resids <- df %>% 
+#   ggplot(aes(home_ratio, model_two_resids)) + 
+#   geom_point() + 
+#   stat_smooth()
+# resp_resids <- df %>% 
+#   ggplot(aes(Chronic_Respiratory_Disease_Death_Perc, model_two_resids)) + 
+#   geom_point() + 
+#   stat_smooth()
+# minority_resids <- df %>% 
+#   ggplot(aes(Minority_Percentage, model_two_resids)) + 
+#   geom_point() + 
+#   stat_smooth()
 ```
 
-```{r}
-mask_resids
-diabetes_resids
-unemployment_resids
-home_resids
-resp_resids
-minority_resids
+```{r, echo = FALSE, message = FALSE, warning = FALSE}
+# mask_resids
+# diabetes_resids
+# unemployment_resids
+# home_resids
+# resp_resids
+# minority_resids
 ```
 - looks a bit worse, edge effects still
 
 
 - No perfect collinearity
 ### > First, we can look at our coefficients, and notice that R has not dropped any variables.
-```{r}
-model_two$coefficients
+```{r, echo = FALSE, message = FALSE, warning = FALSE}
+# model_two$coefficients
 ```
 - no perfect collinearity
 
 ```{r, message = FALSE}
-df %>% 
-  select(
-    Fatality_Rate, mask_ratio, Diabetes_Diagnosed_Perc, Poverty_Perc, home_ratio, Chronic_Respiratory_Disease_Death_Perc, Minority_Percentage, model_two_resids
-  ) %>%
-  GGally::ggpairs()
+# df %>% 
+#   select(
+#     Fatality_Rate, mask_ratio, Diabetes_Diagnosed_Perc, Poverty_Perc, home_ratio, Chronic_Respiratory_Disease_Death_Perc, Minority_Percentage, model_two_resids
+#   ) %>%
+#   GGally::ggpairs()
 ```
 
 
@@ -549,21 +551,21 @@ df %>%
 ### > Another idea is to examine the scale-location plot. Homoskedasticity would show up on this plot as a flat smoothing curve.
  
 ```{r}
-plot(model_two, which=3)
+# plot(model_two, which=3)
 ```
 - homoskedasticity actually not lookin too bad --> model_two looking 10/10!!!
 
 ### > This plot looks quite good, suggesting no major problem with heteroskedasticity.
 - Normally distributed errors
 ```{r}
-plot_one <- df %>% 
-  ggplot(aes(x = model_two_resids)) + 
-  geom_histogram()
-  
-plot_two <- df %>% 
-  ggplot(aes(sample = model_two_resids)) + 
-  stat_qq() + stat_qq_line()
-plot_one / plot_two
+# plot_one <- df %>% 
+#   ggplot(aes(x = model_two_resids)) + 
+#   geom_histogram()
+#   
+# plot_two <- df %>% 
+#   ggplot(aes(sample = model_two_resids)) + 
+#   stat_qq() + stat_qq_line()
+# plot_one / plot_two
 ```
 - not too bad!! some minor deviation from normality towards the tails
 - high frequency of values just below -0.005
@@ -633,7 +635,7 @@ Make sure that you end your report with a discussion that distills key insights 
 
 TODO: all
 
-## Rubric for Evaluation
+<!--## Rubric for Evaluation
 
 You may use the following, loosely structured rubric to guide your writing.
 
@@ -658,4 +660,4 @@ You may use the following, loosely structured rubric to guide your writing.
 
 - **Conclusion.** Does the conclusion address the research question? Does it raise interesting points beyond numerical estimates? Does it place relevant context around the results?
 
-- Are there any other errors, faulty logic, unclear or unpersuasive writing, or other elements that leave you less convinced by the conclusions?
+- Are there any other errors, faulty logic, unclear or unpersuasive writing, or other elements that leave you less convinced by the conclusions? -->
