@@ -385,7 +385,7 @@ The variance inflation factor (VIF) values for all three independent variables a
 
 For Model Two, we added to the variables included in our Limited Model. We initially considered several additional variables that did not make it into the final model. In particular, we decided to not include percent of deaths from heart disease and percent of adults living in poverty because of their strong correlations with other features. To help us evaluate multicollinearity and causal relationships, we examined the correlations between each of explanatory variables. Figure 4 shows correlation matrices for Model Two, where the matrix on the left displays all features we were considering for our model and the right matrix shows the variables we ultimately decided to include in our model. The left matrix in Figure 4 shows that there is high correlation between several features, so we dropped % Deaths from Heart Disease and % Adults in Poverty to reduce multicollinearity. The right matrix shows the correlations after dropping these features, and there is great improvement. The final new variables included in Model Two are the duration of stay-at-home policies, percentage of deaths from chronic respiratory diseases, and the log-transformation of minority percentage of each state, in addition to the features already in the Limited Model
 
-```{r, echo=FALSE, warning = FALSE, message = FALSE, fig.cap="Changes in correlations between explanatory variables before (left) and after (right) removing some features in Model 2.", fig.pos='!h', out.extra='', fig.align="center"}
+```{r, echo=FALSE, warning = FALSE, message = FALSE, fig.cap="Changes in correlations between explanatory variables before (left) and after (right) removing some features in Model 2.", fig.pos='!h', out.extra='trim={0 .5cm 0 0},clip', fig.align="center"}
 
 vars_2_reduced <- subset(df_figs, select = c('Mask Ratio', "% Adults with Diabetes", '% Unemployed', 'Home Ratio', '% Deaths from Chronic
 Resp Disease', '% Minority'))
@@ -437,7 +437,7 @@ The VIF values for all six independent variables are all less than four, which i
 
 Model Three is our most extensive model and includes six additional explanatory variables: percent of adults living in multi-unit dwellings, percent of crowding, percent of asthma deaths, ICU beds per 10,000, percent of stroke deaths, and percent of adults over the age of 65. When choosing which features to include in Model Three, we performed a similar multicollinearity analysis that we did for Model Two. The left correlation matrix in Figure 5 shows correlations between all variables we were initially considering. Because of high correlations between features, we dropped Household Income, % Adults who Smoke, and % Adults with Obesity. This process helped us strategically select which features to include in our model to stay within the assumptions of the one-equation structural model, and our model results are described in the next section.
 
-```{r, echo=FALSE, warning = FALSE, message = FALSE, fig.cap='Changes in correlations between explanatory variables before (left) and after (right) removing some features in Model 3.', fig.pos='!h', out.extra='', fig.align="center"}
+```{r, echo=FALSE, warning = FALSE, message = FALSE, fig.cap='Changes in correlations between explanatory variables before (left) and after (right) removing some features in Model 3.', fig.pos='!h', out.extra='trim={0 1cm 0 0},clip', fig.align="center"}
 
 vars_3_orig <- subset(df_figs, select = -c(`State`, `Deaths`, `Cases`, `Population`, `Population..20..`, `Population >65`, `ICUBeds`, `Fatality Rate`, `% Adults in Poverty`, `% Deaths from Heart Disease`))
 
@@ -456,7 +456,7 @@ model_3_combined_plot
 
 ### Model Equation 
 
-$\text{Fatality Rate} = \beta_0 + \beta_1 \text{ Mask Policy} + \beta_2 \text{ \% Adults with Diabetes} + \beta_3 \text{ \% Unemployment} + \beta_4 \text{ Home Policy} + \beta_5 \text{ \% Chronic Resp Deaths} + \beta_6 \text{ log(\% Minority)} + \beta_7 \text{ \% Multi-Unit Dwelling)} + \beta_8 \text{ \% Crowding} + \beta_9 \text{ \% Asthma Deaths} + \beta_10 \text{ \% ICUBedsPer10K} + \beta_11 \text{ \% Stroke Deaths} + \beta_12 \text{ \% Adults >65} + u$
+$\text{Fatality Rate} = \beta_0 + \beta_1 \text{ Mask Policy} + \beta_2 \text{ \% Adults with Diabetes} + \beta_3 \text{ \% Unemployment} + \beta_4 \text{ Home Policy} + \beta_5 \text{ \% Chronic Resp Deaths} + \beta_6 \text{ log(\% Minority)} + \beta_7 \text{ \% Multi-Unit Dwelling)} + \beta_8 \text{ \% Crowding} + \beta_9 \text{ \% Asthma Deaths} + \beta_{10} \text{ \% ICUBedsPer10K} + \beta_{11} \text{ \% Stroke Deaths} + \beta_{12} \text{ \% Adults >65} + u$
 
 ```{r, echo = FALSE, message = FALSE, warning = FALSE}
 model_three <- lm(Fatality_Rate ~ Multi_Unit_Perc + Unemployment_Perc + home_ratio + 
@@ -679,54 +679,48 @@ We believe there are several concerns with our model and the assumptions of the 
 > This is not a problem for unbiasedness, and it is not a problem for our standard errors.  However, this will threaten the validity of our t-tests and confidence intervals.  We may hope to fix this problem with a variable transformatin. -->
 
 
-### 5. Discussion of Omitted Variables -- All, led by Spencer Song
+# Discussion of Omitted Variables
 
 If the team has taken up an explanatory (i.e. causal) question to evaluate, then identify what you think are the 5 most important *omitted variables* that bias results you care about. For each variable, you should *reason about the direction of bias* caused by omitting this variable. If you can argue whether the bias is large or small, that is even better. State whether you have any variables available that may proxy (even imperfectly) for the omitted variable. Pay particular attention to whether each omitted variable bias is *towards zero or away from zero*. You will use this information to judge whether the effects you find are likely to be real, or whether they might be entirely an artifact of omitted variable bias.
 
-
-We want to apply OVB concepts to our second regression model. We have determined the following as our 5 most important omitted variables:
 TODO: Intro transitioning from what we have and results to considerations for OVB
-| Regression                          |
-|------------------------------------------------|
-| $Fatality Rate = \beta_0 + \beta_1 maskRatio + \beta_2 DiabetesDiagnosedPerc  +\beta_3 UnemploymentPerc +\beta_4 HomeRatio +\beta_5 ChronicRespiratoryDiseaseDeathPerc +\beta_6 log(MinorityPerc) + u$ |
-| Omitted Variables                   |
-| $extremity\_of\_weather$            |
-| $food\_quality$                     |
-| $registered\_Republican$            |
-| $distance\_from\_tourist\_hotspots$ |
-| $perception\_of\_COVID\_severity$   |
+We want to apply OVB concepts to our second regression model. We have determined the following as our 5 most important omitted variables:
+
+### Model Equation
+$\text{Fatality Rate} = \beta_0 + \beta_1 \text{ Mask Policy} + \beta_2 \text{ \% Adults with Diabetes} + \beta_3 \text{ \% Unemployment} + \beta_4 \text{ Home Policy} + \beta_5 \text{ \% Chronic Resp Deaths} + \beta_6 \text{ log(\% Minority)} + u$
 
 
-1. "Food Quality": Quality and availability of healthy food throughout a state.
+1. \textbf{"Food Quality"}: Quality and availability of healthy food throughout a state.
 "Food Quality" throughout a state would likely be negatively correlated with COVID-19 fatality cases. Overall, a healthier population will likely be more adverse to higher fatality rates and severe reactions to COVID-19.
 "Food Quality" will likely have no correlation with state mask policies, stay-at-home policies, and chronic respiratory disease percentages. We observe no OVB for these independent variables.
 "Food Quality" will likely have a high negative correlation with diabetes diagnoses and a negative correlation with unemployment percentages. Because the independent variables have a positive impact on fatality rates and have a negative correlation with our omitted variable, we conclude that the direction of the OVB is towards zero, as we have likely overstated the effects of these independent variables on fatality rates.
 "Food Quality" will likely have a positive correlation with minority percentages, and as minority has a negative causal impact on fatality rates, the direction of the OVB will be towards zero, and we have overstated the impact of minority percentage.
 There may not necessarily be a good 'replacement' for this variable in the data that we have gathered, as it is categorically very different from the rest of our other explanatory variables.
 
-2. "Perception of COVID-19 Severity": A survey value of the average perception of how severe / fatal COVID-19 is.
+2. \textbf{"Perception of COVID-19 Severity":} A survey value of the average perception of how severe / fatal COVID-19 is.
 We believe that a higher perception of how severe / fatal COVID-19 would correlate with lower fatality rates. People who are more concerned about the severity of COVID-19 will likely be more cautious in caring for their own health and isolate if they have underlying health conditions or are immunocompromised.
 "Perception of COVID-19 Severity" will likely have no correlation with diabetes diagnoses, unemployment percentages, and minority percentages.
 "Perception of COVID-19 Severity" will likely have a strong positive correlation with state mask policies, a positive correlation with state stay at home policies, and a positive correlation with chronic respiratory disease percentages. As state mask policies have a positive causal impact on fatality rates, our direction of our OVB is towards zero. But for stay-at-home policies and chronic respiratory disease percentages, we have a negative causal impact on fatality rates, so the direction fo our OVB is away from zero. For these policies, we are likely overstating their impact compared to a regression where we include "Perception of COVID-19 Severity."
 We don't necessarily have a great replacement for this variable. We would have assumed that policies would be a replacement, but we have inverse relationships in both of our policies, so it isn't clear how we could find a 'replacement' for this variable.
 
-3. "% registered Republican": A higher percentage of Republican voters in a state.
+3. \textbf{"\% registered Republican":} A higher percentage of Republican voters in a state.
 We believe that "% registered Republican" will have a negative correlation with fatality rates. We believe that higher Republican percentages will be correlated with less COVID-19 resources and policies in general from state government.
-"% registered Republican" will likely have no correlation with diabetes percentages and chronic respiratory percentages.
-"% registered Republican" will like have a strong negative correlation with state mask policies and stay-at-home policies. This shows that the direction of our bias is away from zero.
+"% registered Republican" will likely have no correlation with diabetes percentages and chronic respiratory percentages. This variable will also have a strong negative correlation with state mask policies and stay-at-home policies. This shows that the direction of our bias is away from zero.
 This variable will likely have a strong negative correlation with minority percentages and unemployment rates, which will direct our bias further away from zero.
 This is also a difficult line of reasoning, as we have seen from our regression that policies in general led to a decrease in fatality rates, which suggests some lines of reverse causality from what we originally thought. So the bias for this variable could very easily be switched and be towards zero instead. Our policy variables are a good replacement 
 
-4. "Population Percentage in Urban Zones": The percentage of the state's population that live in urban zones.
+4. \textbf{"Population \% in Urban Zones":} The percentage of the state's population that live in urban zones.
 We believe that this variable will have a positive correlation with fatality rates, as clusters of individuals would likely be more quickly impacted by COVID-19. This variable likely has no correlation with ethnic percentages, unemployment percentages, chronic respiratory diseases
-"Extreme Temperature" ranges will weaken a person's immune system and their body's ability to fight a virus. This would imply that states with more moderate weather will have a lower fatality rates with COVID-19.
-"Extreme Temperature" will likely have no correlation with state policies, stay-at-home policies, diabetes diagnoses, unemployment percentages, and chronic respiratory disease percentages.
 
-5. "Exercise Rates": Mean exercise per person per week
+5. \textbf{"Exercise Rates":} Mean exercise per person per week
 We believe that "Exercise Rates" will be negatively correlated with fatality rates. Healthier populations should, in general, be correlated with lower fatality rates. "Exercise Rates" will likely have no correlation with state mask policies, stay-at-home policies,  minority percentages, and unemployment percentages. This omitted variable will likely have a negative correlation with diabetes and chronic respiratory diseases, which says that our direction of our bias is away from zero. We have likely overstated the causal effect of health variables on fatality rates, but this is likely to be a small effect. We don't necessarily have a variable that can replace activity in a population, but our health variables are likely indicators that would impact fatality rates.
 
+```{}
+ovb_table <- data.frame("Food Quality" = 1:2, "Age" = c(21,15), "Name" = c("John","Dora"))
+stargazer()
+```
 
-As each of these 
+As each of these
 This leads us to conclude that the bias for this OVB is towards zero?, as the correlations with the independent variables are evenly distributed, and we have reason to believe that there is a negative correlation with fatality rates.
 
 Given our findings using our ANOVA testing and modeling, we have seen that our independent variables are in general ______.
@@ -736,6 +730,8 @@ TODO: Table of towards away conclusion / variables Spencer Song
 
 ### 6. Conclusion
 Make sure that you end your report with a discussion that distills key insights from your estimates and addresses your research question.
+
+
 - Our expectations and assumptions going into EDA
 - A deeper dive into practical significance and what we took away from this and how it relates to our research question
 - Unexpected relationships and possible logic paths for explanation, roadblocks
