@@ -82,19 +82,19 @@ label_size <- 3.6
 Minority_plot <- ggplot(df_pre_drop, aes(Minority_Percentage, y = 0)) +
   geom_boxplot() + 
   geom_text(size = label_size, aes(label = minority_outliers), nudge_y = 0.15) +
-  labs(y = '', x = '% Minorities') +
-  theme(axis.text.y = element_blank(), axis.ticks = element_blank())
+  labs(y = '', x = '% Minorities', title = 'Boxplots for Various Demographic Features and their Outliers') +
+  theme_minimal() + theme(axis.text.y = element_blank(), axis.ticks = element_blank())
 Multi_Unit_Plot <- ggplot(df_pre_drop, aes(Multi_Unit_Perc, y = 0)) +
   geom_boxplot() + 
   geom_text(size = label_size, aes(label = multi_unit_outliers), nudge_y = 0.15, nudge_x = -0.035) +
   labs(y = '', x = '% Adults in Multi-Unit Dwellings') +
-  theme(axis.text.y = element_blank(), axis.ticks = element_blank())
+  theme_minimal() + theme(axis.text.y = element_blank(), axis.ticks = element_blank())
 Crowding_Plot <- ggplot(df_pre_drop, aes(Crowding_Perc, y = 0)) +
   geom_boxplot() + 
   geom_text(size = label_size, aes(label = crowding_outliers), nudge_y = 0.15) +
   labs(y = '', x = '% Crowding') +
-  theme(axis.text.y = element_blank(), axis.ticks = element_blank())
-combined_plot <- (Minority_plot / Multi_Unit_Plot / Crowding_Plot) + labs(tile = 'Boxplots for selected socioeconomic features')
+  theme_minimal() + theme(axis.text.y = element_blank(), axis.ticks = element_blank())
+combined_plot <- (Minority_plot / Multi_Unit_Plot / Crowding_Plot)
 combined_plot
 ```
 
@@ -299,13 +299,15 @@ pairs(df_figs[,6:10], pch = 19, lower.panel = NULL)
 ```{r, echo = FALSE, warning = FALSE, message = FALSE, fig.cap = 'A log transformation on \\% Minority improves its linear relationship with Fatality Rate, so we chose to apply the log in our final models.', fig.pos='!h', out.extra='', fig.align='center', out.width = "75%"}
 #- show minority percentage scatterplots: normal vs logged --> Kevin
 plot3 <- ggplot(df, aes(y = Fatality_Rate, x = Minority_Percentage)) +
- geom_point() + stat_smooth() + labs(x = '% Minority', y = 'Fatality Rate', title = 'Fatality Rate vs % Minority without Transformation')
+ geom_point() + stat_smooth() + labs(x = '% Minority', y = 'Fatality Rate', title = 'Fatality Rate vs % Minority without Transformation') + theme_minimal()
 plot4 <- ggplot(df, aes(y = Fatality_Rate, x = log(Minority_Percentage))) +
- geom_point() + stat_smooth() + labs(x = '% Minority', y = 'log(Fatality Rate)', title = 'Fatality Rate vs % Minority with Transformation')
+ geom_point() + stat_smooth() + labs(x = 'log(% Minority)', y = 'Fatality Rate', title = 'Fatality Rate vs % Minority with Transformation') + theme_minimal()
 plot3 / plot4
 ```
 
 \textbf{Miscellaneous}: ICU Beds per 10,000 does not require a transformation and can be used as-is.
+
+Based on our collected variables and initial exploratory data analysis, we compiled subsets of our variables to include in our limited model, less limited model (Model 2), and most extensive model (Model 3). The following sections describe each model in detail, which features we chose, and some preliminary results.
 
 
 <!--5. Are your choices supported by exploratory data analysis (*EDA*)? You will likely start with some general EDA to *detect anomalies* (missing values, top-coded variables, etc.). From then on, your EDA should be interspersed with your model building. Use visual tools to *guide* your decisions. You can also leverage statistical *tests* to help assess whether variables, or groups of variables, are improving model fit.
@@ -332,9 +334,56 @@ This scatter plot is why we chose to use unemployment to represent our socioecon
 
   TODO: Blurb explaining the graphs below and how we chose to include this correlation plot and what it is used for. Connect to Model Building process. -->
   
-## Selecting Features for Models
+<!-- ## Selecting Features for Models
   
-Based on our collected variables and initial exploratory data analysis, we compiled subsets of our variables to include in our limited model, less limited model (Model 2), and most extensive model (Model 3). Our limited model includes three variables, one from each primary variable category we identified, pre-existing health conditions, policy, and socioeconomic factors. A discussion on how we chose our features for the limited model is discussed in the next section. Model 2 extends on our limited model to include several additional features, and Model 3 is the most inclusive model of all. To help us evaluate multicollinearity and causal relationships, we examined the correlations between each of explanatory variables for both Model 2 and Model 3. Figure 4 shows correlation matrices for Model 2, where the matrix on the left displays all features we were considering for our model and the right matrix shows the variables we ultimately decided to include in our model. The left matrix in Figure 4 shows that there is high correlation between several features, so we dropped % Deaths from Heart Disease and % Adults in Poverty to reduce multicollinearity. The right matrix shows the correlations after dropping these features, and there is great improvement. Figure 5 shows similar graphs for our Model 3. Because of high correlations between features, we drop Household Income, % Adults who Smoke, and % Adults with Obesity. This process helped us strategically select which features to include in our model to stay within the assumptions of the one-equation structural model, and our model results are described in the next section.
+Based on our collected variables and initial exploratory data analysis, we compiled subsets of our variables to include in our limited model, less limited model (Model 2), and most extensive model (Model 3). Our limited model includes three variables, one from each primary variable category we identified, pre-existing health conditions, policy, and socioeconomic factors. A discussion on how we chose our features for the limited model is discussed in the next section. Model 2 extends on our limited model to include several additional features, and Model 3 is the most inclusive model of all. To help us evaluate multicollinearity and causal relationships, we examined the correlations between each of explanatory variables for both Model 2 and Model 3. Figure 4 shows correlation matrices for Model 2, where the matrix on the left displays all features we were considering for our model and the right matrix shows the variables we ultimately decided to include in our model. The left matrix in Figure 4 shows that there is high correlation between several features, so we dropped % Deaths from Heart Disease and % Adults in Poverty to reduce multicollinearity. The right matrix shows the correlations after dropping these features, and there is great improvement. Figure 5 shows similar graphs for our Model 3. Because of high correlations between features, we drop Household Income, % Adults who Smoke, and % Adults with Obesity. This process helped us strategically select which features to include in our model to stay within the assumptions of the one-equation structural model, and our model results are described in the next section. -->
+
+
+<!-- At the same time, it is important to remember that you are not trying to create one perfect model. You will create several specifications, giving the reader a sense of how robust (or sensitive) your results are to modeling choices, and to show that you're not just cherry-picking the specification that leads to the largest effects. -->
+
+<!-- At a minimum, you should include the following three specifications:
+
+1. **Limited Model**: A model that includes *only the key variable* you want to measure and nothing (or almost nothing) else. This variables might be transformed, as determined by your EDA, but the model should include the absolute minimum number of covariates (perhaps one, or at most two-three, covariates if they are so crucial that it would be unreasonable to omit them). 
+1. **Model Two**: A model that includes *key explanatory variables and covariates that you believe advance your modeling* goals without introducing too much multicollinearity or causing other issues. This model should strike a balance between accuracy and parsimony and reflect your best understanding of the relationships among key variables.
+1. **Model Three**: A model that includes the *previous covariates, and many other covariates*, erring on the side of inclusion. A key purpose of this model is to evaluate how parameters of interest change (if at all) when additional, potentially colinear variables are included in the model specification.-->
+  
+
+
+## Limited Model 
+
+### Choosing Features for the Limited Model
+
+Of all the variables we considered, we chose to include the duration a mask mandate policy was in place, the percent of adults diagnosed with diabetes, and the percent unemployment for each state. We chose one variable from each specific topic as to provide an encompassing view of possible causes for the change in fatality rates. These three were determined to be the most crucial from all the explanatory variables. For mask mandate, public health officials consistently stressed the efficacy to reduce transmission of COVID-19, which would reduce the number of fatalities. For percent adults with diabetes, we made the assumption that it encompasses several other health conditions as people with diabetes can tend to have additional underlying health conditions. Therefore, we wanted to include this variable as it would provide an overarching health explanatory variable. For percent unemployment, individuals without a job would have no or inadequate health care, which could lead them to having less accessibility and opportunities to receive medical treatments. During the pandemic, research shows that low-income areas have been severely impacted by COVID-19, which led to us choosing percent unemployment as the socioeconomic explanatory variable for the limited model.
+
+### Model Equation
+
+$\text{Fatality Rate} = \beta_0 + \beta_1 \text{ Mask Policy} + \beta_2 \text{ \% Adults with Diabetes} + \beta_3 \text{ \% Unemployment} + u$
+
+```{r, echo = FALSE, warning = FALSE, message = FALSE}
+model_limited <- lm(Fatality_Rate ~ mask_ratio + Diabetes_Diagnosed_Perc + 
+                      Unemployment_Perc, 
+                    data = df)
+```
+
+```{r excess code, echo = FALSE, warning = FALSE, message = FALSE}
+#coeftest(model_limited)
+#ols_vif_tol(model_limited)
+#plot(density(resid(model_limited)))
+#qqnorm(resid(model_limited))
+#qqline(resid(model_limited))
+```
+
+### Limited Model Results
+
+After running the coefficient test, we observe that both mask duration and unemployment percentage are both statistically significant at a 95% significance level or greater. However, mask duration has a positive impact on predicted fatality rates, which goes against our assumption that states that implemented mask mandates longer would observe a decrease in predicted fatality rates. Except, the model calculates, holding everything equal, with a one percent increase in the duration of a mask mandate, we would expect 0.003 percent increase in predicted fatality rates. For unemployment percentage, the model shows with a one percent increase in poverty, we would expect a 0.19 percent increase in predicted fatality rate.
+
+The variance inflation factor (VIF) values for all three independent variables are all less than two, which indicates that there is minimal multicollinearity among them. With that said, the tolerance, or percent of variance in each variable that cannot be accounted for by the other predictors, of each variable is greater than 0.60. This suggests that there are variables not in the model that account for those predictors. Given this information, we construct a second model that includes a few more explanatory variables in order to lower the tolerance values. Then, we will compare Model Two to the Limited Model to determine which model provides a better fit for predicted values. 
+
+## Model Two
+
+### Choosing Variables for Model Two
+
+For Model Two, we added to the variables included in our Limited Model. We initially considered several additional variables that did not make it into the final model. In particular, we decided to not include percent of deaths from heart disease and percent of adults living in poverty because of their strong correlations with other features. To help us evaluate multicollinearity and causal relationships, we examined the correlations between each of explanatory variables. Figure 4 shows correlation matrices for Model Two, where the matrix on the left displays all features we were considering for our model and the right matrix shows the variables we ultimately decided to include in our model. The left matrix in Figure 4 shows that there is high correlation between several features, so we dropped % Deaths from Heart Disease and % Adults in Poverty to reduce multicollinearity. The right matrix shows the correlations after dropping these features, and there is great improvement. The final new variables included in Model Two are the duration of stay-at-home policies, percentage of deaths from chronic respiratory diseases, and the log-transformation of minority percentage of each state, in addition to the features already in the Limited Model
 
 ```{r, echo=FALSE, warning = FALSE, message = FALSE, fig.cap="Changes in correlations between explanatory variables before (left) and after (right) removing some features in Model 2.", fig.pos='!h', out.extra='', fig.align="center"}
 
@@ -355,71 +404,11 @@ model_2_combined_plot <- (model_2_plot1 | model_2_plot2) + theme(legend.position
 model_2_combined_plot
 ```
 
-```{r, echo=FALSE, warning = FALSE, message = FALSE, fig.cap='Changes in correlations between explanatory variables before (left) and after (right) removing some features in Model 3.', fig.pos='!h', out.extra='', fig.align="center"}
-
-vars_3_orig <- subset(df_figs, select = -c(`State`, `Deaths`, `Cases`, `Population`, `Population..20..`, `Population >65`, `ICUBeds`, `Fatality Rate`, `% Adults in Poverty`, `% Deaths from Heart Disease`))
-
-vars_3_reduced <- subset(df_figs, select = -c(`State`, `Deaths`, `Cases`, `Population`, `Population..20..`, `Population >65`, `ICUBeds`, `Fatality Rate`, `% Adults in Poverty`, `% Deaths from Heart Disease`, `Household Income`, `% Adults who Smoke`, `% Adults with Obesity`))
-
-res_3_orig <- cor(vars_3_orig)
-model_3_plot1 <- ggcorrplot(res_3_orig, type = "upper", method = "square", tl.cex = 6, tl.srt = 90, hc.order = FALSE, colors = c("#6D9EC1", "white", "#E46726"), show.legend = FALSE) 
-
-res_3_reduced <- cor(vars_3_reduced)
-model_3_plot2 <- ggcorrplot(res_3_reduced, type = "upper", method = "square", tl.cex = 6, tl.srt = 90, show.legend = FALSE, colors = c("#6D9EC1", "white", "#E46726"))
-
-model_3_combined_plot <- (model_3_plot1 | model_3_plot2) + theme(legend.position='bottom')
-
-model_3_combined_plot
-```
-
-<!-- At the same time, it is important to remember that you are not trying to create one perfect model. You will create several specifications, giving the reader a sense of how robust (or sensitive) your results are to modeling choices, and to show that you're not just cherry-picking the specification that leads to the largest effects. -->
-
-<!-- At a minimum, you should include the following three specifications:
-
-1. **Limited Model**: A model that includes *only the key variable* you want to measure and nothing (or almost nothing) else. This variables might be transformed, as determined by your EDA, but the model should include the absolute minimum number of covariates (perhaps one, or at most two-three, covariates if they are so crucial that it would be unreasonable to omit them). 
-1. **Model Two**: A model that includes *key explanatory variables and covariates that you believe advance your modeling* goals without introducing too much multicollinearity or causing other issues. This model should strike a balance between accuracy and parsimony and reflect your best understanding of the relationships among key variables.
-1. **Model Three**: A model that includes the *previous covariates, and many other covariates*, erring on the side of inclusion. A key purpose of this model is to evaluate how parameters of interest change (if at all) when additional, potentially colinear variables are included in the model specification.-->
-  
-
-
-## Limited Model 
-
-### Model Equation
-
-$\text{Fatality Rate} = \beta_0 + \beta_1 \text{ Mask Policy} + \beta_2 \text{ \% Adults with Diabetes} + \beta_3 \text{ \% Unemployment} + u$
-
-### Choosing Features for the Limited Model
-
-Of all the variables we considered, we chose to include the duration a mask mandate policy was in place, the percent of adults diagnosed with diabetes, and the percent unemployment for each state. We chose one variable from each specific topic as to provide an encompassing view of possible causes for the change in fatality rates. These three were determined to be the most crucial from all the explanatory variables. For mask mandate, public health officials consistently stressed the efficacy to reduce transmission of COVID-19, which would reduce the number of fatalities. For percent adults with diabetes, we made the assumption that it encompasses several other health conditions as people with diabetes can tend to have additional underlying health conditions. Therefore, we wanted to include this variable as it would provide an overarching health explanatory variable. For percent unemployment, individuals without a job would have no or inadequate health care, which could lead them to having less accessibility and opportunities to receive medical treatments. During the pandemic, research shows that low-income areas have been severely impacted by COVID-19, which led to us choosing percent unemployment as the socioeconomic explanatory variable for the limited model.
-
-```{r}
-model_limited <- lm(Fatality_Rate ~ mask_ratio + Diabetes_Diagnosed_Perc + 
-                      Unemployment_Perc, 
-                    data = df)
-```
-
-```{r excess code, echo = FALSE, warning = FALSE, message = FALSE}
-#coeftest(model_limited)
-#ols_vif_tol(model_limited)
-#plot(density(resid(model_limited)))
-#qqnorm(resid(model_limited))
-#qqline(resid(model_limited))
-```
-
-### Limited Model Results
-
-After running the coefficient test, we observe that both mask duration and unemployment percentage are both statistically significant at a 95% significance level or greater. However, mask duration has a positive impact on predicted fatality rates, which goes against our assumption that states that implemented mask mandates longer would observe a decrease in predicted fatality rates. Except, the model calculates, holding everything equal, with a one percent increase in the duration of a mask mandate, we would expect 0.003 percent increase in predicted fatality rates. For unemployment percentage, the model shows with a one percent increase in poverty, we would expect a 0.19 percent increase in predicted fatality rate.
-
-The variance inflation factor (VIF) values for all three independent variables are all less than two, which indicates that there is minimal multicollinearity among them. With that said, the tolerance, or percent of variance in each variable that cannot be accounted for by the other predictors, of each variable is greater than 0.60. This suggests that there are variables not in the model that account for those predictors. Given this information, we construct a second model that includes a few more explanatory variables in order to lower the tolerance values. Then, we will compare Model Two to the Limited Model to determine which model provides a better fit for predicted values. The variables to be added are the duration of stay-at-home policies, percentage of deaths from chronic respiratory diseases, and the log-transformation of minority percentage of each state.
-
-## Model Two
-
 ### Model Equation
 
 $\text{Fatality Rate} = \beta_0 + \beta_1 \text{ Mask Policy} + \beta_2 \text{ \% Adults with Diabetes} + \beta_3 \text{ \% Unemployment} + \beta_4 \text{ Home Policy} + \beta_5 \text{ \% Chronic Resp Deaths} + \beta_6 \text{ log(\% Minority)} + u$
 
-
-```{r}
+```{r, echo = FALSE, message = FALSE, warning = FALSE}
 model_two <- lm(Fatality_Rate ~ mask_ratio + Diabetes_Diagnosed_Perc + 
                   Unemployment_Perc + home_ratio + 
                   Chronic_Respiratory_Disease_Death_Perc + log(Minority_Percentage), 
@@ -440,15 +429,36 @@ model_two <- lm(Fatality_Rate ~ mask_ratio + Diabetes_Diagnosed_Perc +
 
 With the additional variables, Model Two has three statistically significant explanatory variables at a 90% or greater level of significance: percent of adults diagnosed with diabetes, percent unemployment, and percent of deaths from chronic respiratory disease. Also, we observe that the mask mandate policy variable is no longer statistically significant. Both percent of adults diagnosed with diabetes and unemployment percentage have a positive effect on fatality rates while the percent of chronic respiratory deaths has negative effect, which is concerning as we would expect to have an increased effect on fatality rates as percent of chronic respiratory deaths increases.
 
-The VIF values for all six independent variables are all less than four, which indicates that there is minimal multicollinearity among them. In addition, the tolerance levels of each variable were lower than the Limited Model indicating that the added variables accounted for more for one another than the previous model. The Anova test we ran to compare the fits of the Limited Model and Model Two calculates a p-value less than a 0.05 level of significance level. This shows that by adding the additional variables leads to a more significant improvement of predicted fatality rates compared to the Limited Model. We will proceed to constructing a third model that will add six other explanatory variables to include: percent of adults living in multi-unit dwellings, percent of crowding, percent of asthma deaths, ICU beds per 10,000, percent of stroke deaths, and percent of adults over the age of 65. Model Three will similarly be examined if it is a better fit than Model Two as currently Model Two is our preferred model.
+The VIF values for all six independent variables are all less than four, which indicates that there is minimal multicollinearity among them. In addition, the tolerance levels of each variable were lower than the Limited Model indicating that the added variables accounted for more for one another than the previous model. The Anova test we ran to compare the fits of the Limited Model and Model Two calculates a p-value less than a 0.05 level of significance level. This shows that by adding the additional variables leads to a more significant improvement of predicted fatality rates compared to the Limited Model. We will proceed to constructing a third model that will include several additional features, and Model Three will similarly be examined if it is a better fit than Model Two as currently Model Two is our preferred model.
 
 ## Model Three
+
+### Choosing Variables for Model Three
+
+Model Three is our most extensive model and includes six additional explanatory variables: percent of adults living in multi-unit dwellings, percent of crowding, percent of asthma deaths, ICU beds per 10,000, percent of stroke deaths, and percent of adults over the age of 65. When choosing which features to include in Model Three, we performed a similar multicollinearity analysis that we did for Model Two. The left correlation matrix in Figure 5 shows correlations between all variables we were initially considering. Because of high correlations between features, we dropped Household Income, % Adults who Smoke, and % Adults with Obesity. This process helped us strategically select which features to include in our model to stay within the assumptions of the one-equation structural model, and our model results are described in the next section.
+
+```{r, echo=FALSE, warning = FALSE, message = FALSE, fig.cap='Changes in correlations between explanatory variables before (left) and after (right) removing some features in Model 3.', fig.pos='!h', out.extra='', fig.align="center"}
+
+vars_3_orig <- subset(df_figs, select = -c(`State`, `Deaths`, `Cases`, `Population`, `Population..20..`, `Population >65`, `ICUBeds`, `Fatality Rate`, `% Adults in Poverty`, `% Deaths from Heart Disease`))
+
+vars_3_reduced <- subset(df_figs, select = -c(`State`, `Deaths`, `Cases`, `Population`, `Population..20..`, `Population >65`, `ICUBeds`, `Fatality Rate`, `% Adults in Poverty`, `% Deaths from Heart Disease`, `Household Income`, `% Adults who Smoke`, `% Adults with Obesity`))
+
+res_3_orig <- cor(vars_3_orig)
+model_3_plot1 <- ggcorrplot(res_3_orig, type = "upper", method = "square", tl.cex = 6, tl.srt = 90, hc.order = FALSE, colors = c("#6D9EC1", "white", "#E46726"), show.legend = FALSE) 
+
+res_3_reduced <- cor(vars_3_reduced)
+model_3_plot2 <- ggcorrplot(res_3_reduced, type = "upper", method = "square", tl.cex = 6, tl.srt = 90, show.legend = FALSE, colors = c("#6D9EC1", "white", "#E46726"))
+
+model_3_combined_plot <- (model_3_plot1 | model_3_plot2) + theme(legend.position='bottom')
+
+model_3_combined_plot
+```
 
 ### Model Equation 
 
 $\text{Fatality Rate} = \beta_0 + \beta_1 \text{ Mask Policy} + \beta_2 \text{ \% Adults with Diabetes} + \beta_3 \text{ \% Unemployment} + \beta_4 \text{ Home Policy} + \beta_5 \text{ \% Chronic Resp Deaths} + \beta_6 \text{ log(\% Minority)} + \beta_7 \text{ \% Multi-Unit Dwelling)} + \beta_8 \text{ \% Crowding} + \beta_9 \text{ \% Asthma Deaths} + \beta_10 \text{ \% ICUBedsPer10K} + \beta_11 \text{ \% Stroke Deaths} + \beta_12 \text{ \% Adults >65} + u$
 
-```{r}
+```{r, echo = FALSE, message = FALSE, warning = FALSE}
 model_three <- lm(Fatality_Rate ~ Multi_Unit_Perc + Unemployment_Perc + home_ratio + 
                     log(Minority_Percentage) + Crowding_Perc + Asthma_Deaths_Perc + 
                     Chronic_Respiratory_Disease_Death_Perc + ICUBedsPer10000 + 
@@ -525,13 +535,13 @@ stargazer(VIF,
 
 ## Interpreting Statistical and Practical Significance
 
-In the limited model, we can see that the mask_ratio variable is statistically significant due to its low p value <0.01, the model also returns unemployment percent as statistically significant.  With respect to practical significance, for every percent of the time the mask policy was enacted, all else held constant, we expect to see a .004% increase in fatality rates.  Which is counter intuitive considering we were expecting the mask policy to contribute to lowering COVID-19 deaths. Another variable that was tested to be statistically significant is the unemployment percentage.  The coefficient of 0.195 implies that without any effects from other variables a one percent in unemployment effectively increases the fatality rate by 19.5% thus pointing to a large practical significance.  
+In the limited model, Table 1 shows that the mask_ratio variable is statistically significant with a p value less than 0.05. The model also returns unemployment percent as statistically significant. With respect to practical significance, for every percent of the time the mask policy was enacted, all else held constant, we expect to see a 0.3% increase in fatality rates.  Which is counter intuitive considering we were expecting the mask policy to contribute to lowering COVID-19 deaths. Another variable that was tested to be statistically significant is the unemployment percentage. The coefficient of 0.195 implies that without any effects from other variables, a one percent increase in unemployment effectively increases the fatality rate by 19.5% thus pointing to a large practical significance.  
   
-In the second model, unemployment percent and chronic respiratory disease death percent are shown to be statistically significant with a p value less than 0.01.  The variables of percent diagnosed with diabetes and the intercept are shown to be statistically significant but less so with a p value less than 0.1. With regards to practical significance, we see an increase in the coefficient for unemployment percent in the second model resulting in a stronger practical significance the variable would have on the fatality rate, given all else equal. We do see mask ratio lose its statistical significance while still maintaining practical significance to a degree.  Continuing with practical significance, we see that chronic respiratory disease death percent has an abnormally large coefficient where we can conclude that for every percent change in the death rate for chronic respiratory disease we expect to see a 21.7% decrease in fatality rate.  Lastly, we look at percent of population in each state diagnosed with diabetes. We can infer from the results that for every percent increase in the population that is diagnosed with diabetes, we see a 9.6% increase of fatality rate in the model.
+In the second model, unemployment percent and chronic respiratory disease death percent are shown to be statistically significant with a p value less than 0.01. The variables of percent diagnosed with diabetes and the intercept are shown to be statistically significant but less so with a p value less than 0.1. With regards to practical significance, we see an increase in the coefficient for unemployment percent in the second model resulting in a stronger practical significance the variable would have on the fatality rate, given all else equal. We do see mask ratio lose its statistical significance while still maintaining practical significance to a degree. Continuing with practical significance, we see that chronic respiratory disease death percent has an abnormally large coefficient where we can conclude that for every percent change in the death rate for chronic respiratory disease we expect to see a 21.7% decrease in fatality rate. Lastly, we look at percent of population in each state diagnosed with diabetes. We can infer from the results that for every percent increase in the population that is diagnosed with diabetes, we see a 9.6% increase of fatality rate in the model.
 
-In the third model, we see unemployment percent and percent diagnosed with diabetes continue to be statistically significant with p values less than 0.01 and 0.05 respectively.  We are also met with stroke death percent as another variable that is observed to be highly statistically significant.  The affect of stroke death percent is shown to have the highest practical significance, with an affect of 44% decrease in fatality rate for every percent increase, when compared to any other health variable measured on the same scale.  The chronic respiratory disease death rate is also perceived to no longer have statistical significance as well as lose some of it's practical significance with the inclusion of the additional health variables.  Finally, it is important to note that the increased statistical significance seen in the variable representing the percent of population diagnosed with diabetes also came with an increase to the practical significance with a factor of two resulting in a 18.4% increase in fatality rate for every increase in percent of the state population diagnosed with diabetes.
+In the third model, we see unemployment percent and percent diagnosed with diabetes continue to be statistically significant with p values less than 0.01 and 0.05, respectively. We are also met with stroke death percent as another variable that is observed to be highly statistically significant. The affect of stroke death percent is shown to have the highest practical significance, with an affect of 44% decrease in fatality rate for every percent increase, when compared to any other health variable measured on the same scale. The chronic respiratory disease death rate loses both its statistical significance as well as some of its practical significance with the inclusion of the additional health variables. Finally, it is important to note that the increased statistical significance seen in the variable representing the percent of population diagnosed with diabetes also came with an increase to the practical significance with a factor of two resulting in a 18.4% increase in fatality rate for every increase in percent of the state population diagnosed with diabetes.
 
-Comparing the three models, it is clear that model 2 does the best job of explaining COVID-19 fatality rates. The coefficients in unemployment percent is similar to that of the first model and with the inclusion of other variables such as chronic respiratory disease death percent allows us to improve our model by 28%. Comparing the models on the VIF chart, we can see a dramatic increase in VIF values jumping from model two to model three indicating high multicollinearity among the variables that originally existed within model two. Several variables are propelled to values higher than 4 with diabetes percent crossing over the threshold to 5.35. This means that adding the additional variables into the third model did not dramatically improve our model and might have caused underlying factors to be represented in multiple variables. Looking at the standard errors for each coefficient, asthma deaths percent stands out as having an exceedingly high standard error of 302.008 with a coefficient of -31.038. Chronic respiratory disease death percent also shows high mullticollinearity in the third model with a reduction in practical significance but a dramatic increase in standard error.
+Comparing the three models, it is clear that model 2 does the best job of explaining COVID-19 fatality rates. The coefficients in unemployment percent is similar to that of the first model and with the inclusion of other variables such as chronic respiratory disease death percent allows us to improve our model by 28%. Comparing the models on the VIF chart in Table 2, we can see a dramatic increase in VIF values jumping from Model Two to Model Three indicating high multicollinearity among the variables that originally existed within model two. Several variables are propelled to values higher than 4 with diabetes percent crossing over the threshold to 5.35. This means that adding the additional variables into the third model did not dramatically improve our model and might have caused underlying factors to be represented in multiple variables. Looking at the standard errors for each coefficient, asthma deaths percent stands out as having an exceedingly high standard error of 302.008 with a coefficient of -31.038. Chronic respiratory disease death percent also shows high mullticollinearity in the third model with a reduction in practical significance but a dramatic increase in standard error.
 
 <!--How Models 1 and 3 differed from Model 2. How it impacted our interpretations?-->
 
@@ -553,30 +563,30 @@ TODO: causality concerns / collinearity
 
 - IID -->
 
-We assess the five classical linear model (CLM) assumptions and the violations of the one-equation structural model for our Model 2. This causal analysis relies on the CLM because our dataset consists of only 48 observations, one for each state in the contiguous U.S. Because of this, an accurate interpretation of our results requires analyzing the CLM assumptions: independent and identically distributed random variables, linear conditional expectation, no perfect collinearity, homoskedastic errors, and normally distributed errors. Additionally, we assess if our causal analysis violates any assumptions of the one-equation structural model, including omitted variables, reverse causality, and causal relationships between explanatory variables.
+We assess the five classical linear model (CLM) assumptions and the violations of the one-equation structural model for our Model 2. This causal analysis relies on the CLM because our dataset consists of only 48 observations, one for each state in the contiguous U.S. Because of this, an accurate interpretation of our results requires analyzing the CLM assumptions: independent and identically distributed random variables (IID), linear conditional expectation, no perfect collinearity, homoskedastic errors, and normally distributed errors. Additionally, we assess if our causal analysis violates any assumptions of the one-equation structural model, including omitted variables, reverse causality, and causal relationships between explanatory variables.
 
-Our model met the CLM assumptions well. TODO:*Need help assessing IID* We observed that our model tends to slightly underpredict states with particularly low or high fatality rates and overpredict states with mid-range fatality rates. Our residuals versus predictions plot was not exactly linear around zero, which implies our linear model may not be the best fit. However, applying additional logarithmic transformations did not significantly improve the residuals, so we left our model with only % Minority having a log transformation. We proceed with caution when interpreting the model coefficients. A nonlinear model may have fit the data better, but this is out of scope for our work.
+Our model met the CLM assumptions well. There is some concern about our data being IID because of geographical effects. In particular, for socioeconomic factors and health conditions, some regions of the country suffer more than others. For instance, diabetes is much more prominent in the southern states than elsewhere in the country. We must proceed with caution and assume that our data is satisfactory to meet the IID condition to continue with our analysis. For the linear conditional expectation assumption, we observed that our model tends to slightly underpredict states with particularly low or high fatality rates and overpredict states with mid-range fatality rates. As shown in Figure 6, our residuals versus predictions plot was not exactly linear around zero, which implies our linear model may not be the best fit. Our results are shown in Figure 6. However, applying additional logarithmic transformations did not significantly improve the residuals, so we left our model with only % Minority having a log transformation. We proceed with caution when interpreting the model coefficients. A nonlinear model may have fit the data better, but this is out of scope for our work.
 
-We believe there are several concerns with our model and the assumptions of the one-equation structural model. First, there could plausibly exist some reverse causality in our model, particularly with the policy variables. For example, our model currently assumes that longer mask mandates will cause an impact on COVID-19 fatality rates. However, it is also reasonable to say that high COVID-19 fatality rates will cause mask mandates to last longer. The latter causality statement is likely stronger than the first, which is why our coefficient on Mask Ratio is positive. The coefficient on this feature, therefore, explains the correlation between Mask Ratio and Fatality rate but not the causality. Second, it is also plausible that causal relationships exist between our explanatory variables. This is likely most prevalent among our health features. We tried to account for this by limiting the number of health variables we use. For instance, we omitted % of Adults with Obesity but left % of Adults with Diabetes in our model because obesity is a direct cause of diabetes. However, it is likely that we did not catch all of these relationships, which causes some causal concerns with our health features. Finally, omitted variable bias is another concern, which is discussed further in the next section.
-
-- Linear conditional expectation
-###> To assess whether there is a linear conditional expectation, we've learned to look at the predicted vs. residuals of the model.
-```{r}
+```{r, echo = FALSE, message = FALSE, warning = FALSE, fig.cap = 'The residuals versus predictions scatterplot for Model Two shows that our model does not perfectly meet the linear conditional expectation requirement since our model overpredicts at the edges and underpredicts in the middle.', fig.pos='!h', out.extra='', fig.align="center", out.width = "75%"}
 df %>% 
   mutate(
     model_two_preds = predict(model_two), 
     model_two_resids = resid(model_two)
   ) %>% 
   ggplot(aes(model_two_preds, model_two_resids)) + 
-  geom_point() + 
-  stat_smooth() + ggtitle("Model Two: Residuals vs. Predictions")
+  geom_point() + labs(x = 'Model Two Predictions', y = 'Model Two Residuals') + 
+  stat_smooth() + ggtitle("Model Two: Residuals vs. Predictions") + theme_minimal()
 ```
-Our comments
+
+We believe there are several concerns with our model and the assumptions of the one-equation structural model. First, there could plausibly exist some reverse causality in our model, particularly with the policy variables. For example, our model currently assumes that longer mask mandates will cause an impact on COVID-19 fatality rates. However, it is also reasonable to say that high COVID-19 fatality rates will cause mask mandates to last longer. The latter causality statement is likely stronger than the first, which is why our coefficient on Mask Ratio is positive. The coefficient on this feature, therefore, explains the correlation between Mask Ratio and Fatality rate but not the causality. Second, it is also plausible that causal relationships exist between our explanatory variables. This is likely most prevalent among our health features. We tried to account for this by limiting the number of health variables we use. For instance, we omitted % of Adults with Obesity but left % of Adults with Diabetes in our model because obesity is a direct cause of diabetes. However, it is likely that we did not catch all of these relationships, which causes some causal concerns with our health features. Finally, omitted variable bias is another concern, which is discussed further in the next section.
+
+
+<!-- Our comments
 - edge effects not lookin too good
 
 ###> This doesn't look good. There seems to be a pretty clear non-linear relationship in this data -- perhaps parabolic or logarithmic.
 ###> To correct this, we will try variable transformations, hoping to end up with a more linear pattern in this plot.
-### > Additionally, you may sometimes want to create predictor versus fitted plots, which may give you clues about what variables you need to transform.
+### > Additionally, you may sometimes want to create predictor versus fitted plots, which may give you clues about what variables you need to transform.-->
 ```{r, echo = FALSE, message = FALSE, warning = FALSE}
 # vars_2_reduced <- subset(df_figs, select = c('Mask Ratio', "% Adults with Diabetes", '% Unemployed', 'Home Ratio', '% Deaths from Chronic
 # Resp Disease', '% Minority'))
@@ -620,7 +630,7 @@ Our comments
 # resp_resids
 # minority_resids
 ```
-- looks a bit worse, edge effects still
+<!-- - looks a bit worse, edge effects still
 
 
 - No perfect collinearity
@@ -647,7 +657,7 @@ Our comments
 ```{r}
 # plot(model_two, which=3)
 ```
-- homoskedasticity actually not lookin too bad --> model_two looking 10/10!!!
+- homoskedasticity actually not lookin too bad = model_two looking 10/10!!!
 
 ### > This plot looks quite good, suggesting no major problem with heteroskedasticity.
 - Normally distributed errors
@@ -666,7 +676,7 @@ Our comments
 
 > The histogram of residuals and the qqplot shows some some deviation from normality, specifically a right skew and perhaps an unusual concentration on the right tail.
 >
-> This is not a problem for unbiasedness, and it is not a problem for our standard errors.  However, this will threaten the validity of our t-tests and confidence intervals.  We may hope to fix this problem with a variable transformatin.
+> This is not a problem for unbiasedness, and it is not a problem for our standard errors.  However, this will threaten the validity of our t-tests and confidence intervals.  We may hope to fix this problem with a variable transformatin. -->
 
 
 ### 5. Discussion of Omitted Variables -- All, led by Spencer Song
