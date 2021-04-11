@@ -730,7 +730,7 @@ If in general away from zero, we are likely artificially introducing significanc
 TODO: Table of towards away conclusion / variables Spencer Song
 
 # Conclusion
-Make sure that you end your report with a discussion that distills key insights from your estimates and addresses your research question.
+<!-- Make sure that you end your report with a discussion that distills key insights from your estimates and addresses your research question.
 
 
 - Our expectations and assumptions going into EDA
@@ -738,7 +738,15 @@ Make sure that you end your report with a discussion that distills key insights 
 - Unexpected relationships and possible logic paths for explanation, roadblocks
 - Why we should have done this shit on a county level
 
-TODO: all
+TODO: all-->
+
+Our goal with this analysis was to analyze what causes varying COVID-19 fatality rates across states. By collecting data on implemented policy, pre-existing health conditions, and socioeconomic factors, we built a one-equation structural model for this causal question. We analyzed three different models and concluded that our Model Two was most successful since it fit our data better than our Limited Model but met the one-equation structural model assumptions better than Model Three. From Model Two, we can conclude that Percent of Chronic Respiratory Disease Deaths, Percent Unemployment, and Percent of Adults Diagnosed with Diabetes are the most significant features that cause variation in COVID-19 fatality rates. Our model indicated that higher rates of unemployment and diabetes cause higher fatality rates but higher rates of chronic respiratory disease cause lower fatality rates. The latter of these observations seemed counterintuitive to us, which caused us to question if our model met all assumptions for both the Classical Linear Model and the one-equation structural model.
+
+While Model Two met the CLM assumptions relatively well, we believe our model faced several violations for the one-equation structural model, including reverse causality, causal relationships among the explanatory variables, and omitted variable bias. Although we tried to strategically choose which variables we included in Model Two by looking at correlation matrices, we believe we did not fully mitigate issues with reverse causality and causal relationships among the explanatory variables. There were also several omitted variables that likely impact the coefficients produced in our model. 
+
+Although some conclusions do agree with past studies, such as diabetes causes individuals to be more susceptible to dying from COVID-19, the coefficients produced in our model appear to be untrustworthy. Because of this, we recommend a future study analyzing COVID-19 fatality rates on a county-level instead of a state-level. Within each state, there is significant variation for each covariate we analyzed. Performing this analysis at a state-level resulted in a loss of this detailed variation, and it is likely that the aggregated data played a role in our poor model results. In future work, we should also work to full eliminate reverse causality, ensure explanatory variables are truly independent, and incorporate more variables to avoid OVB. 
+
+Regardless of our model results, it is still clear that COVID-19 has had varying impacts across the United States, affecting some communities more than others, and everyone should continue to take precautions to prevent future COVID-19 fatalities. 
 
 <!--## Rubric for Evaluation
 
