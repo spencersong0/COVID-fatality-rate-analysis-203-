@@ -692,26 +692,31 @@ TODO: Intro transitioning from what we have and results to considerations for OV
 "Food Quality" will likely have no correlation with state mask policies, stay-at-home policies, and chronic respiratory disease percentages. We observe no OVB for these independent variables.
 "Food Quality" will likely have a high negative correlation with diabetes diagnoses and a negative correlation with unemployment percentages. Because the independent variables have a positive impact on fatality rates and have a negative correlation with our omitted variable, we conclude that the direction of the OVB is towards zero, as we have likely overstated the effects of these independent variables on fatality rates.
 "Food Quality" will likely have a positive correlation with minority percentages, and as minority has a negative causal impact on fatality rates, the direction of the OVB will be towards zero, and we have overstated the impact of minority percentage.
-(include more on how LARGE the bias is)
 There may not necessarily be a good 'replacement' for this variable in the data that we have gathered, as it is categorically very different from the rest of our other explanatory variables.
 
-2. "Extreme Temperatures": Mean range of temperature changes across the state over the course of our dataset's time frame.
-We will argue that more extreme temperature ranges will be positively correlated with fatality rates. It is well known that extreme temperature changes will weaken a person's immune system and their body's ability to fight a virus. This would imply that states with more moderate weather will have a lower fatality rates with COVID-19. A similar omitted variable that relates could be the humidity of the air-- as we know, virus' spread when there are lower humidity rates. This bias could be relatively large given the lower percentage of fatality rates in the first place. 
-"Extreme Temperatures" will likely have no correlation with state mask policies and no correlation with state stay at home policies. Temperatures should not have an impact on state policies. "Extreme Temperatures" will also likely have no correlation with diabetes diagnoses, no correlation with unemployment percentages, no correlation with chronic respiratory disease percentages, and no correlation with minority percentages. Because we see weather and temperatures as uncorrelated with each of our independent variables, we can say that the direction of the OVB is towards zero? because of our assumption that it is positively correlated with fatality rates.
+2. "Perception of COVID-19 Severity": A survey value of the average perception of how severe / fatal COVID-19 is.
+We believe that a higher perception of how severe / fatal COVID-19 would correlate with lower fatality rates. People who are more concerned about the severity of COVID-19 will likely be more cautious in caring for their own health and isolate if they have underlying health conditions or are immunocompromised.
+"Perception of COVID-19 Severity" will likely have no correlation with diabetes diagnoses, unemployment percentages, and minority percentages.
+"Perception of COVID-19 Severity" will likely have a strong positive correlation with state mask policies, a positive correlation with state stay at home policies, and a positive correlation with chronic respiratory disease percentages. As state mask policies have a positive causal impact on fatality rates, our direction of our OVB is towards zero. But for stay-at-home policies and chronic respiratory disease percentages, we have a negative causal impact on fatality rates, so the direction fo our OVB is away from zero. For these policies, we are likely overstating their impact compared to a regression where we include "Perception of COVID-19 Severity."
+We don't necessarily have a great replacement for this variable. We would have assumed that policies would be a replacement, but we have inverse relationships in both of our policies, so it isn't clear how we could find a 'replacement' for this variable.
 
 3. "% registered Republican": A higher percentage of Republican voters in a state.
-We believe that political distributions of Republicans will lead to different state and government messages / resources concerning COVID-19 from state leaders. Downplaying the severity of COVID-19 by keeping available resources scarce could lead to uninformed state members, which should increase the fatality rate within a state.
-We believe that "% registered Republican" will have a negative correlation with fatality rates. The bias of this would likely be smaller, but the at-risk population that believes in COVID's severity through government infrastrucutre and messagin will likely take more drastic measures to protect themselves.
-"% registered Republican" will like have a strong negative correlation with state mask policies and stay-at-home policies."% registered Republican" will likely have no correlation with diabetes percentages and chronic respiratory percentages. This variable will likely have a strong negative correlation with minority percentages and unemployment rates.
-This leads us to conclude that the bias for this OVB is towards zero?, as the correlations with the independent variables are evenly distributed, and we have reason to believe that there is a negative correlation with fatality rates.
+We believe that "% registered Republican" will have a negative correlation with fatality rates. We believe that higher Republican percentages will be correlated with less COVID-19 resources and policies in general from state government.
+"% registered Republican" will likely have no correlation with diabetes percentages and chronic respiratory percentages.
+"% registered Republican" will like have a strong negative correlation with state mask policies and stay-at-home policies. This shows that the direction of our bias is away from zero.
+This variable will likely have a strong negative correlation with minority percentages and unemployment rates, which will direct our bias further away from zero.
+This is also a difficult line of reasoning, as we have seen from our regression that policies in general led to a decrease in fatality rates, which suggests some lines of reverse causality from what we originally thought. So the bias for this variable could very easily be switched and be towards zero instead. Our policy variables are a good replacement 
 
-4. "Distance from Tourist Hotspots": Aggregated Distance from Tourist Hotspots / High Frequency travel zones across a state.
-We believe that distances from tourist hotspots / urban zones will likely have a negative correlation with fatality rates. A further distance that cities are from unpredictable and unwanted influxes of tourists would likely correlate with lower fatality rates.
-"Distance from Tourist Hotspots" will likely have no correlation with state mask policies and stay-at-home policies. This variable will also likely have no correlation with minority percentages and unemployment rates, as well as with diabetes and chronic respiratory percentages. This variable is more related to unwanted influxes of tourists during COVID-19, and we will conclude that the direction of the bias is towards zero because of the 
+4. "Population Percentage in Urban Zones": The percentage of the state's population that live in urban zones.
+We believe that this variable will have a positive correlation with fatality rates, as clusters of individuals would likely be more quickly impacted by COVID-19. This variable likely has no correlation with ethnic percentages, unemployment percentages, chronic respiratory diseases
+"Extreme Temperature" ranges will weaken a person's immune system and their body's ability to fight a virus. This would imply that states with more moderate weather will have a lower fatality rates with COVID-19.
+"Extreme Temperature" will likely have no correlation with state policies, stay-at-home policies, diabetes diagnoses, unemployment percentages, and chronic respiratory disease percentages.
 
-5. "Perception of COVID-19 Severity": A survey value of the average perception of how severe / fatal COVID-19 is.
-I believe that a higher perception of how severe / fatal COVID-19 is would lead to lower fatality rates. People who are more concerned about the severity of COVID-19 will likely take many more personal precautions to watch for their own health and isolate if they have underlying health conditions or are immunocompromised.
-"Perception of COVID-19 Severity" will likely have a strong positive correlation with state mask policies, no correlation with diabetes diagnoses, no correlation with unemployment percentages, a positive correlation with state stay at home policies, no correlation with chronic respiratory disease percentages, and no correlation with minority percentages.
+5. "Exercise Rates": Mean exercise per person per week
+We believe that "Exercise Rates" will be negatively correlated with fatality rates. Healthier populations should, in general, be correlated with lower fatality rates. "Exercise Rates" will likely have no correlation with state mask policies, stay-at-home policies,  minority percentages, and unemployment percentages. This omitted variable will likely have a negative correlation with diabetes and chronic respiratory diseases, which says that our direction of our bias is away from zero. We have likely overstated the causal effect of health variables on fatality rates, but this is likely to be a small effect. We don't necessarily have a variable that can replace activity in a population, but our health variables are likely indicators that would impact fatality rates.
+
+
+As each of these 
 This leads us to conclude that the bias for this OVB is towards zero?, as the correlations with the independent variables are evenly distributed, and we have reason to believe that there is a negative correlation with fatality rates.
 
 Given our findings using our ANOVA testing and modeling, we have seen that our independent variables are in general ______.
@@ -720,7 +725,6 @@ If in general away from zero, we are likely artificially introducing significanc
 TODO: Table of towards away conclusion / variables Spencer Song
 
 ### 6. Conclusion
-
 Make sure that you end your report with a discussion that distills key insights from your estimates and addresses your research question.
 - Our expectations and assumptions going into EDA
 - A deeper dive into practical significance and what we took away from this and how it relates to our research question
