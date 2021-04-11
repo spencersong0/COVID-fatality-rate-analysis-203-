@@ -25,6 +25,7 @@ require(gridExtra)
 
 ```{r, echo = FALSE, message = FALSE, warning = FALSE}
 df <- read_csv('FinalDF.csv')
+df_pre_drop <- df
 df <- df[-c(2, 9, 12), ] # remove Alaska, Hawaii, D.C.
 ```
 
@@ -43,7 +44,7 @@ Variable categories: Health, policy, socioeconomic, other -->
 
 The COVID-19 pandemic has overturned nearly all aspects of normal life over the past year. The U.S. has particularly suffered, with 550,000 COVID-19 deaths, more than any other nation in the world [(NY Times)](https://www.nytimes.com/interactive/2020/us/coronavirus-us-cases.html). However, not all areas of the U.S. have been equally affected. While some states have seen relatively few cases and deaths, others have been significantly impacted, seeing overwhelmed healthcare systems and lockdowns. This motivates our primary research question: What causes higher fatality rates from COVID-19 in some states versus others? What are the primary factors driving higher fatality rates across states?
 
-To answer this question, we analyze the cumulative COVID-19 fatality rate from January 22, 2020 through March 31, 2021. We calculate the fatality rate as the number of deaths per positive cases. We operationalize several categories of factors that likely have a causal relationship with fatality rate based on our research from media articles, publications, and government sources. These categories include pre-existing health conditions, enacted policy, and socioeconomic characteristics. We additionally include number of ICU beds per 10,000 people to represent the capacity of healthcare systems in each state.
+To answer this question, we analyze the cumulative COVID-19 fatality rate from January 22, 2020, through March 31, 2021. We calculate the fatality rate as the number of deaths per positive cases. We operationalize several categories of factors that likely have a causal relationship with fatality rate based on our research from media articles, publications, and government sources. These categories include pre-existing health conditions, enacted policy, and socioeconomic characteristics. We additionally include number of ICU beds per 10,000 people to represent the capacity of healthcare systems in each state.
 
 With this background knowledge about factors making people more prone to catching a severe case of COVID-19, we can perform a causal analysis using the one-equation structural model to determine how prevalent these factors are at a state-level. Our causal analysis consists of three models. Our first model contains the variables we believe have the largest causal impact on death rate. Our second model builds on this to include more of our dataset, and finally, our third model includes all data we collected.
 
@@ -53,11 +54,54 @@ With this background knowledge about factors making people more prone to catchin
 
 - explain how we define "death rate" (i.e. deaths/cases)--why is this operationalization more relevant than alternatives (ex. deaths per capita) -- Jenny explains this in the intro a bit but this operationalization probably merits further explanation-->
 
-Our operationalized pre-existing health conditions were largely informed by the Center for Disease Control's list of medical conditions that make adults more likely to get severely ill from COVID-19 [(CDC)](https://www.cdc.gov/coronavirus/2019-ncov/need-extra-precautions/people-with-medical-conditions.html). We focused our policy data on mask requirements and stay at home orders. Individuals' socioeconomic status has also been known to make them more vulnerable to COVID-19, so we include features like unemployment, income, and crowding [(McKinsey)](https://www.mckinsey.com/featured-insights/coronavirus-leading-through-the-crisis/charting-the-path-to-the-next-normal/socioeconomic-vulnerability-increases-the-risk-of-dying-from-covid-19#:~:text=Socioeconomic%20vulnerability%20increases%20the%20risk%20of%20dying%20from%20COVID%2D19,-COVID%2D19%20Inequality&text=September%2010%2C%202020%20People%20who,coronavirus%20than%20the%20general%20population.). Finally, public officials have stressed ICU capacity as an important factor in handling large numbers of severe COVID-19 cases, so we include the number of ICU beds per 10,000 people as an additional feature.
+We collected data for each of our primary categories: pre-existing health conditions, implemented policy, and socioeconomic status. Our operationalized pre-existing health conditions were largely informed by the Center for Disease Control's list of medical conditions that make adults more likely to get severely ill from COVID-19 [(CDC)](https://www.cdc.gov/coronavirus/2019-ncov/need-extra-precautions/people-with-medical-conditions.html). We focused our policy data on mask requirements and stay at home orders. Individuals' socioeconomic status has also been known to make them more vulnerable to COVID-19, so we include features like unemployment, income, and crowding [(McKinsey)](https://www.mckinsey.com/featured-insights/coronavirus-leading-through-the-crisis/charting-the-path-to-the-next-normal/socioeconomic-vulnerability-increases-the-risk-of-dying-from-covid-19#:~:text=Socioeconomic%20vulnerability%20increases%20the%20risk%20of%20dying%20from%20COVID%2D19,-COVID%2D19%20Inequality&text=September%2010%2C%202020%20People%20who,coronavirus%20than%20the%20general%20population.). Finally, public officials have stressed ICU capacity as an important factor in handling large numbers of severe COVID-19 cases, so we include the number of ICU beds per 10,000 people as an additional feature.
 
-Much of this data was collected from a variety of sources, but we were able to join on State FIPS (Federal Information Processing System) Codes. Our data was primarily on a county level, so we aggregated our data to a state level and converted the data to percentage rates to use for our regression. We chose to collect data on a county level because more granular data is likely more precise. Additionally, this opens the opportunity for future analysis at a county level. We made the choice to define "Fatality_Rate" as the total number of deaths divided by total number of cases for each state from January 22, 2020 through March 31, 2021. This normalization allows us to focus on why people are dying from COVID-19 at higher rates rather than how COVID-19 spreads in states.
+Much of this data was collected from a variety of sources, but we were able to join on State Federal Information Processing System (FIPS) Codes. Our data was primarily on a county level, so we aggregated our data to a state level and converted the data to percentage rates to use for our regression. We chose to collect data on a county level because more granular data is likely more precise. Additionally, this opens the opportunity for future analysis at a county level. We made the choice to define "Fatality Rate" as the total number of deaths divided by total number of cases for each state from January 22, 2020 through March 31, 2021. This normalization allows us to focus on why people are dying from COVID-19 at higher rates rather than how COVID-19 spreads in states.
 
-We also made the choice to omit Hawaii, Alaska, and District of Columbia from our states, as we found that these states were outliers in our socioeconomic analysis and policy factors. District of Columbia is primarily urban, so the demographics, multi-unit housing percentages, and crowding were all drastically different from the rest of our data points, causing nonlinearity with our regressions due to our small dataset. Similarly, Hawaii and Alaska are not a part of the contiguous United States, so their COVID-19 management was much more travel/flight dependent, whereas the rest of the United States was openly exposed to travel. Because these two states are isolated from the rest of the US, they can more effectively regulate travel into and out of the state. Finally, Hawaii and Alaska have significantly different demographic characteristics--a high number of minorities and low population density, respectively. These states had many different factors that would impact the fatality of their COVID-19 cases, so for the purpose of our question, we are bounding our dataset to the lower 48 states.
+We also made the choice to omit Hawaii, Alaska, and District of Columbia from our states, as we found that these states were outliers in our socioeconomic analysis and policy factors. District of Columbia is primarily urban, so the demographics, multi-unit housing percentages, and crowding were all drastically different from the rest of our data points, causing nonlinearity with our regressions due to our small dataset. Similarly, Hawaii and Alaska are not a part of the contiguous United States, so their COVID-19 management was much more travel/flight dependent, whereas the rest of the United States was openly exposed to travel. Because these two states are isolated from the rest of the U.S., they can more effectively regulate travel into and out of the state. Finally, Hawaii and Alaska have significantly different demographic characteristics---a high number of minorities and low population density, respectively. These states had many different factors that would impact the fatality of their COVID-19 cases, so for the purpose of our question, we are bounding our dataset to the lower 48 states.
+
+```{r, echo = FALSE, message = FALSE, warning = FALSE, fig.cap = 'Outliers in socioeconomic data often included Alaska, Hawaii, and the District of Columbia, which is one reason for dropping these observations from our dataset.', fig.pos='!h', out.extra='', fig.align="center", out.width = "75%"}
+# check_outlier <- function(v, coef=1.5){
+#   quantiles <- quantile(v,probs=c(0.25,0.75))
+#   IQR <- quantiles[2]-quantiles[1]
+#   res <- v < (quantiles[1]-coef*IQR)|v > (quantiles[2]+coef*IQR)
+#   return(res)
+# }
+
+minority_quantiles <- quantile(df_pre_drop$Minority_Percentage, probs = c(0.25, 0.75))
+multi_unit_quantiles <- quantile(df_pre_drop$Multi_Unit_Perc, probs = c(0.25, 0.75))
+crowding_quantiles <- quantile(df_pre_drop$Crowding_Perc, probs = c(0.25, 0.75))
+
+minority_IQR <- minority_quantiles[2] - minority_quantiles[1]
+multi_unit_IQR <- multi_unit_quantiles[2] - multi_unit_quantiles[1]
+crowding_IQR <- crowding_quantiles[2] - crowding_quantiles[1]
+
+df_pre_drop <- df_pre_drop %>% mutate(
+  minority_outliers = ifelse(Minority_Percentage < minority_quantiles[1]-1.5*minority_IQR | Minority_Percentage > minority_quantiles[2]+1.5*minority_IQR, state, ""),
+  # minority_outliers = ifelse(state == 'Hawaii', 'Hawaii', ''),
+  # multi_unit_outliers = ifelse(state == 'District of Columbia', 'District of Columbia', ''),
+  multi_unit_outliers = ifelse(Multi_Unit_Perc < multi_unit_quantiles[1]-1.5*multi_unit_IQR | Multi_Unit_Perc > multi_unit_quantiles[2]+1.5*multi_unit_IQR, state, ""),
+  crowding_outliers = ifelse(Crowding_Perc < crowding_quantiles[1]-1.5*crowding_IQR | Crowding_Perc > crowding_quantiles[2]+1.5*crowding_IQR, state, ""),
+)
+
+label_size <- 3.6
+
+Minority_plot <- ggplot(df_pre_drop, aes(Minority_Percentage, y = 0)) +
+  geom_boxplot() + 
+  geom_text(size = label_size, aes(label = minority_outliers), nudge_y = 0.15) +
+  labs(y = '', x = '% Minorities')
+Multi_Unit_Plot <- ggplot(df_pre_drop, aes(Multi_Unit_Perc, y = 0)) +
+  geom_boxplot() + 
+  geom_text(size = label_size, aes(label = multi_unit_outliers), nudge_y = 0.15, nudge_x = -0.035) +
+  labs(y = '', x = '% Adults in Multi-Unit Dwellings')
+Crowding_Plot <- ggplot(df_pre_drop, aes(Crowding_Perc, y = 0)) +
+  geom_boxplot() + 
+  geom_text(size = label_size, aes(label = crowding_outliers), nudge_y = 0.15) +
+  labs(y = '', x = '% Crowding')
+combined_plot <- (Minority_plot / Multi_Unit_Plot / Crowding_Plot) + labs(tile = 'Boxplots for selected socioeconomic features')
+combined_plot
+```
+
 
 These are the variables we have collected and considered prior to performing exploratory data analysis.
 
@@ -149,67 +193,28 @@ The team identified fatality rates as the key variable to be measured as we look
 The team identified fatality rates as the key variable to be measured as we look to understand the relationship between fatality rates and several chosen variables that fall within the health, policy, or socioeconomic categories.
 
 ## An Explanatory Analysis
-Our model is an explanatory one, as we not only describe the COVID-19 data and trends but also provide causal relationships between each chosen independent and dependent variables. We plan on explaining causes in the changes in fatality rates.
+Our model is an explanatory one, as we not only describe the COVID-19 data and trends but also use the one-equation structural model to analyze causal relationships between each chosen explanatory variable and the response variable. We plan on explaining causes in the changes in fatality rates.
 
 <!-- 3. What [covariates](https://en.wikipedia.org/wiki/Dependent_and_independent_variables#Statistics_synonyms) help you achieve your modeling goals? What covariates are problematic, either due to *collinearity*, or because they will absorb some of a causal effect you want to measure? -->
 TODO: Add justifications of EDA to each of the covariate descriptions. Maybe talk about overarching EDA process.
 
-## Covariate Descriptions
+## Covariate Descriptions and Initial Exploratory Data Analysis
 
 \textbf{Health}: We selected seven different health covariates as listed out above. These variables were chosen because the CDC has claimed that adults with these conditions are more likely to suffer from severe cases of COVID-19 [(CDC)](https://www.cdc.gov/coronavirus/2019-ncov/need-extra-precautions/people-with-medical-conditions.html). However, a few causal relationships exist among these health variables. For example, obesity is a known cause of diabetes, and smoking is known to cause asthma. We additionally found high correlations between these variables. Because of this, we will limit our use of health variables in our models and ensure that no causal relationships exist between remaining variables.
 
 \textbf{Policy}: The covariates for both mask mandate and stay-at-home policy durations are of concern as they both show a positive linear relationship with fatality rates.
 
-\textbf{Socioeconomic}:
+\textbf{Socioeconomic}: TODO <!--@KEVIN CAN YOU ADD SOME STUFF HERE TY-->
 
-\textbf{Miscellaneous}: The covariates for senior percentages and ICU beds per 10000 actually appear to be of little concern. Neither seem to be overly problematic due to collinearity. 
+\textbf{Miscellaneous}: The covariates for senior percentages and ICU beds per 10,000 actually appear to be of little concern. Neither seem to be overly problematic due to collinearity. 
 
 ## Covariate Transformations
 
 <!-- 4. What *transformations*, if any, should you apply to each variable? These transformations might reveal linearities in the data, make your results relevant, or help you meet model assumptions. -->
 
-When performing EDA on our features, we plotted and analyzed scatterplots of fatality rate versus each explanatory variable. We assessed how transformations could make the relationships between our explanatory and response variables more linear and tried various combinations of logarithmic and polynomial transformations. Based on our analysis, we decided to apply no transformation to fatality rate, our response variable, and the subsections below outline the transformations made to the variables within each subset.
+When performing EDA on our features, we plotted and analyzed scatterplots of fatality rate versus each explanatory variable. We assessed how transformations could make the relationships between our explanatory and response variables more linear and tried various combinations of logarithmic and polynomial transformations. Based on our analysis, we decided to apply no transformation to fatality rate, our response variable, and the subsections below outline the transformations made to the variables within each subset. A sample of our scatterplots are shown in Figure 2. We assessed relationships between explanatory variables and fatality rate and also relationships among the explanatory variables. We conducted similar analyses for all of the variables and the variable categories. 
 
-\textbf{Health}: For health variables, we observed that transformations did not improve the linear relationships between our explanatory variables and fatality rate. Therefore, no transformations were appropriate for any of the health variables. Overall, our diabetes, heart disease, and smoker features had positive correlations with fatality rate. Chronic respiratory disease and asthma both had negative correlations, which seemed counterintuitive, and obesity and stroke essentially had zero correlation.
-
-\textbf{Policy}: For policy variables, no logarithmic or polynomial transformation conducted improved linear relationships between our explanatory variables (duration of each state's mask mandate & stay-at-home policies) and fatality rate.
-
-\textbf{Socioeconomic}: TODO
-
-```{r}
-#- show minority percentage scatterplots: normal vs logged --> Kevin
-plot3 <- ggplot(df, aes(y = Fatality_Rate, x = Minority_Percentage)) +
- geom_point() + stat_smooth()
-plot4 <- ggplot(df, aes(y = Fatality_Rate, x = log(Minority_Percentage))) +
- geom_point() + stat_smooth()
-grid.arrange(plot3, plot4, ncol=1)
-```
-
-\textbf{Miscellaneous}: ICU Beds per 10000 should be used with a log transformation, while senior percentage should not take any transformations. With ICU Beds per 10000, we found that there is a lot of change in the lower ICU Bed values, so the covariate becomes more linear and evenly distributed with a log transformation.
-
-
-<!--5. Are your choices supported by exploratory data analysis (*EDA*)? You will likely start with some general EDA to *detect anomalies* (missing values, top-coded variables, etc.). From then on, your EDA should be interspersed with your model building. Use visual tools to *guide* your decisions. You can also leverage statistical *tests* to help assess whether variables, or groups of variables, are improving model fit.
-  - remove mask policy?-->
-  
-5. Are your choices supported by exploratory data analysis (*EDA*)?
-
-TODO: EDA for all 3 model types and reasoning for specific applied transformations
-  - remove NA and check for reasoning with why they existed (make sure not all from one state, etc.)
-  - scatter, hists, bar?, box 
-  - variable summary, outlier removal? / reasoning
-  - transformation logic (transformations to use,etc. include reasoning)
-  
-TODO: 
-  - show minority percentage scatterplots: normal vs logged --> Kevin
-  - show scatterplots of Fatality_Rate vs everything else --> Spencer Hong
-  - show correlation of "before and after" --> Jenny
-  - TODO: Alaska Hawaii DC Boxplot Outlier Graphs --> Spencer Song
-  TODO: Try to label outliers ONLY ***
-  
-TODO: description of scatter below: From EDA, justification
-This scatter plot is why we chose to use unemployment to represent our socioeconomic sectors.
-
-```{r, echo=FALSE, warning = FALSE, message = FALSE, fig.cap="Scatterplots for each explanatory variable vs Fatality Rate", fig.pos='!h', out.extra='', fig.align="center"}
+```{r, echo=FALSE, warning = FALSE, message = FALSE, fig.cap="Scatterplots for a sample of explanatory variables vs Fatality Rate", fig.pos='!h', out.extra='', fig.align="center", out.width = "105%"}
 df_figs <- read_csv('FinalDF_nicecols.csv')
 df_figs <- df_figs[-c(2, 9, 12), ] # remove Alaska, Hawaii, D.C.
 
@@ -235,9 +240,9 @@ pairs(df_figs[,6:10], pch = 19, lower.panel = NULL)
 # respiratory_scatter <- ggplot(df_figs, aes(x = `% Deaths from Chronic
 # Resp Disease`, y = `Fatality Rate`))+ 
 #   geom_point(size=2.5)
-unemployed_scatter <- ggplot(df_figs, aes(x = `% Unemployed`, y = `Fatality Rate`))+ 
-  geom_point(size=2.5)
-unemployed_scatter
+# # unemployed_scatter <- ggplot(df_figs, aes(x = `% Unemployed`, y = `Fatality Rate`))+
+# #   geom_point(size=2.5)
+# # unemployed_scatter
 # minority_scatter <- ggplot(df_figs, aes(x = `% Minority`, y = `Fatality Rate`))+ 
 #   geom_point(size=2.5)
 # crowding_scatter <- ggplot(df_figs, aes(x = `% Crowding`, y = `Fatality Rate`))+ 
@@ -288,7 +293,48 @@ unemployed_scatter
 # 
 # test_scatter
 ```
-  TODO: Blurb explaining the graphs below and how we chose to include this correlation plot and what it is used for. Connect to Model Building process.
+
+\textbf{Health}: For health variables, we observed that transformations did not improve the linear relationships between our explanatory variables and fatality rate. Therefore, no transformations were appropriate for any of the health variables. Overall, our diabetes, heart disease, and smoker features had positive correlations with fatality rate. Chronic respiratory disease and asthma both had negative correlations, which seemed counterintuitive, and obesity and stroke essentially had zero correlation.
+
+\textbf{Policy}: For policy variables, no logarithmic or polynomial transformation conducted improved linear relationships between our explanatory variabless and fatality rate.
+
+\textbf{Socioeconomic}: TODO: Describe logarithmic transformation applied to the data. Reference the scatterplot figure!!
+
+```{r, echo = FALSE, warning = FALSE, message = FALSE, fig.cap = 'A log transformation on \\% Minority improves its linear relationship with Fatality Rate, so we chose to apply the log in our final models.', fig.pos='!h', out.extra='', fig.align='center', out.width = "75%"}
+#- show minority percentage scatterplots: normal vs logged --> Kevin
+plot3 <- ggplot(df, aes(y = Fatality_Rate, x = Minority_Percentage)) +
+ geom_point() + stat_smooth() + labs(x = '% Minority', y = 'Fatality Rate', title = 'Fatality Rate vs % Minority without Transformation')
+plot4 <- ggplot(df, aes(y = Fatality_Rate, x = log(Minority_Percentage))) +
+ geom_point() + stat_smooth() + labs(x = '% Minority', y = 'Fatality Rate', title = 'Fatality Rate vs % Minority with Transformation')
+plot3 / plot4
+```
+
+\textbf{Miscellaneous}: ICU Beds per 10000 should be used with a log transformation, while senior percentage should not take any transformations. With ICU Beds per 10000, we found that there is a lot of change in the lower ICU Bed values, so the covariate becomes more linear and evenly distributed with a log transformation.
+
+
+<!--5. Are your choices supported by exploratory data analysis (*EDA*)? You will likely start with some general EDA to *detect anomalies* (missing values, top-coded variables, etc.). From then on, your EDA should be interspersed with your model building. Use visual tools to *guide* your decisions. You can also leverage statistical *tests* to help assess whether variables, or groups of variables, are improving model fit.
+  - remove mask policy?-->
+  
+<!-- 5. Are your choices supported by exploratory data analysis (*EDA*)?
+
+TODO: EDA for all 3 model types and reasoning for specific applied transformations
+  - remove NA and check for reasoning with why they existed (make sure not all from one state, etc.)
+  - scatter, hists, bar?, box 
+  - variable summary, outlier removal? / reasoning
+  - transformation logic (transformations to use,etc. include reasoning)
+  
+TODO: 
+  - show minority percentage scatterplots: normal vs logged = Kevin
+  - show scatterplots of Fatality_Rate vs everything else = Spencer Hong
+  - show correlation of "before and after" = Jenny
+  - TODO: Alaska Hawaii DC Boxplot Outlier Graphs = Spencer Song
+  TODO: Try to label outliers ONLY ***
+  
+TODO: description of scatter below: From EDA, justification
+This scatter plot is why we chose to use unemployment to represent our socioeconomic sectors.
+
+
+  TODO: Blurb explaining the graphs below and how we chose to include this correlation plot and what it is used for. Connect to Model Building process. -->
 
 ```{r, echo=FALSE, warning = FALSE, message = FALSE, fig.cap="Changes in correlations between explanatory variables before (left) and after (right) removing some features in Model 2.", fig.pos='!h', out.extra='', fig.align="center"}
 
