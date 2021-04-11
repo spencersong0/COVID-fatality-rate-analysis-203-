@@ -200,7 +200,7 @@ TODO: Add justifications of EDA to each of the covariate descriptions. Maybe tal
 
 \textbf{Policy}: The covariates for both mask mandate and stay-at-home policy durations are of concern as they both show a positive linear relationship with fatality rates.
 
-\textbf{Socioeconomic}: TODO <!--@KEVIN CAN YOU ADD SOME STUFF HERE TY--> move senior percentages to this section..
+\textbf{Socioeconomic}: We collected data for seven socioeconomic covariates that we believe could cause varying COVID-19 fatality rates. Studies have shown that at-risk communities already suffering from poverty and unemployment also are more affected by COVID-19, and COVID-19 has additionally disporportionately impacted communities of color [(CDC)](https://www.cdc.gov/coronavirus/2019-ncov/community/health-equity/race-ethnicity.html). Because of this, we collected data to fully represent states' socioeconomic statuses.
 
 \textbf{Miscellaneous}: The covariate for ICU beds per 10,000 appears to be of little concern since it is not highly collinear with any of our other features. 
 
@@ -292,9 +292,9 @@ pairs(df_figs[,6:10], pch = 19, lower.panel = NULL)
 
 \textbf{Health}: For health variables, we observed that transformations did not improve the linear relationships between our explanatory variables and fatality rate. Therefore, no transformations were appropriate for any of the health variables. Overall, our diabetes, heart disease, and smoker features had positive correlations with fatality rate. Chronic respiratory disease and asthma both had negative correlations, which seemed counterintuitive, and obesity and stroke essentially had zero correlation.
 
-\textbf{Policy}: For policy variables, no logarithmic or polynomial transformation conducted improved linear relationships between our explanatory variabless and fatality rate.
+\textbf{Policy}: For policy variables, no logarithmic or polynomial transformation conducted improved linear relationships between our explanatory variables and fatality rate.
 
-\textbf{Socioeconomic}: TODO: Describe logarithmic transformation applied to the data. Reference the scatterplot figure!! senior percentage should not take any transformations
+\textbf{Socioeconomic}: We found that Percent of Minorities was the only socioeconomic feature that benefitted from a logarithmic transformation. Figure 3 shows that applying a logarithmic transformation does make the best-fit curve slightly more linear. We use all other socioeconomic variables without transformations. We found that all socioeconomic variables had positive correlations with Fatality rate, except for Percent Crowding, which we did not expect since COVID-19 spreads faster when there is a higher concentration of people. Percent Unemployed and Percent Minority had the strongest positive correlations with Fatality Rate.
 
 ```{r, echo = FALSE, warning = FALSE, message = FALSE, fig.cap = 'A log transformation on \\% Minority improves its linear relationship with Fatality Rate, so we chose to apply the log in our final models.', fig.pos='!h', out.extra='', fig.align='center', out.width = "75%"}
 #- show minority percentage scatterplots: normal vs logged --> Kevin
@@ -686,9 +686,10 @@ If the team has taken up an explanatory (i.e. causal) question to evaluate, then
 TODO: Intro transitioning from what we have and results to considerations for OVB
 We want to apply OVB concepts to our second regression model. We have determined the following as our 5 most important omitted variables:
 
-### Model Equation
+## Model Equation
 $\text{Fatality Rate} = \beta_0 + \beta_1 \text{ Mask Policy} + \beta_2 \text{ \% Adults with Diabetes} + \beta_3 \text{ \% Unemployment} + \beta_4 \text{ Home Policy} + \beta_5 \text{ \% Chronic Resp Deaths} + \beta_6 \text{ log(\% Minority)} + u$
 
+## Examples of Omitted Variables Causing Bias
 
 1. \textbf{"Food Quality"}: Quality and availability of healthy food throughout a state.
 "Food Quality" throughout a state would likely be negatively correlated with COVID-19 fatality cases. Overall, a healthier population will likely be more adverse to higher fatality rates and severe reactions to COVID-19.
@@ -728,7 +729,7 @@ If in general away from zero, we are likely artificially introducing significanc
 
 TODO: Table of towards away conclusion / variables Spencer Song
 
-### 6. Conclusion
+# Conclusion
 Make sure that you end your report with a discussion that distills key insights from your estimates and addresses your research question.
 
 
