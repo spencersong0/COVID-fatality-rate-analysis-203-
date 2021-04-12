@@ -685,14 +685,10 @@ We believe there are several concerns with our model and the assumptions of the 
 # Discussion of Omitted Variables
 
 If the team has taken up an explanatory (i.e. causal) question to evaluate, then identify what you think are the 5 most important *omitted variables* that bias results you care about. For each variable, you should *reason about the direction of bias* caused by omitting this variable. If you can argue whether the bias is large or small, that is even better. State whether you have any variables available that may proxy (even imperfectly) for the omitted variable. Pay particular attention to whether each omitted variable bias is *towards zero or away from zero*. You will use this information to judge whether the effects you find are likely to be real, or whether they might be entirely an artifact of omitted variable bias.
+Because we are assessing a causal question, we now need to check for omitted variable bias. We want to apply OVB concepts to our second regression model. We have determined the following as our 5 most important omitted variables:
 
-TODO: Intro transitioning from what we have and results to considerations for OVB
-We want to apply OVB concepts to our second regression model. We have determined the following as our 5 most important omitted variables:
-
-## Model Equation
+### Model Equation
 $\text{Fatality Rate} = \beta_0 + \beta_1 \text{ Mask Policy} + \beta_2 \text{ \% Adults with Diabetes} + \beta_3 \text{ \% Unemployment} + \beta_4 \text{ Home Policy} + \beta_5 \text{ \% Chronic Resp Deaths} + \beta_6 \text{ log(\% Minority)} + u$
-
-## Examples of Omitted Variables Causing Bias
 
 1. \textbf{"Food Quality"}: Quality and availability of healthy food throughout a state.
 "Food Quality" throughout a state would likely be negatively correlated with COVID-19 fatality cases. Overall, a healthier population will likely be more adverse to higher fatality rates and severe reactions to COVID-19.
@@ -703,34 +699,27 @@ There may not necessarily be a good 'replacement' for this variable in the data 
 
 2. \textbf{"Perception of COVID-19 Severity":} A survey value of the average perception of how severe / fatal COVID-19 is.
 We believe that a higher perception of how severe / fatal COVID-19 would correlate with lower fatality rates. People who are more concerned about the severity of COVID-19 will likely be more cautious in caring for their own health and isolate if they have underlying health conditions or are immunocompromised.
-"Perception of COVID-19 Severity" will likely have no correlation with diabetes diagnoses, unemployment percentages, and minority percentages.
-"Perception of COVID-19 Severity" will likely have a strong positive correlation with state mask policies, a positive correlation with state stay at home policies, and a positive correlation with chronic respiratory disease percentages. As state mask policies have a positive causal impact on fatality rates, our direction of our OVB is towards zero. But for stay-at-home policies and chronic respiratory disease percentages, we have a negative causal impact on fatality rates, so the direction fo our OVB is away from zero. For these policies, we are likely overstating their impact compared to a regression where we include "Perception of COVID-19 Severity."
+"Perception of COVID-19 Severity" will likely have no correlation with diabetes diagnoses, unemployment percentages, and minority percentages. "Perception of COVID-19 Severity" will likely have a strong positive correlation with state mask policies, a positive correlation with state stay at home policies, and a positive correlation with chronic respiratory disease percentages. As state mask policies have a positive causal impact on fatality rates, our direction of our OVB is towards zero. But for stay-at-home policies and chronic respiratory disease percentages, we have a negative causal impact on fatality rates, so the direction fo our OVB is away from zero. For these policies, we are likely overstating their impact compared to a regression where we include "Perception of COVID-19 Severity."
 We don't necessarily have a great replacement for this variable. We would have assumed that policies would be a replacement, but we have inverse relationships in both of our policies, so it isn't clear how we could find a 'replacement' for this variable.
 
 3. \textbf{"\% registered Republican":} A higher percentage of Republican voters in a state.
 We believe that "% registered Republican" will have a negative correlation with fatality rates. We believe that higher Republican percentages will be correlated with less COVID-19 resources and policies in general from state government.
 "% registered Republican" will likely have no correlation with diabetes percentages and chronic respiratory percentages. This variable will also have a strong negative correlation with state mask policies and stay-at-home policies. This shows that the direction of our bias is away from zero.
 This variable will likely have a strong negative correlation with minority percentages and unemployment rates, which will direct our bias further away from zero.
-This is also a difficult line of reasoning, as we have seen from our regression that policies in general led to a decrease in fatality rates, which suggests some lines of reverse causality from what we originally thought. So the bias for this variable could very easily be switched and be towards zero instead. Our policy variables are a good replacement 
+This is also a difficult line of reasoning, as we have seen from our regression that policies in general led to a decrease in fatality rates, which suggests some lines of reverse causality from what we originally thought. So the bias for this variable could very easily be switched and be towards zero instead. Our policy variables are a good replacement
 
 4. \textbf{"Population \% in Urban Zones":} The percentage of the state's population that live in urban zones.
-We believe that this variable will have a positive correlation with fatality rates, as clusters of individuals would likely be more quickly impacted by COVID-19. This variable likely has no correlation with ethnic percentages, unemployment percentages, chronic respiratory diseases
+We believe that this variable will have a positive correlation with fatality rates, as clusters of individuals would likely be more quickly impacted by COVID-19. This variable likely has no correlation with ethnic percentages, unemployment percentages, chronic respiratory diseases, and diabetes percentages. On the other hand, this variable is likely to have a positive correlation with mask policy and stay-at-home populations. Higher populations in urban zones will likely correlate with more necessary regulations across a state for COVID-19. These relationships show that our policy variables have an OVB that is directionally away from zero. We have used a 'clustering' variable in our model that can be representative of this statistic, TODO!!!!
 
 5. \textbf{"Exercise Rates":} Mean exercise per person per week
 We believe that "Exercise Rates" will be negatively correlated with fatality rates. Healthier populations should, in general, be correlated with lower fatality rates. "Exercise Rates" will likely have no correlation with state mask policies, stay-at-home policies,  minority percentages, and unemployment percentages. This omitted variable will likely have a negative correlation with diabetes and chronic respiratory diseases, which says that our direction of our bias is away from zero. We have likely overstated the causal effect of health variables on fatality rates, but this is likely to be a small effect. We don't necessarily have a variable that can replace activity in a population, but our health variables are likely indicators that would impact fatality rates.
 
-```{}
-ovb_table <- data.frame("Food Quality" = 1:2, "Age" = c(21,15), "Name" = c("John","Dora"))
-stargazer()
+```{r, echo = FALSE, message = FALSE, warning = FALSE}
+ovb_table <- data.frame("Independent Variable Names" = c("Mask Policy", "Diabetes %", "Unemployment", "Stay-at-Home Policy", "Chronic Respiratory Disease %", "Minority"), "Food Quality" = c(), "" = c("John","Dora"))
+#stargazer()
 ```
 
-As each of these
-This leads us to conclude that the bias for this OVB is towards zero?, as the correlations with the independent variables are evenly distributed, and we have reason to believe that there is a negative correlation with fatality rates.
-
-Given our findings using our ANOVA testing and modeling, we have seen that our independent variables are in general ______.
-If in general away from zero, we are likely artificially introducing significance in our model. towards is fine. 
-
-TODO: Table of towards away conclusion / variables Spencer Song
+Given our findings using our ANOVA testing and modeling, we have seen that our independent variables are in general away from zero. We are likely artificially introducing some significance in our model through omitted variable bias.
 
 # Conclusion
 <!-- Make sure that you end your report with a discussion that distills key insights from your estimates and addresses your research question.
