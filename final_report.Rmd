@@ -499,6 +499,8 @@ Comparing the three models above, we have chosen to emphasize Model Two. First, 
 In your text, comment on both *statistical significance and practical significance*. You may want to include statistical tests besides the standard t-tests for regression coefficients. -->
 TODO: Introduction to what tests we ran and why? maybe mention that we used the robust standard errors?
 
+We group the coefficients and results of our models into a stargazer table to facilitate analysis.  We will focus in particular on model two since it is the model that provides a better fit but does not present high multicollinearity among its variables as in the third model.  We also chose to use the VIF table over the scatterplot matrix due to the fact that many of the variables have already been pre-categorized and have been found to have high collinearity from our initial exploratory data analysis.  Thus we believe assessing the VIF table will help us better analyze the possibility of a relationship between independent variables and gain further insight into the effects of multicollinearity.
+
 ```{r get robust ses, echo = FALSE, message = FALSE, warning = FALSE}
 rse <- function(model) { 
   sqrt(diag(vcovHC(model)))
