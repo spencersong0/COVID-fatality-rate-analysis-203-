@@ -1,0 +1,32 @@
+---
+output:
+  pdf_document: default
+  html_document: default
+  word_document: default
+---
+
+
+```{r, results = "asis", echo = FALSE, message = FALSE, warning = FALSE}
+library(stargazer)
+library(readr)
+library(readxl)
+library(tidyverse)
+library(car)
+library(lmtest)
+library(sandwich)
+library(tidyverse)
+library(magrittr)
+library(ggplot2)
+library(dplyr)
+library(patchwork)
+ovb_table <- data.frame("one" = c("Mask Policy", "Diabetes %", "Unemployment", "Stay-at-Home Policy", "Chronic Respiratory Disease %", "Minority"), "two" = c("None", "Towards", "Towards", "None", "None", "Away"), "three" = c("", "None", "None", "", "", "None"), "four" = c("a", "a", "a", "a", "a", "a"), "five" = c("a", "a", "a", "a", "a", "a"), "six" = c("a", "a", "a", "a", "a", "a")) %>%
+  rename("Independent Variable Names" = "one", "Food Quality" = "two", "Perception of COVID-19 Severity" = "three", "%_Registered_Republican" = "four", "Population % in Urban Zones" = "five", "Exercise Rates" = "six")
+stargazer(ovb_table, header = FALSE, title = 'OVB Analysis Results', summary = FALSE)
+```
+
+<!-- "Mask Policy",  -->
+<!-- "Diabetes %",  -->
+<!-- "Unemployment",  -->
+<!-- "Stay-at-Home Policy",  -->
+<!-- "Chronic Respiratory Disease %",  -->
+<!-- "Minority" -->
